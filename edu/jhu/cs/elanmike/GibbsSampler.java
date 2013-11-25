@@ -1,5 +1,6 @@
 package edu.jhu.cs.elanmike;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GibbsSampler {
@@ -17,6 +18,9 @@ public class GibbsSampler {
 	 */
 	private static int NUM_COLLECTIONS = 2;
 
+	/**
+	 * Map from word string to index
+	 */
 	private HashMap<String,Integer> WordToIndex;
 	
 	GibbsSampler(){
