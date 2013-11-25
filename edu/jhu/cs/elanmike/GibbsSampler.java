@@ -121,6 +121,11 @@ public class GibbsSampler {
 	 */
 	private ArrayList< ArrayList<Integer> > wdiTest;
 	
+	
+	private ArrayList<ArrayList<Double>> theta_dk;
+	private ArrayList<ArrayList<Double>> phi_kw;
+	private ArrayList< ArrayList< ArrayList<Double> > >  phi_ckw;
+	
 	/**
 	 * The number of topics.
 	 */
@@ -184,6 +189,10 @@ public class GibbsSampler {
 		zdiTest = new ArrayList<ArrayList<Integer> >();
 		wdiTest = new ArrayList<ArrayList<Integer> >();
 		
+		theta_dk = new ArrayList<ArrayList<Double>>();
+		phi_kw = new ArrayList<ArrayList<Double>>();
+		phi_ckw = new ArrayList< ArrayList< ArrayList<Double> > >();
+		
 		this.type = type;
 		this.numCollections = numCollections;
 		this.numTopics = numTopics;
@@ -199,12 +208,16 @@ public class GibbsSampler {
 			nckw.add(new ArrayList< ArrayList<Integer>>());
 			nckwTest.add(new ArrayList< ArrayList<Integer>>());
 			
+			phi_ckw.add(new ArrayList<ArrayList<Double>>());
+			
 			for(int k = 0; k < numTopics; k++) {
 				nckStar.get(c).add(0);
 				nckStarTest.get(c).add(0);
 				
 				nckw.get(c).add(new ArrayList<Integer>());
 				nckwTest.get(c).add(new ArrayList<Integer>());
+				
+				phi_ckw.get(c).add(new ArrayList<Double>());
 			}
 		}
 		
@@ -214,7 +227,12 @@ public class GibbsSampler {
 			nkStarTest.add(0);
 			nkw.add(new ArrayList<Integer>());
 			nkwTest.add(new ArrayList<Integer>());
+			
+			phi_kw.add(new ArrayList<Double>());
 		}
+		
+		
+		
 		
 		rand = new Random();
 	}
@@ -300,6 +318,10 @@ public class GibbsSampler {
 			zdiTest.add(new ArrayList<Integer>());
 			xdiTest.add(new ArrayList<Integer>());
 			wdiTest.add(new ArrayList<Integer>());
+			
+			theta_dk.add(new ArrayList<Double>());
+			for(int k = 0; k< numTopics; k++)
+				theta_dk.get(docIdx).add(0.0);
 		}
 		
 		//if new word
