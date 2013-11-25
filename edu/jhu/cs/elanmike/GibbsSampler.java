@@ -273,40 +273,67 @@ public class GibbsSampler {
 			StringTokenizer st = new StringTokenizer(document);
 			int i = 0;
 			while(st.hasMoreElements()) {
-				processWordTest(st.nextToken(), collectionIndex, d, i);
+//				processWordTest(st.nextToken(), collectionIndex, d, i);
 				i++;
 			}
 			d++;
 		}
 		in.close();
 	}
-	
+	/**
+	 * Updates the counts to exclude the current assignment of the given word 
+	 * in the given document.
+	 * @param docIdx
+	 * @param wordIdx
+	 */
+	private void updateCountsExcludeCurrentAssignment(int docIdx, int wordIdx) {
+		
+	}
+	/**
+	 * Updates the counts to include the newly sampled assignment of the
+	 * given word in the given document.
+	 * @param docIdx
+	 * @param wordIdx
+	 */
+	private void updateCountsNewlySampledAssignment(int docIdx, int wordIdx) {
+		
+	}
+	/**
+	 * Run sampling algorithm.
+	 * Each iteration runs on training data,
+	 * then on test data, then computes likelihoods.
+	 * @param totalIters
+	 * @param totalBurnin
+	 */
 	private void runSampling(int totalIters, int totalBurnin) {
 		// and now run sampling
-		for (int i = 0; i < totalIters; i++) {
+		for (int t = 0; t < totalIters; t++) {
 			// sample
-			// for each token (d,i) in each document d in the train set:
-			// update the counts to exclude the assignment of the current token
-			// randomly sample a new value for zdi
-			// randomly sample a new value for xdi, using newly sampled zdi
-			// update the counts to include the newly sampled assignments of the
-			// current token
+			for(int d = 0; d < ndk.size(); d++) {
+				int numWordsInD = ndStar.get(d);
+				for(int i = 0; i < numWordsInD; i++) {
+					updateCountsExcludeCurrentAssignment(d, i);
+					// 	randomly sample a new value for zdi
+					// 	randomly sample a new value for xdi, using newly sampled zdi
+					updateCountsNewlySampledAssignment(d, i);
+				}
+			}
 			// estimate params
 			// estimate map theta_dk
 			// estimate map phi_dk
 			// for each collection c
 			// estimate map phi_cdk
-			if (i > totalBurnin) {
+			if (t > totalBurnin) {
 				// save sample, add estimate to our expected value
 			}
 			// sample z of the test set, directly use the current iteration's
 			// estimates of phis
 			// for each token (d,i) in each document d in the test set:
-			// update the counts to exclude the assignment of the current token
-			// randomly sample a new value for zdi
-			// randomly sample a new value for xdi, using newly sampled zdi
-			// update the counts to include the newly sampled assignments of the
-			// current token
+			// 	update the counts to exclude the assignment of the current token
+			// 	randomly sample a new value for zdi
+			// 	randomly sample a new value for xdi, using newly sampled zdi
+			// 	update the counts to include the newly sampled assignments of the
+			// 	current token
 			// compute log likelihood of train
 			// compute log likelihood of test
 		}
