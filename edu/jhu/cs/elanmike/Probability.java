@@ -80,7 +80,7 @@ public class Probability {
 		}
 		else {
 			System.out.println("uh oh!! we didn't account for a case in log add");
-			System.err.println("uh oh!! we didn't account for a case in log add");
+//			System.err.println("uh oh!! we didn't account for a case in log add");
 			System.out.printf("this:%s\nother:%s\n",this,other);
 			value = Double.NaN; // try to throw an error
 		}

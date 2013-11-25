@@ -587,6 +587,7 @@ public class GibbsSampler {
 			multiplier = new Probability(-1);
 			multiplier = multiplier.product(new Probability(lambda));
 			multiplier = multiplier.add(Probability.ONE);
+			System.out.println("multiplier:"+multiplier);
 			System.out.println("beta:"+beta);
 			// nkw + beta
 			Probability c = new Probability(beta);
@@ -599,20 +600,32 @@ public class GibbsSampler {
 			f = f.product(new Probability(beta));
 			f = f.add(new Probability(getValue(nkStar, k)));
 			// a / b
+			System.out.println("(beta + nkw) / (V * beta + nkstar):"+f);
 			c = c.divide(f);
 			return multiplier.product(c);
 		}
 		else if(v == 1) {
 			multiplier = new Probability(lambda);
+			System.out.println("multiplier:"+multiplier);
 			int coll = getValue(collections_d, d);
+			System.out.println("c:"+coll);
 			// nckw + beta
 			Probability c = new Probability(beta);
+			System.out.println("beta:"+beta);
+			System.out.println("nckw:"+getValue(nckw, coll, k, w));
 			c = c.add(new Probability(getValue(nckw, coll, k, w)));
+			System.out.println("beta + nckw:"+c);
 			// nckstar + V * beta
 			Probability f = new Probability(getVocabSize());
+			System.out.println("V:"+f);
+			System.out.println("beta:"+beta);
 			f = f.product(new Probability(beta));
+			System.out.println("V * beta:"+f);
+			System.out.println("nckstar:"+getValue(nckStar, coll, k));
 			f = f.add(new Probability(getValue(nckStar, coll, k)));
+			System.out.println("V * beta + nckstar:"+f);
 			// c / f
+			System.out.println("(beta + nckw) / (V * beta + nckstar):"+f);
 			c = c.divide(f);
 			return multiplier.product(c);
 		}
@@ -721,11 +734,13 @@ public class GibbsSampler {
 					double p = rand.nextDouble();
 					Probability marker = new Probability(p);
 					marker = marker.product(totalProb);
+					System.out.println("marker:"+marker);
 					for(int k = 0; k < numTopics; k++) {
-						System.out.println("marker:"+marker);
+						System.out.println("kth total:"+totalProbs[k]);
 						if(totalProbs[k].getLogProb() > marker.getLogProb()) {
 							// stop. we have sampled this value of k
 							sampledZdi = k;
+							System.out.println("sampled k = "+sampledZdi);
 							break;
 						}
 					}
@@ -733,7 +748,9 @@ public class GibbsSampler {
 					// randomly sample a new value for xdi, using newly sampled zdi
 					p = rand.nextDouble();
 					marker = new Probability(p);
-					totalProb = getPXdiEqualsV(numWordsInD, i, w, sampledZdi, 0);
+					totalProb = getPXdiEqualsV(d, i, w, sampledZdi, 0);
+					Probability check = getPXdiEqualsV(d, i, w, sampledZdi, 1);
+					System.out.println("should be 1:"+check.add(totalProb));
 					int sampledXdi = -1;
 					if(totalProb.getLogProb() > marker.getLogProb()) {
 						// we have sampled xdi = 0
