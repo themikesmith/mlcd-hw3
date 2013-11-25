@@ -1,6 +1,19 @@
 package edu.jhu.cs.elanmike;
 
 public class GibbsSampler {
+	/**
+	 * 1D array, indexed by document number, holding the number of words in each document
+	 */
+	private static ArrayList<Integer> ndStar = new ArrayList<Integer>();
+	/**
+	 * 2D array of counts of words of each topic in each document
+	 * first index is topic, second index is document
+	 */
+	private static ArrayList<Integer> ndk = new ArrayList<Integer>();
+	/**
+	 * Number of collections
+	 */
+	private static int NUM_COLLECTIONS = 2;
 
 	/**
 	 * @param args
