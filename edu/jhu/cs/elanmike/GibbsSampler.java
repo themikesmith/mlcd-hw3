@@ -584,9 +584,7 @@ public class GibbsSampler {
 		int k = zdi;
 		Probability multiplier;
 		if(v == 0) {
-			multiplier = new Probability(-1);
-			multiplier = multiplier.product(new Probability(lambda));
-			multiplier = multiplier.add(Probability.ONE);
+			multiplier = new Probability((1-lambda));
 			System.out.println("multiplier:"+multiplier);
 			System.out.println("beta:"+beta);
 			// nkw + beta
