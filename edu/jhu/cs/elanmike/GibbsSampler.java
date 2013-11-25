@@ -1,6 +1,7 @@
 package edu.jhu.cs.elanmike;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class GibbsSampler {
@@ -42,7 +43,9 @@ public class GibbsSampler {
 			
 		}else{
 			WordToIndex.put(word, WordToIndex.size());
-			//add a new word slot to n^{k}_{w}
+			//add a new word row to n^{k}_{w}
+			int[] topicArray = new int[NUM_COLLECTIONS];
+			nkw.add(new ArrayList<Integer>(Arrays.asList(topicArray)));
 		}
 	}
 	
