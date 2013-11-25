@@ -1,10 +1,13 @@
 package edu.jhu.cs.elanmike;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.StringTokenizer;
 
 public class GibbsSampler {
 	/**
@@ -224,7 +227,23 @@ public class GibbsSampler {
 	 * @throws IOException
 	 */
 	private void readTrainingFile(String filename) throws IOException {
-		
+		BufferedReader in = new BufferedReader(new FileReader(filename));
+		String line;
+		int d = 0;
+		while((line = in.readLine()) != null) {
+			int space = line.indexOf(' ');
+			String collection = line.substring(0, space);
+			int collectionIndex = Integer.parseInt(collection);
+			String document = line.substring(space);
+			StringTokenizer st = new StringTokenizer(document);
+			int i = 0;
+			while(st.hasMoreElements()) {
+				processWord(st.nextToken(), collectionIndex, d, i);
+				i++;
+			}
+			d++;
+		}
+		in.close();
 	}
 	/**
 	 * Reads in our test file.
@@ -236,7 +255,23 @@ public class GibbsSampler {
 	 * @throws IOException
 	 */
 	private void readTestFile(String filename) throws IOException {
-		
+		BufferedReader in = new BufferedReader(new FileReader(filename));
+		String line;
+		int d = 0;
+		while((line = in.readLine()) != null) {
+			int space = line.indexOf(' ');
+			String collection = line.substring(0, space);
+			int collectionIndex = Integer.parseInt(collection);
+			String document = line.substring(space);
+			StringTokenizer st = new StringTokenizer(document);
+			int i = 0;
+			while(st.hasMoreElements()) {
+				processWordTest(st.nextToken(), collectionIndex, d, i);
+				i++;
+			}
+			d++;
+		}
+		in.close();
 	}
 
 	/**
@@ -278,6 +313,31 @@ public class GibbsSampler {
 			System.err.println("error getting test data!");
 			e.printStackTrace();
 			return;
+		}
+		// and now run sampling
+		for(int i = 0; i < totalIters; i++) {
+			// sample
+			// for each token (d,i) in each document d in the train set:
+			// 	update the counts to exclude the assignment of the current token
+			// 	randomly sample a new value for zdi
+			// 	randomly sample a new value for xdi, using newly sampled zdi
+			// 	update the counts to include the newly sampled assignments of the current token
+			// estimate params
+			// estimate map theta_dk
+			// estimate map phi_dk
+			// for each collection c
+			//	estimate map phi_cdk
+			if(i > totalBurnin) {
+				// save sample, add estimate to our expected value
+			}
+			// sample z of the test set, directly use the current iteration's estimates of phis
+			// for each token (d,i) in each document d in the test set:
+			// 	update the counts to exclude the assignment of the current token
+			// 	randomly sample a new value for zdi
+			// 	randomly sample a new value for xdi, using newly sampled zdi
+			// 	update the counts to include the newly sampled assignments of the current token
+			// compute log likelihood of train
+			// compute log likelihood of test
 		}
 	}
 	private static void usage() {
