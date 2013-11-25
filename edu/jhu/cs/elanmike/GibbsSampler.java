@@ -125,6 +125,8 @@ public class GibbsSampler {
 	private ArrayList<ArrayList<Probability>> theta_dk;
 	private ArrayList<ArrayList<Probability>> phi_kw;
 	private ArrayList< ArrayList< ArrayList<Probability> > >  phi_ckw;
+
+	private ArrayList<ArrayList<Probability>> theta_dkTest;
 	
 	/**
 	 * The number of topics.
@@ -192,6 +194,7 @@ public class GibbsSampler {
 		theta_dk = new ArrayList<ArrayList<Probability>>();
 		phi_kw = new ArrayList<ArrayList<Probability>>();
 		phi_ckw = new ArrayList< ArrayList< ArrayList<Probability> > >();
+		theta_dkTest = new ArrayList<ArrayList<Probability>>();
 		
 		this.type = type;
 		this.numCollections = numCollections;
@@ -324,8 +327,11 @@ public class GibbsSampler {
 			wdiTest.add(new ArrayList<Integer>());
 			
 			theta_dk.add(new ArrayList<Probability>());
-			for(int k = 0; k< numTopics; k++)
+			theta_dkTest.add(new ArrayList<Probability>());
+			for(int k = 0; k< numTopics; k++) {
 				theta_dk.get(docIdx).add(new Probability(0.0));
+				theta_dkTest.get(docIdx).add(new Probability(0.0));
+			}
 		}
 		
 		//if new word
@@ -817,6 +823,24 @@ public class GibbsSampler {
 		return a;
 	}
 	/**
+	 * Computes and returns our estimated theta_{d,k}
+	 * @param d
+	 * @param k
+	 * @return
+	 */
+	private Probability getThetadkTest(int d, int k) {
+		// ndk + alpha
+		Probability a = new Probability(alpha);
+		a = a.add(new Probability(getValue(ndkTest, k, d)));
+		// ndstar + K * alpha
+		Probability b = new Probability(numTopics);
+		b = b.product(new Probability(alpha));
+		b = b.add(new Probability(getValue(ndStarTest, d)));
+		// a / b
+		a = a.divide(b);
+		return a;
+	}
+	/**
 	 * Computes and returns our estimated phi_{k,w}
 	 * @param d
 	 * @param k
@@ -1023,6 +1047,13 @@ public class GibbsSampler {
 			// 	randomly sample a new value for xdi, using newly sampled zdi
 			// 	update the counts to include the newly sampled assignments of the
 			// 	current token
+			// estimate map theta_dk
+			for (int d = 0; d < collections_dTest.size(); d++) {
+				for (int k = 0; k < numTopics; k++) {
+					Probability thetadkTest = getThetadkTest(d, k);
+					setProbability(theta_dkTest, thetadkTest, d, k);
+				}
+			}
 			// compute log likelihood of train
 			// compute log likelihood of test
 		}
