@@ -137,6 +137,18 @@ public class GibbsSampler {
 		}
 		return (Integer) curArray.get(indicies[depth]);
 	}
+	
+	private void setValue(ArrayList a, Integer val, int... indicies){
+		int depth = 0;
+		ArrayList curArray = a;
+		
+		while(depth <indicies.length - 1){
+			curArray = (ArrayList) curArray.get(indicies[depth]);
+			depth++;
+		}
+		curArray.set(indicies[depth],val);
+	}
+	
 	/**
 	 * Reads in our training file.
 	 * Each line represents a document.
@@ -161,6 +173,7 @@ public class GibbsSampler {
 	private void readTestFile(String filename) throws IOException {
 		
 	}
+
 	/**
 	 * @param args
 	 */
