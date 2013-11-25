@@ -65,13 +65,13 @@ public class GibbsSampler {
 	}
 	
 	
-	private void processWord(String word,int docIdx, int wordIdx){
-		if(WordToIndex.containsKey(word)){
-			
-		}else{
+	private void processWord(String word, int collectingIdx, int docIdx, int wordIdx){
+		if(!WordToIndex.containsKey(word)){
 			WordToIndex.put(word, WordToIndex.size());
 			//add a new word row to n^{k}_{w}
 			Integer[] topicArray = new Integer[numTopics];
+			nkw.add(new ArrayList<Integer>(Arrays.asList(topicArray)));
+			topicArray = new Integer[numTopics];
 			nkw.add(new ArrayList<Integer>(Arrays.asList(topicArray)));
 		}
 	}
