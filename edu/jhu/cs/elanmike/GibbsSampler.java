@@ -155,6 +155,10 @@ public class GibbsSampler {
 	
 	GibbsSampler(SamplerType type, int numCollections, int numTopics, 
 			double lambda, double alpha, double beta) {
+		System.err.println("\n===[ New GibbsSampler ]===");
+		System.out.printf("type = %d \nnumCollections = %d  \nnumTopics = %d \nlambda = %f \nalpha = %f \nbeta = %f",
+				type.ordinal(),numCollections,numTopics,lambda,alpha,beta);
+		
 		WordToIndex = new HashMap<String,Integer>();
 		ndStar = new ArrayList<Integer>();
 		collections_d = new ArrayList<Integer>();
@@ -217,10 +221,10 @@ public class GibbsSampler {
 	
 	
 	private void processWord(String word, int collectionIdx, int docIdx, int wordIdx){
-		System.out.printf("Processing: %s, c=%d d=%d i=%d \n",word,collectionIdx,docIdx,wordIdx);
+		//System.out.printf("Processing: %s, c=%d d=%d i=%d \n",word,collectionIdx,docIdx,wordIdx);
 		//if new document
 		if(docIdx >= collections_d.size()){
-			System.out.printf("New document!\n");
+			//System.out.printf("New document!\n");
 
 			ndStar.add(0);
 			collections_d.add(collectionIdx);
@@ -237,7 +241,7 @@ public class GibbsSampler {
 		
 		//if new word
 		if(!WordToIndex.containsKey(word)){
-			System.out.printf("New word!\n");
+			//System.out.printf("New word!\n");
 			WordToIndex.put(word, WordToIndex.size());
 			//add a new word row to n^{k}_{w} and n^{(c),k}_{w}
 			for(int k = 0; k<numTopics; k++){
@@ -272,7 +276,7 @@ public class GibbsSampler {
 	}
 	
 	/**
-	 * Process a word taht we see when reading data.
+	 * Process a word that we see when reading data.
 	 * increment the appropriate counts.
 	 * @param word
 	 * @param collectionIdx
@@ -280,10 +284,10 @@ public class GibbsSampler {
 	 * @param wordIdx
 	 */
 	private void processWordTest(String word, int collectionIdx, int docIdx, int wordIdx){
-		System.out.printf("Processing: %s, c=%d d=%d i=%d \n",word,collectionIdx,docIdx,wordIdx);
+		//System.out.printf("Processing: %s, c=%d d=%d i=%d \n",word,collectionIdx,docIdx,wordIdx);
 		//if new document
 		if(docIdx >= collections_dTest.size()){
-			System.out.printf("New document!\n");
+			//System.out.printf("New document!\n");
 
 			ndStarTest.add(0);
 			collections_dTest.add(collectionIdx);
@@ -300,7 +304,7 @@ public class GibbsSampler {
 		
 		//if new word
 		if(!WordToIndex.containsKey(word)){
-			System.out.printf("New word!\n");
+			//System.out.printf("New word!\n");
 			WordToIndex.put(word, WordToIndex.size());
 			//add a new word row to n^{k}_{w} and n^{(c),k}_{w}
 			for(int k = 0; k<numTopics; k++){
@@ -743,7 +747,7 @@ public class GibbsSampler {
 	}
 
 	private void printDebug(){
-		
+		System.err.println("\n\n===[ DEBUG ]===");
 		System.out.println("\n=== ndStar ===");
 		for(int d = 0; d<ndStar.size(); d++){
 			System.out.printf("d %d:  %d\n", d,ndStar.get(d));
