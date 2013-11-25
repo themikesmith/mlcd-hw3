@@ -162,6 +162,16 @@ public class GibbsSampler {
 	
 	
 	private void processWord(String word, int collectionIdx, int docIdx, int wordIdx){
+		
+		//if new document
+		if(docIdx >= collections_d.size()){
+			ndStar.add(0);
+			collections_d.add(collectionIdx);
+			Integer[] topicArray = new Integer[numTopics];
+			ndk.add(new ArrayList<Integer>(Arrays.asList(topicArray)));
+		}
+		
+		//if new word
 		if(!WordToIndex.containsKey(word)){
 			WordToIndex.put(word, WordToIndex.size());
 			//add a new word row to n^{k}_{w}
@@ -170,14 +180,15 @@ public class GibbsSampler {
 			topicArray = new Integer[numTopics];
 			nckw.get(collectionIdx).add(new ArrayList<Integer>(Arrays.asList(topicArray)));
 		}
+		
+		
 		int wordIntValue = WordToIndex.get(word);
 		int x = rand.nextInt(2);
 		int z = rand.nextInt(numTopics);
 		
 		xdi.get(docIdx).add(x);
 		zdi.get(docIdx).add(z);
-		//setValue(xdi,x,docIdx,wordIdx);
-		//setValue(zdi,x,docIdx,wordIdx);
+		wdi.get(docIdx).add(wordIntValue);
 		
 		if(x == 0){ // using collection-independent counts
 			increment(nkw,z,wordIntValue);
