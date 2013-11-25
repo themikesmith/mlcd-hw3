@@ -235,8 +235,10 @@ public class GibbsSampler {
 			//add a new word row to n^{k}_{w} and n^{(c),k}_{w}
 			for(int k = 0; k<numTopics; k++){
 				nkw.get(k).add(0);
+				nkwTest.get(k).add(0);
 				for(int c = 0; c< numCollections; c++){
 					nckw.get(c).get(k).add(0);
+					nckwTest.get(c).get(k).add(0);
 				}
 			}
 		}
@@ -295,8 +297,10 @@ public class GibbsSampler {
 			WordToIndex.put(word, WordToIndex.size());
 			//add a new word row to n^{k}_{w} and n^{(c),k}_{w}
 			for(int k = 0; k<numTopics; k++){
+				nkw.get(k).add(0);
 				nkwTest.get(k).add(0);
 				for(int c = 0; c< numCollections; c++){
+					nckw.get(c).get(k).add(0);
 					nckwTest.get(c).get(k).add(0);
 				}
 			}
@@ -407,6 +411,7 @@ public class GibbsSampler {
 	 * @throws IOException
 	 */
 	private void readTestFile(String filename) throws IOException {
+		
 		BufferedReader in = new BufferedReader(new FileReader(filename));
 		String line;
 		int d = 0;
