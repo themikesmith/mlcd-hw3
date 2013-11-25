@@ -207,10 +207,13 @@ public class GibbsSampler {
 		if(!WordToIndex.containsKey(word)){
 			WordToIndex.put(word, WordToIndex.size());
 			//add a new word row to n^{k}_{w}
+			
+			/*
 			Integer[] topicArray = new Integer[numTopics];
 			nkw.add(new ArrayList<Integer>(Arrays.asList(topicArray)));
 			topicArray = new Integer[numTopics];
-			nckw.get(collectionIdx).add(new ArrayList<Integer>(Arrays.asList(topicArray)));
+			nckw.get(collectionIdx).add(new ArrayList<Integer>(Arrays.asList(topicArray))); //TODO:!!!! F
+			*/
 		}
 		
 		
@@ -425,10 +428,32 @@ public class GibbsSampler {
 		}
 	}
 
+	private void printDebug(){
+		
+		System.out.println("\n=== ndStar ===");
+		for(int d = 0; d<ndStar.size(); d++){
+			System.out.printf("d: %d - %d", d,ndStar.get(d));
+		}
+		
+		System.out.println("\n=== collections_d ===");
+		for(int d = 0; d<collections_d.size(); d++){
+			System.out.printf("d: %d - %d", d,collections_d.get(d));
+		}
+		
+		System.out.println("\n=== ndk ===");
+		for(int d = 0; d<ndk.size(); d++){
+			System.out.printf("\nd: %d\t", d);
+			for(int k = 0; k<ndk.get(d).size(); k++){
+				System.out.printf("%d\t", ndk.get(d).get(k));
+			}
+		}
+		
+	}
+	
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+ 	public static void main(String[] args) {
 		SamplerType type = SamplerType.COLLAPSED;
 		if(args.length < 9 || args.length > 10) {
 			System.err.printf("Error: You passed %d arguments.\n",args.length);
