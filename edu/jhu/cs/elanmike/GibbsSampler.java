@@ -1,6 +1,6 @@
 package edu.jhu.cs.elanmike;
 
-public class CollapsedGibbsSampler {
+public class GibbsSampler {
 
 	/**
 	 * @param args
