@@ -127,6 +127,10 @@ public class GibbsSampler {
 
 	private ArrayList<ArrayList<Probability>> theta_dkTest;
 	
+	private ArrayList<ArrayList<Probability>> theta_dkMean;
+	private ArrayList<ArrayList<Probability>> phi_kwMean;
+	private ArrayList< ArrayList< ArrayList<Probability> > >  phi_ckwMean;
+	
 	/**
 	 * The number of topics.
 	 */
@@ -195,6 +199,10 @@ public class GibbsSampler {
 		phi_ckw = new ArrayList< ArrayList< ArrayList<Probability> > >();
 		theta_dkTest = new ArrayList<ArrayList<Probability>>();
 		
+		theta_dkMean = new ArrayList<ArrayList<Probability>>();
+		phi_kwMean = new ArrayList<ArrayList<Probability>>();
+		phi_ckwMean = new ArrayList< ArrayList< ArrayList<Probability> > >();
+		
 		this.type = type;
 		this.numCollections = numCollections;
 		this.numTopics = numTopics;
@@ -211,6 +219,7 @@ public class GibbsSampler {
 			nckwTest.add(new ArrayList< ArrayList<Integer>>());
 			
 			phi_ckw.add(new ArrayList<ArrayList<Probability>>());
+			phi_ckwMean.add(new ArrayList<ArrayList<Probability>>());
 			
 			for(int k = 0; k < numTopics; k++) {
 				nckStar.get(c).add(0);
@@ -220,6 +229,7 @@ public class GibbsSampler {
 				nckwTest.get(c).add(new ArrayList<Integer>());
 				
 				phi_ckw.get(c).add(new ArrayList<Probability>());
+				phi_ckwMean.get(c).add(new ArrayList<Probability>());
 			}
 		}
 		
@@ -231,6 +241,7 @@ public class GibbsSampler {
 			nkwTest.add(new ArrayList<Integer>());
 			
 			phi_kw.add(new ArrayList<Probability>());
+			phi_kwMean.add(new ArrayList<Probability>());
 		}
 		
 		
@@ -269,11 +280,13 @@ public class GibbsSampler {
 				nkwTest.get(k).add(0);
 				
 				phi_kw.get(k).add(new Probability(0));
+				phi_kwMean.get(k).add(new Probability(0));
 				for(int c = 0; c< numCollections; c++){
 					nckw.get(c).get(k).add(0);
 					nckwTest.get(c).get(k).add(0);
 					
 					phi_ckw.get(c).get(k).add(new Probability(0));
+					phi_ckwMean.get(c).get(k).add(new Probability(0));
 				}
 			}
 		}
@@ -327,9 +340,11 @@ public class GibbsSampler {
 			
 			theta_dk.add(new ArrayList<Probability>());
 			theta_dkTest.add(new ArrayList<Probability>());
+			theta_dkMean.add(new ArrayList<Probability>());
 			for(int k = 0; k< numTopics; k++) {
 				theta_dk.get(docIdx).add(new Probability(0.0));
 				theta_dkTest.get(docIdx).add(new Probability(0.0));
+				theta_dkMean.get(docIdx).add(new Probability(0.0));
 			}
 		}
 		
@@ -1011,6 +1026,7 @@ public class GibbsSampler {
 	 */
 	private void runSampling(int totalIters, int totalBurnin) {
 		System.out.printf("run sampling! totaliters:%d burn in:%d\n", totalIters, totalBurnin);
+		boolean meansInitialized = false;
 		// and now run sampling
 		for (int t = 0; t < totalIters; t++) {
 			System.out.printf("t:%d ",t);
@@ -1034,8 +1050,49 @@ public class GibbsSampler {
 					}
 				}
 			}
-			if (t > totalBurnin) {
+			if (t >= totalBurnin) {
 				// save sample, add estimate to our expected value
+//				if(!meansInitialized) {
+//					// init mean values
+//					for (int d = 0; d < collections_d.size(); d++) {
+//						for (int k = 0; k < numTopics; k++) {
+//							Probability thetadk = new Probability(0);
+//							setProbability(theta_dkMean, thetadk, d, k);
+//						}
+//					}
+//					// estimate map phi_dk
+//					for (int k = 0; k < numTopics; k++) {
+//						for (int w = 0; w < WordToIndex.size(); w++) {
+//							Probability phikw = new Probability(0);
+//							setProbability(phi_kwMean, phikw, k, w);
+//							for (int c = 0; c < numCollections; c++) {
+//								Probability phickw = new Probability(0);
+//								setProbability(phi_ckwMean, phickw, c, k, w);
+//							}
+//						}
+//					}
+//					meansInitialized = true;
+//				}
+				// add to sums
+				for (int d = 0; d < collections_d.size(); d++) {
+					for (int k = 0; k < numTopics; k++) {
+						Probability old = getProbability(theta_dkMean, d,k);
+						setProbability(theta_dkMean, 
+								old.add(getProbability(theta_dk, d,k)), d, k);
+					}
+				}
+				for (int k = 0; k < numTopics; k++) {
+					for (int w = 0; w < WordToIndex.size(); w++) {
+						Probability old = getProbability(phi_kwMean, k,w);
+						setProbability(phi_kwMean,
+								old.add(getProbability(phi_kw, k,w)), k, w);
+						for (int c = 0; c < numCollections; c++) {
+							old = getProbability(phi_ckwMean, c, k,w);
+							setProbability(phi_ckwMean,
+									old.add(getProbability(phi_ckw, c,k,w)), c,k, w);
+						}
+					}
+				}
 			}
 			// sample z of the test set, directly use the current iteration's
 			// estimates of phis
@@ -1077,6 +1134,27 @@ public class GibbsSampler {
 						
 						logLike_train.add(getProbability(theta_dkTest,d,k).product(term1.add(term2)));
 					}
+				}
+			}
+		}
+		int numSamples = totalIters - totalBurnin;
+		// divide means by N to actaully get means
+		for (int d = 0; d < collections_d.size(); d++) {
+			for (int k = 0; k < numTopics; k++) {
+				Probability old = getProbability(theta_dkMean, d,k);
+				setProbability(theta_dkMean, 
+						old.divide(new Probability(numSamples)), d, k);
+			}
+		}
+		for (int k = 0; k < numTopics; k++) {
+			for (int w = 0; w < WordToIndex.size(); w++) {
+				Probability old = getProbability(phi_kwMean, k,w);
+				setProbability(phi_kwMean,
+						old.divide(new Probability(numSamples)), k, w);
+				for (int c = 0; c < numCollections; c++) {
+					old = getProbability(phi_ckwMean, c, k,w);
+					setProbability(phi_ckwMean,
+						old.divide(new Probability(numSamples)), c,k, w);
 				}
 			}
 		}
