@@ -62,6 +62,11 @@ public class GibbsSampler {
 	private ArrayList< ArrayList<Integer> > wdi;
 	
 	/**
+	 * 1D array indexed by document num, holds which collection each document is in
+	 * for test data counts
+	 */
+	private ArrayList<Integer> collections_dTest;
+	/**
 	 * 1D array, indexed by document number, holding the number of words in each document
 	 * for test data counts
 	 */
@@ -159,6 +164,7 @@ public class GibbsSampler {
 		nckw = new ArrayList< ArrayList< ArrayList<Integer> > >();
 		nckStar = new ArrayList<ArrayList<Integer> >();
 		
+		collections_dTest = new ArrayList<Integer>();
 		ndStarTest = new ArrayList<Integer>();
 		ndkTest = new ArrayList<ArrayList<Integer> >();
 		nkStarTest = new ArrayList<Integer>();
@@ -201,6 +207,7 @@ public class GibbsSampler {
 		// init count of topics
 		for(int k = 0; k < numTopics; k++) {
 			nkStar.add(0);
+			nkStarTest.add(0);
 			nkw.add(new ArrayList<Integer>());
 			nkwTest.add(new ArrayList<Integer>());
 		}
@@ -275,11 +282,11 @@ public class GibbsSampler {
 	private void processWordTest(String word, int collectionIdx, int docIdx, int wordIdx){
 		System.out.printf("Processing: %s, c=%d d=%d i=%d \n",word,collectionIdx,docIdx,wordIdx);
 		//if new document
-		if(docIdx >= collections_d.size()){
+		if(docIdx >= collections_dTest.size()){
 			System.out.printf("New document!\n");
 
 			ndStarTest.add(0);
-			collections_d.add(collectionIdx);
+			collections_dTest.add(collectionIdx);
 			
 			ndkTest.add(new ArrayList<Integer>());
 			for(int k = 0; k<numTopics; k++){
