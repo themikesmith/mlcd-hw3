@@ -122,9 +122,9 @@ public class GibbsSampler {
 	private ArrayList< ArrayList<Integer> > wdiTest;
 	
 	
-	private ArrayList<ArrayList<Double>> theta_dk;
-	private ArrayList<ArrayList<Double>> phi_kw;
-	private ArrayList< ArrayList< ArrayList<Double> > >  phi_ckw;
+	private ArrayList<ArrayList<Probability>> theta_dk;
+	private ArrayList<ArrayList<Probability>> phi_kw;
+	private ArrayList< ArrayList< ArrayList<Probability> > >  phi_ckw;
 	
 	/**
 	 * The number of topics.
@@ -189,9 +189,9 @@ public class GibbsSampler {
 		zdiTest = new ArrayList<ArrayList<Integer> >();
 		wdiTest = new ArrayList<ArrayList<Integer> >();
 		
-		theta_dk = new ArrayList<ArrayList<Double>>();
-		phi_kw = new ArrayList<ArrayList<Double>>();
-		phi_ckw = new ArrayList< ArrayList< ArrayList<Double> > >();
+		theta_dk = new ArrayList<ArrayList<Probability>>();
+		phi_kw = new ArrayList<ArrayList<Probability>>();
+		phi_ckw = new ArrayList< ArrayList< ArrayList<Probability> > >();
 		
 		this.type = type;
 		this.numCollections = numCollections;
@@ -208,7 +208,7 @@ public class GibbsSampler {
 			nckw.add(new ArrayList< ArrayList<Integer>>());
 			nckwTest.add(new ArrayList< ArrayList<Integer>>());
 			
-			phi_ckw.add(new ArrayList<ArrayList<Double>>());
+			phi_ckw.add(new ArrayList<ArrayList<Probability>>());
 			
 			for(int k = 0; k < numTopics; k++) {
 				nckStar.get(c).add(0);
@@ -217,7 +217,7 @@ public class GibbsSampler {
 				nckw.get(c).add(new ArrayList<Integer>());
 				nckwTest.get(c).add(new ArrayList<Integer>());
 				
-				phi_ckw.get(c).add(new ArrayList<Double>());
+				phi_ckw.get(c).add(new ArrayList<Probability>());
 			}
 		}
 		
@@ -228,7 +228,7 @@ public class GibbsSampler {
 			nkw.add(new ArrayList<Integer>());
 			nkwTest.add(new ArrayList<Integer>());
 			
-			phi_kw.add(new ArrayList<Double>());
+			phi_kw.add(new ArrayList<Probability>());
 		}
 		
 		
@@ -265,9 +265,13 @@ public class GibbsSampler {
 			for(int k = 0; k<numTopics; k++){
 				nkw.get(k).add(0);
 				nkwTest.get(k).add(0);
+				
+				phi_kw.get(k).add(new Probability(0));
 				for(int c = 0; c< numCollections; c++){
 					nckw.get(c).get(k).add(0);
 					nckwTest.get(c).get(k).add(0);
+					
+					phi_ckw.get(c).get(k).add(new Probability(0));
 				}
 			}
 		}
@@ -319,9 +323,9 @@ public class GibbsSampler {
 			xdiTest.add(new ArrayList<Integer>());
 			wdiTest.add(new ArrayList<Integer>());
 			
-			theta_dk.add(new ArrayList<Double>());
+			theta_dk.add(new ArrayList<Probability>());
 			for(int k = 0; k< numTopics; k++)
-				theta_dk.get(docIdx).add(0.0);
+				theta_dk.get(docIdx).add(new Probability(0.0));
 		}
 		
 		//if new word
@@ -372,6 +376,28 @@ public class GibbsSampler {
 	}
 	
 	private void setValue(ArrayList a, Integer val, int... indicies){
+		int depth = 0;
+		ArrayList curArray = a;
+		
+		while(depth <indicies.length - 1){
+			curArray = (ArrayList) curArray.get(indicies[depth]);
+			depth++;
+		}
+		curArray.set(indicies[depth],val);
+	}
+	
+	private Probability getProbability(ArrayList a, int... indicies){
+		int depth = 0;
+		ArrayList curArray = a;
+		
+		while(depth <indicies.length - 1){
+			curArray = (ArrayList) curArray.get(indicies[depth]);
+			depth++;
+		}
+		return (Probability) curArray.get(indicies[depth]);
+	}
+	
+	private void setProbability(ArrayList a, Probability val, int... indicies){
 		int depth = 0;
 		ArrayList curArray = a;
 		
