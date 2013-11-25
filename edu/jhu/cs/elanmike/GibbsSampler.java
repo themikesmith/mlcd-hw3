@@ -30,6 +30,16 @@ public class GibbsSampler {
 	 * First index is collection, second index is topic, third is word type
 	 */
 	private ArrayList< ArrayList< ArrayList<Integer> > > nckw;
+	/**
+	 * Stores the topic index of each word in each document.
+	 * First index is document, second word index
+	 */
+	private ArrayList< ArrayList<Integer> > zdi;
+	/**
+	 * Stores the flag of global vs collection-specific for each word in each document
+	 * First index is document, second word index
+	 */
+	private ArrayList< ArrayList<Integer> > xdi;
 
 	/**
 	 * 1D array, indexed by document number, holding the number of words in each document
@@ -60,7 +70,18 @@ public class GibbsSampler {
 	 * for test data counts
 	 */
 	private ArrayList< ArrayList< ArrayList<Integer> > > nckwTest;
-	
+	/**
+	 * Stores the topic index of each word in each document.
+	 * First index is document, second word index
+	 * for test data counts
+	 */
+	private ArrayList< ArrayList<Integer> > zdiTest;
+	/**
+	 * Stores the flag of global vs collection-specific for each word in each document
+	 * First index is document, second word index
+	 * for test data counts
+	 */
+	private ArrayList< ArrayList<Integer> > xdiTest;
 	
 	/**
 	 * The number of topics.
