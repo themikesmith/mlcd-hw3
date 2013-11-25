@@ -800,7 +800,7 @@ public class GibbsSampler {
 		for(int c = 0; c <numCollections; c++){
 			System.out.printf("\nc %d:", c);
 			for(int k = 0; k <numTopics; k++){
-				System.out.printf("\n\tk %d:", k);
+				System.out.printf("\n\tk %d:\t", k);
 				for(int w = 0; w < nckw.get(c).get(k).size(); w++)
 					System.out.printf("%d\t\t", getValue(nckw,c,k,w));
 			}
