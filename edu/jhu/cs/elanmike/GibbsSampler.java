@@ -1054,13 +1054,13 @@ public class GibbsSampler {
 				for (int i = 0; i < ndStar.get(d); i++) {
 					for (int k = 0; k < numTopics; k++) {
 						Probability term1 = new Probability(1-lambda);
-						term1.product(
+						term1 = term1.product(
 								getProbability(phi_kw,k,getValue(wdi,d,i).intValue()));
 						Probability term2 = new Probability(lambda);
-						term2.product(
+						term2 = term2.product(
 								getProbability(phi_ckw,getValue(collections_d,d),k,getValue(wdi,d,i).intValue()));
-						term1.add(term2);
-						logLike_train.add(term1);
+						
+						logLike_train.add(getProbability(theta_dk,d,k).product(term1.add(term2)));
 					}
 				}
 			}
@@ -1070,13 +1070,13 @@ public class GibbsSampler {
 				for (int i = 0; i < ndStar.get(d); i++) {
 					for (int k = 0; k < numTopics; k++) {
 						Probability term1 = new Probability(1-lambda);
-						term1.product(
+						term1 = term1.product(
 								getProbability(phi_kw,k,getValue(wdi,d,i).intValue()));
 						Probability term2 = new Probability(lambda);
-						term2.product(
+						term2 = term2.product(
 								getProbability(phi_ckw,getValue(collections_d,d),k,getValue(wdi,d,i).intValue()));
-						term1.add(term2);
-						logLike_train.add(term1);
+						
+						logLike_train.add(getProbability(theta_dkTest,d,k).product(term1.add(term2)));
 					}
 				}
 			}
