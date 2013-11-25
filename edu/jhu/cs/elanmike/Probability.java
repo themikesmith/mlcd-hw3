@@ -1,6 +1,7 @@
 package edu.jhu.cs.elanmike;
 
 public class Probability {
+	public static final Probability ONE = new Probability(1), ZERO = new Probability(0); 
 	private double logprob;
 	public Probability(double prob) {
 		logprob = Math.log(prob);

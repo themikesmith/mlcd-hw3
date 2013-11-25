@@ -392,6 +392,119 @@ public class GibbsSampler {
 		}
 	}
 	/**
+	 * the vocab size is the size of the set of words we know, + 1 for OOV
+	 * @return the vocab size.
+	 */
+	private int getVocabSize() {
+		return WordToIndex.keySet().size() + 1;
+	}
+	/**
+	 * Get the probability that z_{d,i} = k
+	 * if xdi = 0
+	 * (ndk + alpha) / (ndstar + K alpha) *
+	 * 	(nkw + beta) / (nkstar + V beta)
+	 * 
+	 * or if xdi = 1
+	 * 
+	 * (ndk + alpha) / (ndstar + K alpha) *
+	 * 	(nckw + beta) / (nckstar + V beta)
+	 * @param d document index
+	 * @param i index of word in doc
+	 * @param w word index
+	 * @param xdi xdi value
+	 * @param k topic index
+	 * @return the probability
+	 */
+	private Probability getPZdiEqualsK(int d, int i, int w, int xdi, int k) {
+		// ndk + alpha
+		Probability a = new Probability(alpha);
+		a = a.add(new Probability(getValue(ndk, k, d)));
+		// ndstar + K * alpha
+		Probability b = new Probability(numTopics);
+		b = b.product(new Probability(alpha));
+		b = b.add(new Probability(getValue(ndStar, d)));
+		// a / b
+		a = a.divide(b);
+		if(xdi == 0) {
+			// nkw + beta
+			Probability c = new Probability(beta);
+			c = c.add(new Probability(getValue(nkw, k, w)));
+			// nkstar + V * beta
+			Probability f = new Probability(getVocabSize());
+			f = f.product(new Probability(beta));
+			f = f.add(new Probability(getValue(nkStar, k)));
+			// a / b
+			c = c.divide(f);
+			return a.product(c);
+		}
+		else {
+			int coll = getValue(collections_d, d);
+			// nckw + beta
+			Probability c = new Probability(beta);
+			c = c.add(new Probability(getValue(nckw, coll, k, w)));
+			// nckstar + V * beta
+			Probability f = new Probability(getVocabSize());
+			f = f.product(new Probability(beta));
+			f = f.add(new Probability(getValue(nckStar, coll, k)));
+			// c / f
+			c = c.divide(f);
+			return a.product(c);
+		}
+	}
+	/**
+	 * Get the probability that x_{d,i} = v
+	 * if v = 0
+	 * (nkw + beta) / (nkstar + V beta) * (1 - lambda)
+	 * 
+	 * or if v = 1
+	 * 
+	 * (nckw + beta) / (nckstar + V beta) * lambda
+	 * 
+	 * @param d document index
+	 * @param i index of word in doc
+	 * @param w word index
+	 * @param zdi zdi value = k
+	 * @param v 0 or 1
+	 * @return the probability
+	 */
+	private Probability getPXdiEqualsV(int d, int i, int w, int zdi, int v) {
+		int k = zdi;
+		Probability multiplier;
+		if(v == 0) {
+			multiplier = new Probability(-1);
+			multiplier = multiplier.product(new Probability(lambda));
+			multiplier = multiplier.add(Probability.ONE);
+			// nkw + beta
+			Probability c = new Probability(beta);
+			c = c.add(new Probability(getValue(nkw, k, w)));
+			// nkstar + V * beta
+			Probability f = new Probability(getVocabSize());
+			f = f.product(new Probability(beta));
+			f = f.add(new Probability(getValue(nkStar, k)));
+			// a / b
+			c = c.divide(f);
+			return multiplier.product(c);
+		}
+		else if(v == 1) {
+			multiplier = new Probability(lambda);
+			int coll = getValue(collections_d, d);
+			// nckw + beta
+			Probability c = new Probability(beta);
+			c = c.add(new Probability(getValue(nckw, coll, k, w)));
+			// nckstar + V * beta
+			Probability f = new Probability(getVocabSize());
+			f = f.product(new Probability(beta));
+			f = f.add(new Probability(getValue(nckStar, coll, k)));
+			// c / f
+			c = c.divide(f);
+			return multiplier.product(c);
+		}
+		else {
+			System.err.println("x can only be 0 or 1: specified:"+v);
+			return null; // throw error, x can only be 0 or 1
+		}
+	}
+	/**
 	 * Run sampling algorithm.
 	 * Each iteration runs on training data,
 	 * then on test data, then computes likelihoods.
@@ -408,7 +521,7 @@ public class GibbsSampler {
 					updateCountsExcludeCurrentAssignment(d, i);
 					// 	randomly sample a new value for zdi
 					double p = rand.nextDouble();
-					double totalProb = 0;
+					Probability totalProb = new Probability(0);
 					for(int k = 0; k < numTopics; k++) {
 						
 					}
