@@ -111,6 +111,7 @@ public class GibbsSampler {
 		COLLAPSED, BLOCKED
 	}
 	private SamplerType type;
+	
 	/**
 	 * Map from word string to index
 	 */
