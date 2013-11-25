@@ -174,17 +174,16 @@ public class GibbsSampler {
 		for(int c = 0; c < numCollections; c++) {
 			nckStar.add(new ArrayList<Integer>());
 			nckStarTest.add(new ArrayList<Integer>());
-			ArrayList<Integer> num = nckStar.get(c);
-			ArrayList<Integer> numTest = nckStarTest.get(c);
-			ArrayList<ArrayList<Integer>> aa = new ArrayList< ArrayList<Integer> >(),
-					bb = new ArrayList< ArrayList<Integer> >();
-			nckw.add(aa);
-			nckwTest.add(bb);
+			
+			nckw.add(new ArrayList< ArrayList<Integer>>());
+			nckwTest.add(new ArrayList< ArrayList<Integer>>());
+			
 			for(int k = 0; k < numTopics; k++) {
-				num.add(0);
-				numTest.add(0);
-				aa.add(new ArrayList<Integer>());
-				bb.add(new ArrayList<Integer>());
+				nckStar.get(c).add(0);
+				nckStarTest.get(c).add(0);
+				
+				nckw.get(c).add(new ArrayList<Integer>());
+				nckwTest.get(c).add(new ArrayList<Integer>());
 			}
 		}
 		
@@ -192,6 +191,7 @@ public class GibbsSampler {
 		for(int k = 0; k < numTopics; k++) {
 			nkStar.add(0);
 			nkw.add(new ArrayList<Integer>());
+			
 		}
 		
 		rand = new Random();
@@ -199,13 +199,19 @@ public class GibbsSampler {
 	
 	
 	private void processWord(String word, int collectionIdx, int docIdx, int wordIdx){
-		
+		System.out.printf("Processing: %s, c=%d d=%d i=%d \n",word,collectionIdx,docIdx,wordIdx);
 		//if new document
 		if(docIdx >= collections_d.size()){
+			System.out.printf("New document!\n");
+
 			ndStar.add(0);
 			collections_d.add(collectionIdx);
-			Integer[] topicArray = new Integer[numTopics];
-			ndk.add(new ArrayList<Integer>(Arrays.asList(topicArray)));
+			
+			ndk.add(new ArrayList<Integer>());
+			for(int k = 0; k<numTopics; k++){
+				ndk.get(docIdx).add(0);
+			}
+			
 			zdi.add(new ArrayList<Integer>());
 			xdi.add(new ArrayList<Integer>());
 			wdi.add(new ArrayList<Integer>());
@@ -213,6 +219,7 @@ public class GibbsSampler {
 		
 		//if new word
 		if(!WordToIndex.containsKey(word)){
+			System.out.printf("New word!\n");
 			WordToIndex.put(word, WordToIndex.size());
 			//add a new word row to n^{k}_{w} and n^{(c),k}_{w}
 			for(int k = 0; k<numTopics; k++){
@@ -238,12 +245,11 @@ public class GibbsSampler {
 			increment(nckw,collectionIdx,z,wordIntValue);	
 		}
 		increment(ndStar,docIdx);
-		increment(ndk,z,docIdx);
+		//System.out.printf("d = %d  z = %d\n",docIdx,z);
+		increment(ndk,docIdx,z);
 		increment(nkStar,z);
 		increment(nckStar, collectionIdx, z);
 	}
-	
-	
 	
 	private Integer getValue(ArrayList a, int... indicies){
 		int depth = 0;
@@ -272,10 +278,12 @@ public class GibbsSampler {
 		ArrayList curArray = a;
 		
 		while(depth <indicies.length - 1){
+			//System.out.printf("Getting %d of %d\n",indicies[depth],curArray.size());
 			curArray = (ArrayList) curArray.get(indicies[depth]);
 			depth++;
 		}
-		curArray.set(indicies[depth],curArray.get(indicies[depth]+1));
+		//System.out.printf("(Last)Getting %d of %d\n",indicies[depth],curArray.size());
+		((ArrayList<Integer>)curArray).set(indicies[depth],(Integer)curArray.get(indicies[depth])+1);
 	}
 	
 	private void decrement(ArrayList a, int... indicies){
@@ -286,7 +294,7 @@ public class GibbsSampler {
 			curArray = (ArrayList) curArray.get(indicies[depth]);
 			depth++;
 		}
-		curArray.set(indicies[depth],curArray.get(indicies[depth]-1));
+		((ArrayList<Integer>)curArray).set(indicies[depth],(Integer)curArray.get(indicies[depth])-1);
 	}
 	
 	/**
@@ -496,6 +504,7 @@ public class GibbsSampler {
 			e.printStackTrace();
 			return;
 		}
+		g.printDebug();
 		try {
 			g.readTestFile(testFile);
 		} catch (IOException e) {
