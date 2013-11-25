@@ -516,7 +516,7 @@ public class GibbsSampler {
 	 * @param wordIdx
 	 */
 	private void updateCountsExcludeCurrentAssignment(int docIdx, int wordIdx) {
-		System.out.printf("update counts exclude. docid:%d wordid:%d\n", docIdx, wordIdx);
+//		System.out.printf("update counts exclude. docid:%d wordid:%d\n", docIdx, wordIdx);
 		// query zdi and xdi, and get word value and doc collection
 		int z = getValue(zdi, docIdx, wordIdx), // topic index
 			x = getValue(xdi, docIdx, wordIdx), // global flag
@@ -542,7 +542,7 @@ public class GibbsSampler {
 	 * @param wordIdx
 	 */
 	private void updateCountsNewlySampledAssignment(int docIdx, int wordIdx) {
-		System.out.printf("update counts new sample. docid:%d wordid:%d\n", docIdx, wordIdx);
+//		System.out.printf("update counts new sample. docid:%d wordid:%d\n", docIdx, wordIdx);
 		// query zdi and xdi, and get word value and doc collection
 		int z = getValue(zdi, docIdx, wordIdx), // topic index
 		x = getValue(xdi, docIdx, wordIdx), // global flag
@@ -568,7 +568,7 @@ public class GibbsSampler {
 	 * @param wordIdx
 	 */
 	private void updateTestCountsExcludeCurrentAssignment(int docIdx, int wordIdx) {
-		System.out.printf("update counts exclude. docid:%d wordid:%d\n", docIdx, wordIdx);
+//		System.out.printf("update counts exclude. docid:%d wordid:%d\n", docIdx, wordIdx);
 		// query zdi and xdi, and get word value and doc collection
 		int z = getValue(zdiTest, docIdx, wordIdx), // topic index
 			c = getValue(collections_dTest, docIdx); // collection id
@@ -586,7 +586,7 @@ public class GibbsSampler {
 	 * @param wordIdx
 	 */
 	private void updateTestCountsNewlySampledAssignment(int docIdx, int wordIdx) {
-		System.out.printf("update counts new sample. docid:%d wordid:%d\n", docIdx, wordIdx);
+//		System.out.printf("update counts new sample. docid:%d wordid:%d\n", docIdx, wordIdx);
 		// query zdi and xdi, and get word value and doc collection
 		int z = getValue(zdiTest, docIdx, wordIdx), // topic index
 		c = getValue(collections_dTest, docIdx); // collection id
@@ -623,25 +623,25 @@ public class GibbsSampler {
 	 * @return the probability
 	 */
 	private Probability getPZdiEqualsK(int d, int i, int w, int xdi, int k) {
-		System.out.printf("get p zdi = k: d:%d i:%d w:%d xdi:%d k:%d\n",
-			d, i, w, xdi, k);
+//		System.out.printf("get p zdi = k: d:%d i:%d w:%d xdi:%d k:%d\n",
+//			d, i, w, xdi, k);
 		// ndk + alpha
 //		System.out.println("alpha:"+alpha);
 		Probability a = new Probability(alpha);
 		a = a.add(new Probability(getValue(ndk, d, k)));
 //		System.out.println("ndk:"+getValue(ndk, d, k));
-		System.out.println("alpha + ndk:"+a);
+//		System.out.println("alpha + ndk:"+a);
 		// ndstar + K * alpha
 		Probability b = new Probability(numTopics);
 //		System.out.println("K:"+b);
 		b = b.product(new Probability(alpha));
 //		System.out.println("alpha:"+alpha);
-		System.out.println("ndstar:"+getValue(ndStar, d));
+//		System.out.println("ndstar:"+getValue(ndStar, d));
 		b = b.add(new Probability(getValue(ndStar, d)));
-		System.out.println("K * alpha + ndstar:"+b);
+//		System.out.println("K * alpha + ndstar:"+b);
 		// a / b
 		a = a.divide(b);
-		System.out.println("(alpha + ndk) / (K * alpha + ndstar):"+a);
+//		System.out.println("(alpha + ndk) / (K * alpha + ndstar):"+a);
 		if(xdi == 0) {
 			// nkw + beta
 			Probability c = new Probability(beta);
@@ -685,8 +685,8 @@ public class GibbsSampler {
 	 * @return the probability
 	 */
 	private Probability getPXdiEqualsV(int d, int i, int w, int zdi, int v) {
-		System.out.printf("get p xdi = k: d:%d i:%d w:%d zdi:%d v:%d\n",
-				d, i, w, zdi, v);
+//		System.out.printf("get p xdi = k: d:%d i:%d w:%d zdi:%d v:%d\n",
+//				d, i, w, zdi, v);
 		int k = zdi;
 		Probability multiplier;
 		if(v == 0) {
@@ -697,14 +697,14 @@ public class GibbsSampler {
 			Probability c = new Probability(beta);
 //			System.out.println("beta:"+c);
 			c = c.add(new Probability(getValue(nkw, k, w)));
-			System.out.println("nkw:"+getValue(nkw, k, w));
-			System.out.println("beta + nkw:"+c);
+//			System.out.println("nkw:"+getValue(nkw, k, w));
+//			System.out.println("beta + nkw:"+c);
 			// nkstar + V * beta
 			Probability f = new Probability(getVocabSize());
 			f = f.product(new Probability(beta));
 			f = f.add(new Probability(getValue(nkStar, k)));
 			// a / b
-			System.out.println("(beta + nkw) / (V * beta + nkstar):"+f);
+//			System.out.println("(beta + nkw) / (V * beta + nkstar):"+f);
 			c = c.divide(f);
 			return multiplier.product(c);
 		}
@@ -716,21 +716,21 @@ public class GibbsSampler {
 			// nckw + beta
 			Probability c = new Probability(beta);
 //			System.out.println("beta:"+beta);
-			System.out.println("nckw:"+getValue(nckw, coll, k, w));
+//			System.out.println("nckw:"+getValue(nckw, coll, k, w));
 			c = c.add(new Probability(getValue(nckw, coll, k, w)));
-			System.out.println("beta + nckw:"+c);
+//			System.out.println("beta + nckw:"+c);
 			// nckstar + V * beta
 			Probability f = new Probability(getVocabSize());
 //			System.out.println("V:"+f);
 //			System.out.println("beta:"+beta);
 			f = f.product(new Probability(beta));
-			System.out.println("V * beta:"+f);
-			System.out.println("nckstar:"+getValue(nckStar, coll, k));
+//			System.out.println("V * beta:"+f);
+//			System.out.println("nckstar:"+getValue(nckStar, coll, k));
 			f = f.add(new Probability(getValue(nckStar, coll, k)));
-			System.out.println("V * beta + nckstar:"+f);
+//			System.out.println("V * beta + nckstar:"+f);
 			// c / f
 			c = c.divide(f);
-			System.out.println("(beta + nckw) / (V * beta + nckstar):"+f);
+//			System.out.println("(beta + nckw) / (V * beta + nckstar):"+f);
 			return multiplier.product(c);
 		}
 		else {
@@ -757,23 +757,23 @@ public class GibbsSampler {
 	 * @return the probability
 	 */
 	private Probability getTestPZdiEqualsK(int d, int i, int w, int xdi, int k) {
-		System.out.printf("get p zdi = k: d:%d i:%d w:%d xdi:%d k:%d\n",
-			d, i, w, xdi, k);
+//		System.out.printf("get p zdi = k: d:%d i:%d w:%d xdi:%d k:%d\n",
+//			d, i, w, xdi, k);
 		// ndk + alpha
 		Probability a = new Probability(alpha);
 		a = a.add(new Probability(getValue(ndkTest, d, k)));
-		System.out.println("alpha + ndk:"+a);
+//		System.out.println("alpha + ndk:"+a);
 		// ndstar + K * alpha
 		Probability b = new Probability(numTopics);
 //		System.out.println("K:"+b);
 		b = b.product(new Probability(alpha));
 //		System.out.println("alpha:"+alpha);
-		System.out.println("ndstar:"+getValue(ndStarTest, d));
+//		System.out.println("ndstar:"+getValue(ndStarTest, d));
 		b = b.add(new Probability(getValue(ndStarTest, d)));
-		System.out.println("K * alpha + ndstar:"+b);
+//		System.out.println("K * alpha + ndstar:"+b);
 		// a / b
 		a = a.divide(b);
-		System.out.println("(alpha + ndk) / (K * alpha + ndstar):"+a);
+//		System.out.println("(alpha + ndk) / (K * alpha + ndstar):"+a);
 		if(xdi == 0) {
 			return a.product(getProbability(phi_kw, k, w));
 		}
@@ -799,8 +799,8 @@ public class GibbsSampler {
 	 * @return the probability
 	 */
 	private Probability getTestPXdiEqualsV(int d, int i, int w, int zdi, int v) {
-		System.out.printf("get p xdi = k: d:%d i:%d w:%d zdi:%d v:%d\n",
-				d, i, w, zdi, v);
+//		System.out.printf("get p xdi = k: d:%d i:%d w:%d zdi:%d v:%d\n",
+//				d, i, w, zdi, v);
 		int k = zdi;
 		Probability multiplier;
 		if(v == 0) {
@@ -856,8 +856,8 @@ public class GibbsSampler {
 	}
 	/**
 	 * Computes and returns our estimated phi_{k,w}
-	 * @param d
 	 * @param k
+	 * @param w
 	 * @return
 	 */
 	private Probability getPhikw(int k, int w) {
@@ -874,8 +874,9 @@ public class GibbsSampler {
 	}
 	/**
 	 * Computes and returns our estimated phi_{k,w}
-	 * @param d
+	 * @param c
 	 * @param k
+	 * @param w
 	 * @return
 	 */
 	private Probability getPhickw(int c, int k, int w) {
@@ -896,12 +897,12 @@ public class GibbsSampler {
 	 */
 	private void sampleTestIter() {
 		for(int d = 0; d < ndkTest.size(); d++) {
-			System.out.printf("d:%d ",d);
+//			System.out.printf("d:%d ",d);
 			int numWordsInD = ndStarTest.get(d);
 			for(int i = 0; i < numWordsInD; i++) {
 				int w = getValue(wdiTest, d, i),
 					v = getValue(xdiTest, d, i);
-				System.out.printf("i:%d w:%d\n",i,w);
+//				System.out.printf("i:%d w:%d\n",i,w);
 				// exclude current assignment
 				updateTestCountsExcludeCurrentAssignment(d, i);
 				// randomly sample a new value for zdi
@@ -910,27 +911,27 @@ public class GibbsSampler {
 				Probability totalProb = new Probability(0);
 				int sampledZdi = -1;
 				for(int k = 0; k < numTopics; k++) {
-					System.out.printf("\nk:%d\ntotal before:%s\n", k, totalProb);
+//					System.out.printf("\nk:%d\ntotal before:%s\n", k, totalProb);
 					Probability curr = getTestPZdiEqualsK(d, i, w, v, k);
-					System.out.println("curr:"+curr);
+//					System.out.println("curr:"+curr);
 					totalProb = totalProb.add(curr);
-					System.out.println("total after:"+totalProb);
+//					System.out.println("total after:"+totalProb);
 					totalProbs[k] = totalProb;
 				}
 				// get random num
 				double p = rand.nextDouble();
 				Probability marker = new Probability(p);
 				marker = marker.product(totalProb);
-				System.out.println("marker:"+marker);
+//				System.out.println("marker:"+marker);
 				for(int k = 0; k < numTopics; k++) {
-					System.out.println("kth total:"+totalProbs[k]);
+//					System.out.println("kth total:"+totalProbs[k]);
 					if(totalProbs[k].getLogProb() > marker.getLogProb()) {
 						// stop. we have sampled this value of k
 						sampledZdi = k;
 						break;
 					}
 				}
-				System.out.println("sampled k = "+sampledZdi);
+//				System.out.println("sampled k = "+sampledZdi);
 				// randomly sample a new value for xdi, using newly sampled zdi
 				p = rand.nextDouble();
 				marker = new Probability(p);
@@ -945,7 +946,7 @@ public class GibbsSampler {
 				else {
 					sampledXdi = 1;
 				}
-				System.out.println("sampled x = "+sampledXdi);
+//				System.out.println("sampled x = "+sampledXdi);
 				// set zdi and xdi
 				setValue(zdiTest, sampledZdi, d, i);
 				setValue(xdiTest, sampledXdi, d, i);
@@ -959,12 +960,12 @@ public class GibbsSampler {
 	 */
 	private void sampleTrainingIter() {
 		for(int d = 0; d < ndk.size(); d++) {
-			System.out.printf("d:%d ",d);
+//			System.out.printf("d:%d ",d);
 			int numWordsInD = ndStar.get(d);
 			for(int i = 0; i < numWordsInD; i++) {
 				int w = getValue(wdi, d, i),
 					v = getValue(xdi, d, i);
-				System.out.printf("i:%d w:%d\n",i,w);
+//				System.out.printf("i:%d w:%d\n",i,w);
 				// exclude current assignment
 				updateCountsExcludeCurrentAssignment(d, i);
 				// randomly sample a new value for zdi
@@ -973,27 +974,27 @@ public class GibbsSampler {
 				Probability totalProb = new Probability(0);
 				int sampledZdi = -1;
 				for(int k = 0; k < numTopics; k++) {
-					System.out.printf("\nk:%d\ntotal before:%s\n", k, totalProb);
+//					System.out.printf("\nk:%d\ntotal before:%s\n", k, totalProb);
 					Probability curr = getPZdiEqualsK(d, i, w, v, k);
-					System.out.println("curr:"+curr);
+//					System.out.println("curr:"+curr);
 					totalProb = totalProb.add(curr);
-					System.out.println("total after:"+totalProb);
+//					System.out.println("total after:"+totalProb);
 					totalProbs[k] = totalProb;
 				}
 				// get random num
 				double p = rand.nextDouble();
 				Probability marker = new Probability(p);
 				marker = marker.product(totalProb);
-				System.out.println("marker:"+marker);
+//				System.out.println("marker:"+marker);
 				for(int k = 0; k < numTopics; k++) {
-					System.out.println("kth total:"+totalProbs[k]);
+//					System.out.println("kth total:"+totalProbs[k]);
 					if(totalProbs[k].getLogProb() > marker.getLogProb()) {
 						// stop. we have sampled this value of k
 						sampledZdi = k;
 						break;
 					}
 				}
-				System.out.println("sampled k = "+sampledZdi);
+//				System.out.println("sampled k = "+sampledZdi);
 				// randomly sample a new value for xdi, using newly sampled zdi
 				p = rand.nextDouble();
 				marker = new Probability(p);
@@ -1008,7 +1009,7 @@ public class GibbsSampler {
 				else {
 					sampledXdi = 1;
 				}
-				System.out.println("sampled x = "+sampledXdi);
+//				System.out.println("sampled x = "+sampledXdi);
 				// set zdi and xdi
 				setValue(zdi, sampledZdi, d, i);
 				setValue(xdi, sampledXdi, d, i);
@@ -1025,11 +1026,11 @@ public class GibbsSampler {
 	 * @param totalBurnin
 	 */
 	private void runSampling(int totalIters, int totalBurnin) {
-		System.out.printf("run sampling! totaliters:%d burn in:%d\n", totalIters, totalBurnin);
+//		System.out.printf("run sampling! totaliters:%d burn in:%d\n", totalIters, totalBurnin);
 		boolean meansInitialized = false;
 		// and now run sampling
 		for (int t = 0; t < totalIters; t++) {
-			System.out.printf("t:%d ",t);
+//			System.out.printf("t:%d ",t);
 			// sample training
 			sampleTrainingIter();
 			// estimate map theta_dk
@@ -1120,6 +1121,7 @@ public class GibbsSampler {
 					}
 				}
 			}
+			System.out.printf("ll(train) = %s\n", logLike_train);
 			// compute log likelihood of test
 			Probability logLike_test = new Probability(0.0);
 			for (int d = 0; d < collections_dTest.size(); d++) {
@@ -1136,6 +1138,7 @@ public class GibbsSampler {
 					}
 				}
 			}
+			System.out.printf("ll(test) = %s\n", logLike_test);
 		}
 		int numSamples = totalIters - totalBurnin;
 		// divide means by N to actaully get means
