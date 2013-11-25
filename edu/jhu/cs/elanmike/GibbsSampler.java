@@ -520,16 +520,16 @@ public class GibbsSampler {
 		System.out.printf("get p zdi = k: d:%d i:%d w:%d xdi:%d k:%d\n",
 			d, i, w, xdi, k);
 		// ndk + alpha
-		System.out.println("alpha:"+alpha);
+//		System.out.println("alpha:"+alpha);
 		Probability a = new Probability(alpha);
 		a = a.add(new Probability(getValue(ndk, d, k)));
-		System.out.println("ndk:"+getValue(ndk, d, k));
+//		System.out.println("ndk:"+getValue(ndk, d, k));
 		System.out.println("alpha + ndk:"+a);
 		// ndstar + K * alpha
 		Probability b = new Probability(numTopics);
-		System.out.println("K:"+b);
+//		System.out.println("K:"+b);
 		b = b.product(new Probability(alpha));
-		System.out.println("alpha:"+alpha);
+//		System.out.println("alpha:"+alpha);
 		System.out.println("ndstar:"+getValue(ndStar, d));
 		b = b.add(new Probability(getValue(ndStar, d)));
 		System.out.println("K * alpha + ndstar:"+b);
@@ -585,11 +585,11 @@ public class GibbsSampler {
 		Probability multiplier;
 		if(v == 0) {
 			multiplier = new Probability((1-lambda));
-			System.out.println("multiplier:"+multiplier);
-			System.out.println("beta:"+beta);
+//			System.out.println("multiplier:"+multiplier);
+//			System.out.println("beta:"+beta);
 			// nkw + beta
 			Probability c = new Probability(beta);
-			System.out.println("beta:"+c);
+//			System.out.println("beta:"+c);
 			c = c.add(new Probability(getValue(nkw, k, w)));
 			System.out.println("nkw:"+getValue(nkw, k, w));
 			System.out.println("beta + nkw:"+c);
@@ -604,19 +604,19 @@ public class GibbsSampler {
 		}
 		else if(v == 1) {
 			multiplier = new Probability(lambda);
-			System.out.println("multiplier:"+multiplier);
+//			System.out.println("multiplier:"+multiplier);
 			int coll = getValue(collections_d, d);
-			System.out.println("c:"+coll);
+//			System.out.println("c:"+coll);
 			// nckw + beta
 			Probability c = new Probability(beta);
-			System.out.println("beta:"+beta);
+//			System.out.println("beta:"+beta);
 			System.out.println("nckw:"+getValue(nckw, coll, k, w));
 			c = c.add(new Probability(getValue(nckw, coll, k, w)));
 			System.out.println("beta + nckw:"+c);
 			// nckstar + V * beta
 			Probability f = new Probability(getVocabSize());
-			System.out.println("V:"+f);
-			System.out.println("beta:"+beta);
+//			System.out.println("V:"+f);
+//			System.out.println("beta:"+beta);
 			f = f.product(new Probability(beta));
 			System.out.println("V * beta:"+f);
 			System.out.println("nckstar:"+getValue(nckStar, coll, k));
