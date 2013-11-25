@@ -830,7 +830,7 @@ public class GibbsSampler {
 	private Probability getThetadkTest(int d, int k) {
 		// ndk + alpha
 		Probability a = new Probability(alpha);
-		a = a.add(new Probability(getValue(ndkTest, k, d)));
+		a = a.add(new Probability(getValue(ndkTest, d, k)));
 		// ndstar + K * alpha
 		Probability b = new Probability(numTopics);
 		b = b.product(new Probability(alpha));
@@ -1048,7 +1048,37 @@ public class GibbsSampler {
 				}
 			}
 			// compute log likelihood of train
+			Probability logLike_train = new Probability(0.0);
+			for (int d = 0; d < collections_dTest.size(); d++) {
+				for (int i = 0; i < ndStar.get(d); i++) {
+					for (int k = 0; k < numTopics; k++) {
+						Probability term1 = new Probability(1-lambda);
+						term1 = term1.product(
+								getProbability(phi_kw,k,getValue(wdi,d,i).intValue()));
+						Probability term2 = new Probability(lambda);
+						term2 = term2.product(
+								getProbability(phi_ckw,getValue(collections_d,d),k,getValue(wdi,d,i).intValue()));
+						
+						logLike_train.add(getProbability(theta_dk,d,k).product(term1.add(term2)));
+					}
+				}
+			}
 			// compute log likelihood of test
+			Probability logLike_test = new Probability(0.0);
+			for (int d = 0; d < collections_dTest.size(); d++) {
+				for (int i = 0; i < ndStar.get(d); i++) {
+					for (int k = 0; k < numTopics; k++) {
+						Probability term1 = new Probability(1-lambda);
+						term1 = term1.product(
+								getProbability(phi_kw,k,getValue(wdi,d,i).intValue()));
+						Probability term2 = new Probability(lambda);
+						term2 = term2.product(
+								getProbability(phi_ckw,getValue(collections_d,d),k,getValue(wdi,d,i).intValue()));
+						
+						logLike_train.add(getProbability(theta_dkTest,d,k).product(term1.add(term2)));
+					}
+				}
+			}
 		}
 	}
 
