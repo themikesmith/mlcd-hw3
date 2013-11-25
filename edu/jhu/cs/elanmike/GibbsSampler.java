@@ -68,7 +68,6 @@ public class GibbsSampler {
 	private void processWord(String word,int docIdx, int wordIdx){
 		if(WordToIndex.containsKey(word)){
 			
-			
 		}else{
 			WordToIndex.put(word, WordToIndex.size());
 			//add a new word row to n^{k}_{w}
