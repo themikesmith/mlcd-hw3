@@ -102,6 +102,12 @@ public class GibbsSampler {
 	 * for test data counts
 	 */
 	private ArrayList< ArrayList<Integer> > xdiTest;
+	/**
+	 * 2D array, number of times topic is mentioned in each collection
+	 * First index is collection, second is topic
+	 * for test data counts
+	 */
+	private ArrayList< ArrayList<Integer> > nckStarTest;
 	
 	/**
 	 * The number of topics.
@@ -144,13 +150,14 @@ public class GibbsSampler {
 		nkStar = new ArrayList<Integer>();
 		nkw = new ArrayList<ArrayList<Integer> >();
 		nckw = new ArrayList< ArrayList< ArrayList<Integer> > >();
+		nckStar = new ArrayList<ArrayList<Integer> >();
 		
 		ndStarTest = new ArrayList<Integer>();
 		ndkTest = new ArrayList<ArrayList<Integer> >();
 		nkStarTest = new ArrayList<Integer>();
 		nkwTest = new ArrayList<ArrayList<Integer> >();
 		nckwTest = new ArrayList< ArrayList< ArrayList<Integer> > >();
-		nckStar = new ArrayList<ArrayList<Integer> >();
+		nckStarTest = new ArrayList<ArrayList<Integer> >();
 		
 		xdi = new ArrayList<ArrayList<Integer> >();
 		zdi = new ArrayList<ArrayList<Integer> >();
@@ -162,6 +169,22 @@ public class GibbsSampler {
 		this.lambda = lambda;
 		this.alpha = alpha;
 		this.beta = beta;
+		
+		// init num collections per topic
+		for(int c = 0; c < numCollections; c++) {
+			nckStar.add(new ArrayList<Integer>());
+			nckStarTest.add(new ArrayList<Integer>());
+			ArrayList<Integer> num = nckStar.get(c);
+			ArrayList<Integer> numTest = nckStarTest.get(c);
+			for(int k = 0; k < numTopics; k++) {
+				num.add(0);
+				numTest.add(0);
+			}
+		}
+		// init count of topics
+		for(int k = 0; k < numTopics; k++) {
+			nkStar.add(0);
+		}
 		
 		rand = new Random();
 	}
