@@ -20,10 +20,6 @@ public class GibbsSampler {
 	 */
 	private ArrayList<Integer> nkStar;
 	/**
-	 * Number of collections
-	 */
-	private int NUM_COLLECTIONS = 2;
-	/**
 	 * 2D array counting the number of word tokens labeled with each topic
 	 * First index is topic, second is word index
 	 */
@@ -49,19 +45,33 @@ public class GibbsSampler {
 	 * The parameter beta.
 	 */
 	private double beta;
-
+	/**
+	 * Number of collections
+	 */
+	private int numCollections = 2;
+	private enum SamplerType {
+		COLLAPSED, BLOCKED
+	}
+	private SamplerType type;
 	/**
 	 * Map from word string to index
 	 */
 	private HashMap<String,Integer> WordToIndex;
 	
-	GibbsSampler(){
+	GibbsSampler(SamplerType type, int numCollections, int numTopics, 
+			double lambda, double alpha, double beta) {
 		WordToIndex = new HashMap<String,Integer>();
 		ndStar = new ArrayList<Integer>();
 		ndk = new ArrayList<ArrayList<Integer> >();
 		nkStar = new ArrayList<Integer>();
 		nkw = new ArrayList<ArrayList<Integer> >();
 		nckw = new ArrayList< ArrayList< ArrayList<Integer> > >();
+		this.type = type;
+		this.numCollections = numCollections;
+		this.numTopics = numTopics;
+		this.lambda = lambda;
+		this.alpha = alpha;
+		this.beta = beta;
 	}
 	
 	
@@ -93,23 +103,37 @@ public class GibbsSampler {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// parse args
-		// ./collapsed-sampler input-train.txt input-test.txt output.txt 10 0.5 0.1 0.01 1100 1000
-		if(args.length != 9) {
+		SamplerType type = SamplerType.COLLAPSED;
+		if(args.length < 9 || args.length > 10) {
 			usage();
 			return;
 		}
+		else if(args.length == 10) {
+			if(args[9].equals("-b")) {
+				type = SamplerType.BLOCKED;
+			}
+			else {
+				usage();
+				return;
+			}
+		}
+		// read arguments
 		String trainingFile = args[0], testFile = args[1], outFile = args[2];
-		int k = Integer.parseInt(args[3]), totalIters = Integer.parseInt(args[7]), 
+		int numTopics = Integer.parseInt(args[3]), totalIters = Integer.parseInt(args[7]), 
 				totalBurnin = Integer.parseInt(args[8]);
-		double lambda = Double.parseDouble(args[4]), alpha = Double.parseDouble(args[5]), 
+		double lambda = Double.parseDouble(args[4]),
+				alpha = Double.parseDouble(args[5]), 
 				beta = Double.parseDouble(args[6]);
+		GibbsSampler g = new GibbsSampler(type, 2, numTopics, lambda, alpha, beta);
+		
 	}
 	private static void usage() {
 		System.out.println("Usage:./collapsed-sampler trainFile testFile outputFile K lambda alpha beta totalNumSamples totalBurnIn\n" +
-				"Eample usage:\n./collapsed-sampler input-train.txt " +
+				"Example usage:\n./collapsed-sampler input-train.txt " +
 				"input-test.txt output.txt 10 0.5 0.1 0.01 1100 1000\n" +
-				"This runs the sampler with K = 10 topics and would" +
-				"collect 100 samples after a 1000-iteration burn-in.");
+				"This runs the sampler with K = 10 topics and would " +
+				"collect 100 samples after a 1000-iteration burn-in.\n" +
+				"An optional 10th argument may be passed '-b' to run blocked collapsed gibbs sampling" +
+				" instead of the default collapsed gibbs");
 	}
 }
