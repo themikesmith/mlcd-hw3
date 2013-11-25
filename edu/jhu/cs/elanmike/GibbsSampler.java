@@ -1,12 +1,11 @@
 package edu.jhu.cs.elanmike;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+import java.util.Random;
 
 public class GibbsSampler {
 	/**
@@ -115,6 +114,8 @@ public class GibbsSampler {
 	 */
 	private HashMap<String,Integer> WordToIndex;
 	
+	private Random rand;
+	
 	GibbsSampler(SamplerType type, int numCollections, int numTopics, 
 			double lambda, double alpha, double beta) {
 		WordToIndex = new HashMap<String,Integer>();
@@ -135,6 +136,8 @@ public class GibbsSampler {
 		this.lambda = lambda;
 		this.alpha = alpha;
 		this.beta = beta;
+		
+		rand = new Random();
 	}
 	
 	
@@ -148,10 +151,22 @@ public class GibbsSampler {
 			nckw.get(collectionIdx).add(new ArrayList<Integer>(Arrays.asList(topicArray)));
 		}
 		int wordIntValue = WordToIndex.get(word);
+		int x = rand.nextInt(2);
+		int z = rand.nextInt(numTopics);
 		
-		//increment(ndStar,)
+		xdi.get(docIdx).add(x);
+		zdi.get(docIdx).add(z);
+		//setValue(xdi,x,docIdx,wordIdx);
+		//setValue(zdi,x,docIdx,wordIdx);
 		
-		
+		if(x == 0){ // using collection-independent counts
+			increment(nkw,z,wordIntValue);
+		}else{ // using collection-dependent counts
+			increment(nckw,collectionIdx,z,wordIntValue);	
+		}
+		increment(ndStar,docIdx);
+		increment(ndk,z,docIdx);
+		increment(nkStar,z);
 	}
 	
 	private Integer getValue(ArrayList a, int... indicies){
