@@ -856,8 +856,8 @@ public class GibbsSampler {
 	}
 	/**
 	 * Computes and returns our estimated phi_{k,w}
-	 * @param d
 	 * @param k
+	 * @param w
 	 * @return
 	 */
 	private Probability getPhikw(int k, int w) {
@@ -874,8 +874,9 @@ public class GibbsSampler {
 	}
 	/**
 	 * Computes and returns our estimated phi_{k,w}
-	 * @param d
+	 * @param c
 	 * @param k
+	 * @param w
 	 * @return
 	 */
 	private Probability getPhickw(int c, int k, int w) {
