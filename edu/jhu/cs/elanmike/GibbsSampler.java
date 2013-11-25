@@ -1076,7 +1076,7 @@ public class GibbsSampler {
 						term2 = term2.product(
 								getProbability(phi_ckw,getValue(collections_d,d),k,getValue(wdi,d,i).intValue()));
 						
-						logLike_train.add(getProbability(theta_dkTest,d,k).product(term1.add(term2)));
+						logLike_test.add(getProbability(theta_dkTest,d,k).product(term1.add(term2)));
 					}
 				}
 			}
