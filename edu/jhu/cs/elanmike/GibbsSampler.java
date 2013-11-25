@@ -540,6 +540,44 @@ public class GibbsSampler {
 			increment(nckw, c, z, w);
 		}
 	}
+	
+	/**
+	 * Updates the counts to exclude the current assignment of the given word 
+	 * in the given document.
+	 * @param docIdx
+	 * @param wordIdx
+	 */
+	private void updateTestCountsExcludeCurrentAssignment(int docIdx, int wordIdx) {
+		System.out.printf("update counts exclude. docid:%d wordid:%d\n", docIdx, wordIdx);
+		// query zdi and xdi, and get word value and doc collection
+		int z = getValue(zdiTest, docIdx, wordIdx), // topic index
+			c = getValue(collections_dTest, docIdx); // collection id
+		// decrement topic count per doc, ndk
+		decrement(ndkTest, docIdx, z);
+		// and decrement topic count per word, nkstar
+		decrement(nkStarTest, z);
+		// and decrement nckstar
+		decrement(nckStarTest, c, z);
+	}
+	/**
+	 * Updates the counts to include the newly sampled assignment of the
+	 * given word in the given document.
+	 * @param docIdx
+	 * @param wordIdx
+	 */
+	private void updateTestCountsNewlySampledAssignment(int docIdx, int wordIdx) {
+		System.out.printf("update counts new sample. docid:%d wordid:%d\n", docIdx, wordIdx);
+		// query zdi and xdi, and get word value and doc collection
+		int z = getValue(zdiTest, docIdx, wordIdx), // topic index
+		c = getValue(collections_dTest, docIdx); // collection id
+		// decrement topic count per doc, ndk
+		increment(ndkTest, docIdx, z);
+		// and decrement topic count per word, nkstar
+		increment(nkStarTest, z);
+		// and decrement nckstar
+		increment(nckStarTest, c, z);
+	}
+	
 	/**
 	 * the vocab size is the size of the set of words we know, + 1 for OOV
 	 * @return the vocab size.
@@ -680,12 +718,86 @@ public class GibbsSampler {
 			return null; // throw error, x can only be 0 or 1
 		}
 	}
-//	private Probability getPZdiEqualsK(int d, int i, int w, int xdi, int k) {
-//		
-//	}
-//	private Probability getPXdiEqualsV(int d, int i, int w, int zdi, int v) {
-//		
-//	}
+
+	/**
+	 * Get the probability that z_{d,i} = k
+	 * if xdi = 0
+	 * (ndk + alpha) / (ndstar + K alpha) *
+	 * 	(nkw + beta) / (nkstar + V beta)
+	 * 
+	 * or if xdi = 1
+	 * 
+	 * (ndk + alpha) / (ndstar + K alpha) *
+	 * 	(nckw + beta) / (nckstar + V beta)
+	 * @param d document index
+	 * @param i index of word in doc
+	 * @param w word index
+	 * @param xdi xdi value
+	 * @param k topic index
+	 * @return the probability
+	 */
+	private Probability getTestPZdiEqualsK(int d, int i, int w, int xdi, int k) {
+		System.out.printf("get p zdi = k: d:%d i:%d w:%d xdi:%d k:%d\n",
+			d, i, w, xdi, k);
+		// ndk + alpha
+		Probability a = new Probability(alpha);
+		a = a.add(new Probability(getValue(ndkTest, d, k)));
+		System.out.println("alpha + ndk:"+a);
+		// ndstar + K * alpha
+		Probability b = new Probability(numTopics);
+//		System.out.println("K:"+b);
+		b = b.product(new Probability(alpha));
+//		System.out.println("alpha:"+alpha);
+		System.out.println("ndstar:"+getValue(ndStarTest, d));
+		b = b.add(new Probability(getValue(ndStarTest, d)));
+		System.out.println("K * alpha + ndstar:"+b);
+		// a / b
+		a = a.divide(b);
+		System.out.println("(alpha + ndk) / (K * alpha + ndstar):"+a);
+		if(xdi == 0) {
+			return a.product(getProbability(phi_kw, k, w));
+		}
+		else {
+			int c = getValue(collections_d, d);
+			return a.product(getProbability(phi_ckw, c, k, w));
+		}
+	}
+	/**
+	 * Get the probability that x_{d,i} = v
+	 * if v = 0
+	 * (nkw + beta) / (nkstar + V beta) * (1 - lambda)
+	 * 
+	 * or if v = 1
+	 * 
+	 * (nckw + beta) / (nckstar + V beta) * lambda
+	 * 
+	 * @param d document index
+	 * @param i index of word in doc
+	 * @param w word index
+	 * @param zdi zdi value = k
+	 * @param v 0 or 1
+	 * @return the probability
+	 */
+	private Probability getTestPXdiEqualsV(int d, int i, int w, int zdi, int v) {
+		System.out.printf("get p xdi = k: d:%d i:%d w:%d zdi:%d v:%d\n",
+				d, i, w, zdi, v);
+		int k = zdi;
+		Probability multiplier;
+		if(v == 0) {
+			multiplier = new Probability((1-lambda));
+			return multiplier.product(getProbability(phi_kw, k, w));
+		}
+		else if(v == 1) {
+			multiplier = new Probability(lambda);
+			int c = getValue(collections_d, d);
+			return multiplier.product(getProbability(phi_ckw, c, k, w));
+		}
+		else {
+			System.err.println("x can only be 0 or 1: specified:"+v);
+			return null; // throw error, x can only be 0 or 1
+		}
+	}
+	
 	/**
 	 * Computes and returns our estimated theta_{d,k}
 	 * @param d
