@@ -728,21 +728,73 @@ public class GibbsSampler {
 		
 		System.out.println("\n=== ndStar ===");
 		for(int d = 0; d<ndStar.size(); d++){
-			System.out.printf("d: %d - %d", d,ndStar.get(d));
+			System.out.printf("d %d:  %d\n", d,ndStar.get(d));
 		}
 		
 		System.out.println("\n=== collections_d ===");
 		for(int d = 0; d<collections_d.size(); d++){
-			System.out.printf("d: %d - %d", d,collections_d.get(d));
+			System.out.printf("d %d:  %d\n", d,collections_d.get(d));
 		}
 		
 		System.out.println("\n=== ndk ===");
 		for(int d = 0; d<ndk.size(); d++){
 			System.out.printf("\nd: %d\t", d);
-			for(int k = 0; k<ndk.get(d).size(); k++){
-				System.out.printf("%d\t", ndk.get(d).get(k));
+			for(int k = 0; k<numTopics; k++){
+				System.out.printf("%d\t", getValue(ndk,d,k));
 			}
 		}
+		
+		
+		System.out.println("\n\n=== w/x/z_di ===");
+		for(int d = 0; d<ndk.size(); d++){
+			System.out.printf("\nd %d:", d);
+			System.out.printf("\tw\t");
+			for(int i = 0; i<xdi.get(d).size(); i++){
+				System.out.printf("%d\t", getValue(wdi,d,i));
+			}
+			System.out.printf("\n\tx\t");
+			for(int i = 0; i<xdi.get(d).size(); i++){
+				System.out.printf("%d\t", getValue(xdi,d,i));
+			}
+			System.out.printf("\n\tz\t");
+			for(int i = 0; i<xdi.get(d).size(); i++){
+				System.out.printf("%d\t", getValue(zdi,d,i));
+			}
+		}
+		
+		System.out.println("\n\n=== nkStar ===");
+		for(int k = 0; k <numTopics; k++){
+			System.out.printf("k %d:  %d\n", k,nkStar.get(k));
+		}
+		
+		System.out.println("\n\n=== nkw ===");
+		for(int k = 0; k <numTopics; k++){
+			System.out.printf("\nk %d:", k);
+			for(int w = 0; w < nkw.get(k).size(); w++)
+				System.out.printf("%d\t", getValue(nkw,k,w));
+		}
+		
+		System.out.println("\n\n=== nckw ===");
+		for(int c = 0; c <numCollections; c++){
+			System.out.printf("\nc %d:", c);
+			for(int k = 0; k <numTopics; k++){
+				System.out.printf("\n\tk %d:", k);
+				for(int w = 0; w < nckw.get(c).get(k).size(); w++)
+					System.out.printf("%d\t\t", getValue(nckw,c,k,w));
+			}
+		}
+		
+		System.out.println("\n\n=== nckStar ===");
+		for(int c = 0; c <numCollections; c++){
+			System.out.printf("\nc %d:", c);
+			for(int k = 0; k <numTopics; k++){
+				System.out.printf("\n\tk %d: %d", k,getValue(nckStar,c,k));
+			}
+		}
+		
+		//
+		
+		
 		
 	}
 	
