@@ -40,6 +40,11 @@ public class GibbsSampler {
 	 */
 	private ArrayList< ArrayList< ArrayList<Integer> > > nckw;
 	/**
+	 * 2D array, number of times topic is mentioned in each collection
+	 * First index is collection, second is topic
+	 */
+	private ArrayList< ArrayList<Integer> > nckStar;
+	/**
 	 * Stores the topic index of each word in each document.
 	 * First index is document, second word index
 	 */
@@ -145,6 +150,7 @@ public class GibbsSampler {
 		nkStarTest = new ArrayList<Integer>();
 		nkwTest = new ArrayList<ArrayList<Integer> >();
 		nckwTest = new ArrayList< ArrayList< ArrayList<Integer> > >();
+		nckStar = new ArrayList<ArrayList<Integer> >();
 		
 		xdi = new ArrayList<ArrayList<Integer> >();
 		zdi = new ArrayList<ArrayList<Integer> >();
@@ -310,13 +316,19 @@ public class GibbsSampler {
 	 */
 	private void updateCountsExcludeCurrentAssignment(int docIdx, int wordIdx) {
 		// query zdi and xdi
-		int z = getValue(zdi, docIdx, wordIdx),
-			x = getValue(xdi, docIdx, wordIdx);
+		int z = getValue(zdi, docIdx, wordIdx), // topic index
+			x = getValue(xdi, docIdx, wordIdx), // global flag
+			w = getValue(wdi, docIdx, wordIdx), // word value
+			c = getValue(collections_d, docIdx); // collection id
+		// decrement topic count per doc, ndk
+		decrement(ndk, z, docIdx);
+		// and decrement topic count per word, nkstar 
+		// and decrement nckstar ? 
 		if(x == 0) { // decrement global
-			decrement(ndk, z, docIdx);
+			decrement(nkw, z, w);
 		}
-		else { // x is the collection number
-			decrement(ndk, z, docIdx);
+		else { // collection-specific
+			decrement(nckw, c, z, w);
 		}
 	}
 	/**
