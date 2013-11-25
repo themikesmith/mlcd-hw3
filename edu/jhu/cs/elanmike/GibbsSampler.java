@@ -1,11 +1,13 @@
 package edu.jhu.cs.elanmike;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.StringTokenizer;
 import java.util.Random;
+import java.util.StringTokenizer;
 
 public class GibbsSampler {
 	/**
