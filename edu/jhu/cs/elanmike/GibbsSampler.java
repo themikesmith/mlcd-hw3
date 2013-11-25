@@ -747,8 +747,8 @@ public class GibbsSampler {
 					p = rand.nextDouble();
 					marker = new Probability(p);
 					Probability xzero = getPXdiEqualsV(d, i, w, sampledZdi, 0);
-					Probability check = getPXdiEqualsV(d, i, w, sampledZdi, 1);
-					System.out.println("should be 1:"+check.add(xzero));
+					Probability xone = getPXdiEqualsV(d, i, w, sampledZdi, 1);
+					marker = marker.product(xzero.add(xone));
 					int sampledXdi = -1;
 					if(xzero.getLogProb() > marker.getLogProb()) {
 						// we have sampled xdi = 0
