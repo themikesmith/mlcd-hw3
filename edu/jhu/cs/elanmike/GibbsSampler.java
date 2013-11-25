@@ -513,15 +513,25 @@ public class GibbsSampler {
 	 * @return the probability
 	 */
 	private Probability getPZdiEqualsK(int d, int i, int w, int xdi, int k) {
+		System.out.printf("get p zdi = k: d:%d i:%d w:%d xdi:%d k:%d\n",
+			d, i, w, xdi, k);
 		// ndk + alpha
+		System.out.println("alpha:"+alpha);
 		Probability a = new Probability(alpha);
 		a = a.add(new Probability(getValue(ndk, d, k)));
+		System.out.println("ndk:"+getValue(ndk, d, k));
+		System.out.println("alpha + ndk:"+a);
 		// ndstar + K * alpha
 		Probability b = new Probability(numTopics);
+		System.out.println("K:"+b);
 		b = b.product(new Probability(alpha));
+		System.out.println("alpha:"+alpha);
+		System.out.println("ndstar:"+getValue(ndStar, d));
 		b = b.add(new Probability(getValue(ndStar, d)));
+		System.out.println("K * alpha + ndstar:"+b);
 		// a / b
 		a = a.divide(b);
+		System.out.println("(alpha + ndk) / (K * alpha + ndstar):"+a);
 		if(xdi == 0) {
 			// nkw + beta
 			Probability c = new Probability(beta);
@@ -565,15 +575,21 @@ public class GibbsSampler {
 	 * @return the probability
 	 */
 	private Probability getPXdiEqualsV(int d, int i, int w, int zdi, int v) {
+		System.out.printf("get p xdi = k: d:%d i:%d w:%d zdi:%d v:%d\n",
+				d, i, w, zdi, v);
 		int k = zdi;
 		Probability multiplier;
 		if(v == 0) {
 			multiplier = new Probability(-1);
 			multiplier = multiplier.product(new Probability(lambda));
 			multiplier = multiplier.add(Probability.ONE);
+			System.out.println("beta:"+beta);
 			// nkw + beta
 			Probability c = new Probability(beta);
+			System.out.println("beta:"+c);
 			c = c.add(new Probability(getValue(nkw, k, w)));
+			System.out.println("nkw:"+getValue(nkw, k, w));
+			System.out.println("beta + nkw:"+c);
 			// nkstar + V * beta
 			Probability f = new Probability(getVocabSize());
 			f = f.product(new Probability(beta));
@@ -685,19 +701,31 @@ public class GibbsSampler {
 					// exclude current assignment
 					updateCountsExcludeCurrentAssignment(d, i);
 					// randomly sample a new value for zdi
-					double p = rand.nextDouble();
-					Probability marker = new Probability(p);
+					Probability[] totalProbs = new Probability[numTopics];
+					// find total
 					Probability totalProb = new Probability(0);
 					int sampledZdi = -1;
 					for(int k = 0; k < numTopics; k++) {
+						System.out.printf("\nk:%d\ntotal before:%s\n", k, totalProb);
 						Probability curr = getPZdiEqualsK(d, i, w, v, k);
+						System.out.println("curr:"+curr);
 						totalProb = totalProb.add(curr);
-						if(totalProb.getLogProb() > marker.getLogProb()) {
+						System.out.println("total after:"+totalProb);
+						totalProbs[k] = totalProb;
+					}
+					// get random num
+					double p = rand.nextDouble();
+					Probability marker = new Probability(p);
+					marker = marker.product(totalProb);
+					for(int k = 0; k < numTopics; k++) {
+						System.out.println("marker:"+marker);
+						if(totalProbs[k].getLogProb() > marker.getLogProb()) {
 							// stop. we have sampled this value of k
 							sampledZdi = k;
 							break;
 						}
 					}
+					
 					// randomly sample a new value for xdi, using newly sampled zdi
 					p = rand.nextDouble();
 					marker = new Probability(p);
