@@ -170,6 +170,28 @@ public class GibbsSampler {
 		curArray.set(indicies[depth],val);
 	}
 	
+	private void increment(ArrayList a, int... indicies){
+		int depth = 0;
+		ArrayList curArray = a;
+		
+		while(depth <indicies.length - 1){
+			curArray = (ArrayList) curArray.get(indicies[depth]);
+			depth++;
+		}
+		curArray.set(indicies[depth],curArray.get(indicies[depth]+1));
+	}
+	
+	private void decrement(ArrayList a, int... indicies){
+		int depth = 0;
+		ArrayList curArray = a;
+		
+		while(depth <indicies.length - 1){
+			curArray = (ArrayList) curArray.get(indicies[depth]);
+			depth++;
+		}
+		curArray.set(indicies[depth],curArray.get(indicies[depth]-1));
+	}
+	
 	/**
 	 * Reads in our training file.
 	 * Each line represents a document.
