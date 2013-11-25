@@ -32,6 +32,22 @@ public class GibbsSampler {
 	 * First index is collection, second index is topic, third is word type
 	 */
 	private ArrayList< ArrayList< ArrayList<Integer> > > nckw;
+	/**
+	 * The number of topics.
+	 */
+	private int numTopics;
+	/**
+	 * The parameter lambda
+	 */
+	private double lambda;
+	/**
+	 * The parameter alpha
+	 */
+	private double alpha;
+	/**
+	 * The parameter beta.
+	 */
+	private double beta;
 
 	/**
 	 * Map from word string to index
