@@ -813,7 +813,7 @@ public class GibbsSampler {
 	private Probability getThetadk(int d, int k) {
 		// ndk + alpha
 		Probability a = new Probability(alpha);
-		a = a.add(new Probability(getValue(ndk, k, d)));
+		a = a.add(new Probability(getValue(ndk, d, k)));
 		// ndstar + K * alpha
 		Probability b = new Probability(numTopics);
 		b = b.product(new Probability(alpha));
