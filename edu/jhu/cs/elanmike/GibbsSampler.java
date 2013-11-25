@@ -410,6 +410,11 @@ public class GibbsSampler {
 				for(int i = 0; i < numWordsInD; i++) {
 					updateCountsExcludeCurrentAssignment(d, i);
 					// 	randomly sample a new value for zdi
+					double p = rand.nextDouble();
+					double totalProb = 0;
+					for(int k = 0; k < numTopics; k++) {
+						
+					}
 					// 	randomly sample a new value for xdi, using newly sampled zdi
 					updateCountsNewlySampledAssignment(d, i);
 				}
