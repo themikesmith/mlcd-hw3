@@ -44,6 +44,7 @@ public class GibbsSampler {
 	 * First index is collection, second is topic
 	 */
 	private ArrayList< ArrayList<Integer> > nckStar;
+	
 	/**
 	 * Stores the topic index of each word in each document.
 	 * First index is document, second word index
@@ -54,7 +55,6 @@ public class GibbsSampler {
 	 * First index is document, second word index
 	 */
 	private ArrayList< ArrayList<Integer> > xdi;
-
 	/**
 	 * Stores the wordIntValue for each word in each document
 	 * First index is document, second word index
