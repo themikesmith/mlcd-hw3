@@ -28,8 +28,14 @@ public class GibbsSampler {
 	}
 	
 	
-	private void processWord(String word){
-		
+	private void processWord(String word,int docIdx, int wordIdx){
+		if(WordToIndex.containsKey(word)){
+			
+			
+		}else{
+			WordToIndex.put(word, WordToIndex.size());
+			//add a new word slot to n^{k}_{w}
+		}
 	}
 	
 	/**
