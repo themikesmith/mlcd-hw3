@@ -21,7 +21,7 @@ public class GibbsSampler {
 	private ArrayList<Integer> collections_d;
 	/**
 	 * 2D array of counts of words of each topic in each document
-	 * first index is topic, second index is document
+	 * first index is document, second index is topic
 	 */
 	private ArrayList< ArrayList<Integer> > ndk;
 	/**
@@ -73,7 +73,7 @@ public class GibbsSampler {
 	private ArrayList<Integer> ndStarTest;
 	/**
 	 * 2D array of counts of words of each topic in each document
-	 * first index is topic, second index is document
+	 * first index is document, second index is topic
 	 * for test data counts
 	 */
 	private ArrayList< ArrayList<Integer> > ndkTest;
@@ -444,13 +444,14 @@ public class GibbsSampler {
 	 * @param wordIdx
 	 */
 	private void updateCountsExcludeCurrentAssignment(int docIdx, int wordIdx) {
+		System.out.printf("update counts exclude. docid:%d wordid:%d\n", docIdx, wordIdx);
 		// query zdi and xdi, and get word value and doc collection
 		int z = getValue(zdi, docIdx, wordIdx), // topic index
 			x = getValue(xdi, docIdx, wordIdx), // global flag
 			w = getValue(wdi, docIdx, wordIdx), // word value
 			c = getValue(collections_d, docIdx); // collection id
 		// decrement topic count per doc, ndk
-		decrement(ndk, z, docIdx);
+		decrement(ndk, docIdx, z);
 		// and decrement topic count per word, nkstar
 		decrement(nkStar, z);
 		// and decrement nckstar
@@ -469,13 +470,14 @@ public class GibbsSampler {
 	 * @param wordIdx
 	 */
 	private void updateCountsNewlySampledAssignment(int docIdx, int wordIdx) {
+		System.out.printf("update counts new sample. docid:%d wordid:%d\n", docIdx, wordIdx);
 		// query zdi and xdi, and get word value and doc collection
 		int z = getValue(zdi, docIdx, wordIdx), // topic index
 		x = getValue(xdi, docIdx, wordIdx), // global flag
 		w = getValue(wdi, docIdx, wordIdx), // word value
 		c = getValue(collections_d, docIdx); // collection id
 		// decrement topic count per doc, ndk
-		increment(ndk, z, docIdx);
+		increment(ndk, docIdx, z);
 		// and decrement topic count per word, nkstar
 		increment(nkStar, z);
 		// and decrement nckstar
@@ -513,7 +515,7 @@ public class GibbsSampler {
 	private Probability getPZdiEqualsK(int d, int i, int w, int xdi, int k) {
 		// ndk + alpha
 		Probability a = new Probability(alpha);
-		a = a.add(new Probability(getValue(ndk, k, d)));
+		a = a.add(new Probability(getValue(ndk, d, k)));
 		// ndstar + K * alpha
 		Probability b = new Probability(numTopics);
 		b = b.product(new Probability(alpha));
@@ -668,14 +670,18 @@ public class GibbsSampler {
 	 * @param totalBurnin
 	 */
 	private void runSampling(int totalIters, int totalBurnin) {
+		System.out.printf("run sampling! totaliters:%d burn in:%d\n", totalIters, totalBurnin);
 		// and now run sampling
 		for (int t = 0; t < totalIters; t++) {
+			System.out.printf("t:%d ",t);
 			// sample
 			for(int d = 0; d < ndk.size(); d++) {
+				System.out.printf("d:%d ",d);
 				int numWordsInD = ndStar.get(d);
 				for(int i = 0; i < numWordsInD; i++) {
 					int w = getValue(wdi, d, i),
 						v = getValue(xdi, d, i);
+					System.out.printf("i:%d w:%d\n",i,w);
 					// exclude current assignment
 					updateCountsExcludeCurrentAssignment(d, i);
 					// randomly sample a new value for zdi
