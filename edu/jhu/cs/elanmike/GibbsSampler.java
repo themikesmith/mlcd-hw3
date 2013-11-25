@@ -1174,7 +1174,7 @@ public class GibbsSampler {
 		
 		System.out.println("\n=== ndk ===");
 		for(int d = 0; d<ndk.size(); d++){
-			System.out.printf("\nd: %d\t", d);
+			System.out.printf("\nd %d:\t", d);
 			for(int k = 0; k<numTopics; k++){
 				System.out.printf("%d\t", getValue(ndk,d,k));
 			}
@@ -1205,7 +1205,7 @@ public class GibbsSampler {
 		
 		System.out.println("\n\n=== nkw ===");
 		for(int k = 0; k <numTopics; k++){
-			System.out.printf("\nk %d:", k);
+			System.out.printf("\nk %d:\t", k);
 			for(int w = 0; w < nkw.get(k).size(); w++)
 				System.out.printf("%d\t", getValue(nkw,k,w));
 		}
@@ -1269,6 +1269,15 @@ public class GibbsSampler {
 			return;
 		}
 		g.printDebug();
+//		System.err.println("\n\nEXCLUDING d= 0 w = 0");
+//		g.updateCountsExcludeCurrentAssignment(0, 0);
+//		System.err.println();
+//		g.printDebug();
+//		
+//		System.err.println("\n\nINCLUDING d= 0 w = 0");
+//		g.updateCountsNewlySampledAssignment(0, 0);
+//		System.err.println();
+//		g.printDebug();
 		try {
 			g.readTestFile(testFile);
 		} catch (IOException e) {
