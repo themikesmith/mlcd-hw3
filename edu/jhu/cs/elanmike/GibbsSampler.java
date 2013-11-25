@@ -431,6 +431,7 @@ public class GibbsSampler {
 	public static void main(String[] args) {
 		SamplerType type = SamplerType.COLLAPSED;
 		if(args.length < 9 || args.length > 10) {
+			System.err.printf("Error: You passed %d arguments.\n",args.length);
 			usage();
 			return;
 		}
