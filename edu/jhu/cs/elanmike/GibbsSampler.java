@@ -18,7 +18,7 @@ public class GibbsSampler {
 	 * 1D array counting the number of tokens that are assigned to each topic
 	 * First index is topic
 	 */
-	private ArrayList< ArrayList<Integer> > nkStar;
+	private ArrayList<Integer> nkStar;
 	/**
 	 * Number of collections
 	 */
@@ -72,7 +72,7 @@ public class GibbsSampler {
 		}else{
 			WordToIndex.put(word, WordToIndex.size());
 			//add a new word row to n^{k}_{w}
-			Integer[] topicArray = new Integer[NUM_COLLECTIONS];
+			Integer[] topicArray = new Integer[numTopics];
 			nkw.add(new ArrayList<Integer>(Arrays.asList(topicArray)));
 		}
 	}
