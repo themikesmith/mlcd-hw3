@@ -587,6 +587,12 @@ public class GibbsSampler {
 			return null; // throw error, x can only be 0 or 1
 		}
 	}
+//	private Probability getPZdiEqualsK(int d, int i, int w, int xdi, int k) {
+//		
+//	}
+//	private Probability getPXdiEqualsV(int d, int i, int w, int zdi, int v) {
+//		
+//	}
 	/**
 	 * Computes and returns our estimated theta_{d,k}
 	 * @param d
