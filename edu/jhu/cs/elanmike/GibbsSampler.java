@@ -993,15 +993,24 @@ public class GibbsSampler {
 			System.out.printf("t:%d ",t);
 			// sample training
 			sampleTrainingIter();
-//			// estimate map theta_dk
-//			Probability thetadk = getThetadk(d, k);
-//			// estimate map phi_dk
-//			Probability phikw = getPhikw(k, w);
-//			// for each collection c
-//			// estimate map phi_cdk
-//			for(int c = 0; c < numCollections; c++) {
-//				Probability phickw = getPhikw(c, k, w);
-//			}
+			// estimate map theta_dk
+			for(int d = 0; d < collections_d.size(); d++) {
+				for(int k = 0; k < numTopics; k++) {
+					Probability thetadk = getThetadk(d, k);
+					setProbability(theta_dk, thetadk, d, k);
+				}
+			}
+			// estimate map phi_dk
+			for(int k = 0; k < numTopics; k++) {
+				for(int w = 0; w < WordToIndex.size(); w++) {
+					Probability phikw = getPhikw(k, w);
+					setProbability(phi_kw, phikw, k, w);
+					for(int c = 0; c < numCollections; c++) {
+						Probability phickw = getPhickw(c, k, w);
+						setProbability(phi_ckw, phickw, c, k, w);
+					}
+				}
+			}
 			if (t > totalBurnin) {
 				// save sample, add estimate to our expected value
 			}
