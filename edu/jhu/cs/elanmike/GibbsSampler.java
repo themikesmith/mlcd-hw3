@@ -1041,13 +1041,7 @@ public class GibbsSampler {
 			// sample z of the test set, directly use the current iteration's
 			// estimates of phis
 			sampleTestIter();
-			// for each token (d,i) in each document d in the test set:
-			// 	update the counts to exclude the assignment of the current token
-			// 	randomly sample a new value for zdi
-			// 	randomly sample a new value for xdi, using newly sampled zdi
-			// 	update the counts to include the newly sampled assignments of the
-			// 	current token
-			// estimate map theta_dk
+			// estimate map theta_dk test
 			for (int d = 0; d < collections_dTest.size(); d++) {
 				for (int k = 0; k < numTopics; k++) {
 					Probability thetadkTest = getThetadkTest(d, k);
