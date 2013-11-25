@@ -268,6 +268,15 @@ public class GibbsSampler {
 			zdi.add(new ArrayList<Integer>());
 			xdi.add(new ArrayList<Integer>());
 			wdi.add(new ArrayList<Integer>());
+			
+			theta_dk.add(new ArrayList<Probability>());
+			theta_dkTest.add(new ArrayList<Probability>());
+			theta_dkMean.add(new ArrayList<Probability>());
+			for(int k = 0; k< numTopics; k++) {
+				theta_dk.get(docIdx).add(new Probability(0.0));
+				theta_dkTest.get(docIdx).add(new Probability(0.0));
+				theta_dkMean.get(docIdx).add(new Probability(0.0));
+			}
 		}
 		
 		//if new word
@@ -347,22 +356,26 @@ public class GibbsSampler {
 				theta_dkMean.get(docIdx).add(new Probability(0.0));
 			}
 		}
-		
-		//if new word
-		if(!WordToIndex.containsKey(word)){
-			//System.out.printf("New word!\n");
+		// if new word
+		if (!WordToIndex.containsKey(word)) {
+			// System.out.printf("New word!\n");
 			WordToIndex.put(word, WordToIndex.size());
-			//add a new word row to n^{k}_{w} and n^{(c),k}_{w}
-			for(int k = 0; k<numTopics; k++){
+			// add a new word row to n^{k}_{w} and n^{(c),k}_{w}
+			for (int k = 0; k < numTopics; k++) {
 				nkw.get(k).add(0);
 				nkwTest.get(k).add(0);
-				for(int c = 0; c< numCollections; c++){
+
+				phi_kw.get(k).add(new Probability(0));
+				phi_kwMean.get(k).add(new Probability(0));
+				for (int c = 0; c < numCollections; c++) {
 					nckw.get(c).get(k).add(0);
 					nckwTest.get(c).get(k).add(0);
+
+					phi_ckw.get(c).get(k).add(new Probability(0));
+					phi_ckwMean.get(c).get(k).add(new Probability(0));
 				}
 			}
 		}
-		
 		
 		int wordIntValue = WordToIndex.get(word);
 		int x = rand.nextInt(2);
