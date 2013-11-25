@@ -20,10 +20,6 @@ public class GibbsSampler {
 	 */
 	private ArrayList<Integer> nkStar;
 	/**
-	 * Number of collections
-	 */
-	private int NUM_COLLECTIONS = 2;
-	/**
 	 * 2D array counting the number of word tokens labeled with each topic
 	 * First index is topic, second is word index
 	 */
@@ -49,19 +45,33 @@ public class GibbsSampler {
 	 * The parameter beta.
 	 */
 	private double beta;
-
+	/**
+	 * Number of collections
+	 */
+	private int numCollections = 2;
+	private enum SamplerType {
+		COLLAPSED, BLOCKED
+	}
+	private SamplerType type;
 	/**
 	 * Map from word string to index
 	 */
 	private HashMap<String,Integer> WordToIndex;
 	
-	GibbsSampler(){
+	GibbsSampler(SamplerType type, int numCollections, int numTopics, 
+			double lambda, double alpha, double beta) {
 		WordToIndex = new HashMap<String,Integer>();
 		ndStar = new ArrayList<Integer>();
 		ndk = new ArrayList<ArrayList<Integer> >();
 		nkStar = new ArrayList<Integer>();
 		nkw = new ArrayList<ArrayList<Integer> >();
 		nckw = new ArrayList< ArrayList< ArrayList<Integer> > >();
+		this.type = type;
+		this.numCollections = numCollections;
+		this.numTopics = numTopics;
+		this.lambda = lambda;
+		this.alpha = alpha;
+		this.beta = beta;
 	}
 	
 	
