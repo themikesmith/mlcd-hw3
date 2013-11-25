@@ -108,6 +108,13 @@ public class GibbsSampler {
 	 * for test data counts
 	 */
 	private ArrayList< ArrayList<Integer> > nckStarTest;
+
+	/**
+	 * Stores the wordIntValue for each word in each document
+	 * First index is document, second word index
+	 * for test data counts
+	 */
+	private ArrayList< ArrayList<Integer> > wdiTest;
 	
 	/**
 	 * The number of topics.
@@ -162,6 +169,10 @@ public class GibbsSampler {
 		xdi = new ArrayList<ArrayList<Integer> >();
 		zdi = new ArrayList<ArrayList<Integer> >();
 		wdi = new ArrayList<ArrayList<Integer> >();
+		
+		xdiTest = new ArrayList<ArrayList<Integer> >();
+		zdiTest = new ArrayList<ArrayList<Integer> >();
+		wdiTest = new ArrayList<ArrayList<Integer> >();
 		
 		this.type = type;
 		this.numCollections = numCollections;
@@ -249,6 +260,67 @@ public class GibbsSampler {
 		increment(ndk,docIdx,z);
 		increment(nkStar,z);
 		increment(nckStar, collectionIdx, z);
+	}
+	
+	/**
+	 * Process a word taht we see when reading data.
+	 * increment the appropriate counts.
+	 * @param word
+	 * @param collectionIdx
+	 * @param docIdx
+	 * @param wordIdx
+	 */
+	private void processWordTest(String word, int collectionIdx, int docIdx, int wordIdx){
+		System.out.printf("Processing: %s, c=%d d=%d i=%d \n",word,collectionIdx,docIdx,wordIdx);
+		//if new document
+		if(docIdx >= collections_d.size()){
+			System.out.printf("New document!\n");
+
+			ndStarTest.add(0);
+			collections_d.add(collectionIdx);
+			
+			ndkTest.add(new ArrayList<Integer>());
+			for(int k = 0; k<numTopics; k++){
+				ndkTest.get(docIdx).add(0);
+			}
+			
+			zdiTest.add(new ArrayList<Integer>());
+			xdiTest.add(new ArrayList<Integer>());
+			wdiTest.add(new ArrayList<Integer>());
+		}
+		
+		//if new word
+		if(!WordToIndex.containsKey(word)){
+			System.out.printf("New word!\n");
+			WordToIndex.put(word, WordToIndex.size());
+			//add a new word row to n^{k}_{w} and n^{(c),k}_{w}
+			for(int k = 0; k<numTopics; k++){
+				nkwTest.get(k).add(0);
+				for(int c = 0; c< numCollections; c++){
+					nckwTest.get(c).get(k).add(0);
+				}
+			}
+		}
+		
+		
+		int wordIntValue = WordToIndex.get(word);
+		int x = rand.nextInt(2);
+		int z = rand.nextInt(numTopics);
+		
+		xdiTest.get(docIdx).add(x);
+		zdiTest.get(docIdx).add(z);
+		wdiTest.get(docIdx).add(wordIntValue);
+		
+		if(x == 0){ // using collection-independent counts
+			increment(nkwTest,z,wordIntValue);
+		}else{ // using collection-dependent counts
+			increment(nckwTest,collectionIdx,z,wordIntValue);	
+		}
+		increment(ndStarTest,docIdx);
+		//System.out.printf("d = %d  z = %d\n",docIdx,z);
+		increment(ndkTest,docIdx,z);
+		increment(nkStarTest,z);
+		increment(nckStarTest, collectionIdx, z);
 	}
 	
 	private Integer getValue(ArrayList a, int... indicies){
@@ -346,7 +418,7 @@ public class GibbsSampler {
 			StringTokenizer st = new StringTokenizer(document);
 			int i = 0;
 			while(st.hasMoreElements()) {
-//				processWordTest(st.nextToken(), collectionIndex, d, i);
+				processWordTest(st.nextToken(), collectionIndex, d, i);
 				i++;
 			}
 			d++;
