@@ -1,9 +1,12 @@
 package edu.jhu.cs.elanmike;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
 public class GibbsSampler {
 	/**
@@ -202,7 +205,23 @@ public class GibbsSampler {
 	 * @throws IOException
 	 */
 	private void readTrainingFile(String filename) throws IOException {
-		
+		BufferedReader in = new BufferedReader(new FileReader(filename));
+		String line;
+		int d = 0;
+		while((line = in.readLine()) != null) {
+			int space = line.indexOf(' ');
+			String collection = line.substring(0, space);
+			int collectionIndex = Integer.parseInt(collection);
+			String document = line.substring(space);
+			StringTokenizer st = new StringTokenizer(document);
+			int i = 0;
+			while(st.hasMoreElements()) {
+				processWord(st.nextToken(), collectionIndex, d, i);
+				i++;
+			}
+			d++;
+		}
+		in.close();
 	}
 	/**
 	 * Reads in our test file.
@@ -214,7 +233,23 @@ public class GibbsSampler {
 	 * @throws IOException
 	 */
 	private void readTestFile(String filename) throws IOException {
-		
+		BufferedReader in = new BufferedReader(new FileReader(filename));
+		String line;
+		int d = 0;
+		while((line = in.readLine()) != null) {
+			int space = line.indexOf(' ');
+			String collection = line.substring(0, space);
+			int collectionIndex = Integer.parseInt(collection);
+			String document = line.substring(space);
+			StringTokenizer st = new StringTokenizer(document);
+			int i = 0;
+			while(st.hasMoreElements()) {
+				processWordTest(st.nextToken(), collectionIndex, d, i);
+				i++;
+			}
+			d++;
+		}
+		in.close();
 	}
 
 	/**
