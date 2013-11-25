@@ -12,7 +12,12 @@ public class GibbsSampler {
 	 * 2D array of counts of words of each topic in each document
 	 * first index is topic, second index is document
 	 */
-	private ArrayList<Integer> ndk;
+	private ArrayList< ArrayList<Integer> > ndk;
+	/**
+	 * 1D array counting the number of tokens that are assigned to each topic
+	 * First index is topic
+	 */
+	private ArrayList< ArrayList<Integer> > nkStar;
 	/**
 	 * Number of collections
 	 */
@@ -21,7 +26,12 @@ public class GibbsSampler {
 	 * 2D array counting the number of word tokens labeled with each topic
 	 * First index is topic, second is word index
 	 */
-	private ArrayList<Integer> nkw;
+	private ArrayList< ArrayList<Integer> > nkw;
+	/**
+	 * 3D array, number of collections, number of topics, number of word types of each topic in each collection
+	 * First index is collection, second index is topic, third is word type
+	 */
+	private ArrayList< ArrayList< ArrayList<Integer> > > nckw;
 
 	/**
 	 * Map from word string to index
@@ -31,8 +41,10 @@ public class GibbsSampler {
 	GibbsSampler(){
 		WordToIndex = new HashMap<String,Integer>();
 		ndStar = new ArrayList<Integer>();
-		ndk = new ArrayList<Integer>();
-		nkw = new ArrayList<Integer>();
+		ndk = new ArrayList<ArrayList<Integer> >();
+		nkStar = new ArrayList<Integer>();
+		nkw = new ArrayList<ArrayList<Integer> >();
+		nckw = new ArrayList< ArrayList< ArrayList<Integer> > >();
 	}
 	
 	
