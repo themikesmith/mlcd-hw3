@@ -51,6 +51,12 @@ public class GibbsSampler {
 	private ArrayList< ArrayList<Integer> > xdi;
 
 	/**
+	 * Stores the wordIntValue for each word in each document
+	 * First index is document, second word index
+	 */
+	private ArrayList< ArrayList<Integer> > wdi;
+	
+	/**
 	 * 1D array, indexed by document number, holding the number of words in each document
 	 * for test data counts
 	 */
@@ -139,6 +145,11 @@ public class GibbsSampler {
 		nkStarTest = new ArrayList<Integer>();
 		nkwTest = new ArrayList<ArrayList<Integer> >();
 		nckwTest = new ArrayList< ArrayList< ArrayList<Integer> > >();
+		
+		xdi = new ArrayList<ArrayList<Integer> >();
+		zdi = new ArrayList<ArrayList<Integer> >();
+		wdi = new ArrayList<ArrayList<Integer> >();
+		
 		this.type = type;
 		this.numCollections = numCollections;
 		this.numTopics = numTopics;
