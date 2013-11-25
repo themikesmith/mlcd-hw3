@@ -171,6 +171,8 @@ public class GibbsSampler {
 		increment(nkStar,z);
 	}
 	
+	
+	
 	private Integer getValue(ArrayList a, int... indicies){
 		int depth = 0;
 		ArrayList curArray = a;
