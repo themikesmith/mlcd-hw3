@@ -191,6 +191,7 @@ public class GibbsSampler {
 		// init count of topics
 		for(int k = 0; k < numTopics; k++) {
 			nkStar.add(0);
+			nkw.add(new ArrayList<Integer>());
 		}
 		
 		rand = new Random();
@@ -213,14 +214,13 @@ public class GibbsSampler {
 		//if new word
 		if(!WordToIndex.containsKey(word)){
 			WordToIndex.put(word, WordToIndex.size());
-			//add a new word row to n^{k}_{w}
-			
-			/*
-			Integer[] topicArray = new Integer[numTopics];
-			nkw.add(new ArrayList<Integer>(Arrays.asList(topicArray)));
-			topicArray = new Integer[numTopics];
-			nckw.get(collectionIdx).add(new ArrayList<Integer>(Arrays.asList(topicArray))); //TODO:!!!! F
-			*/
+			//add a new word row to n^{k}_{w} and n^{(c),k}_{w}
+			for(int k = 0; k<numTopics; k++){
+				nkw.get(k).add(0);
+				for(int c = 0; c< numCollections; c++){
+					nckw.get(c).get(k).add(0);
+				}
+			}
 		}
 		
 		
