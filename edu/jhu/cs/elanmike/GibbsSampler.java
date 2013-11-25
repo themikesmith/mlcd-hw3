@@ -1049,6 +1049,21 @@ public class GibbsSampler {
 				}
 			}
 			// compute log likelihood of train
+			Probability logLike_train = new Probability(0.0);
+			for (int d = 0; d < collections_dTest.size(); d++) {
+				for (int i = 0; i < ndStar.get(d); i++) {
+					for (int k = 0; k < numTopics; k++) {
+						Probability term1 = new Probability(1-lambda);
+						term1.product(
+								getProbability(phi_kw,k,getValue(wdi,d,i).intValue()));
+						Probability term2 = new Probability(lambda);
+						term2.product(
+								getProbability(phi_ckw,getValue(collections_d,d),k,getValue(wdi,d,i).intValue()));
+						term1.add(term2);
+						logLike_train.add(term1);
+					}
+				}
+			}
 			// compute log likelihood of test
 		}
 	}
