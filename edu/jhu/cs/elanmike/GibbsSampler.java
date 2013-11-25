@@ -316,15 +316,17 @@ public class GibbsSampler {
 	 * @param wordIdx
 	 */
 	private void updateCountsExcludeCurrentAssignment(int docIdx, int wordIdx) {
-		// query zdi and xdi
+		// query zdi and xdi, and get word value and doc collection
 		int z = getValue(zdi, docIdx, wordIdx), // topic index
 			x = getValue(xdi, docIdx, wordIdx), // global flag
 			w = getValue(wdi, docIdx, wordIdx), // word value
 			c = getValue(collections_d, docIdx); // collection id
 		// decrement topic count per doc, ndk
 		decrement(ndk, z, docIdx);
-		// and decrement topic count per word, nkstar 
-		// and decrement nckstar ? 
+		// and decrement topic count per word, nkstar
+		decrement(nkStar, z);
+		// and decrement nckstar
+		decrement(nckStar, c, z);
 		if(x == 0) { // decrement global
 			decrement(nkw, z, w);
 		}
@@ -339,7 +341,22 @@ public class GibbsSampler {
 	 * @param wordIdx
 	 */
 	private void updateCountsNewlySampledAssignment(int docIdx, int wordIdx) {
-		
+		// query zdi and xdi, and get word value and doc collection
+		int z = getValue(zdi, docIdx, wordIdx), // topic index
+		x = getValue(xdi, docIdx, wordIdx), // global flag
+		w = getValue(wdi, docIdx, wordIdx), // word value
+		c = getValue(collections_d, docIdx); // collection id
+		// decrement topic count per doc, ndk
+		increment(ndk, z, docIdx);
+		// and decrement topic count per word, nkstar
+		increment(nkStar, z);
+		// and decrement nckstar
+		increment(nckStar, c, z);
+		if (x == 0) { // decrement global
+			increment(nkw, z, w);
+		} else { // collection-specific
+			increment(nckw, c, z, w);
+		}
 	}
 	/**
 	 * Run sampling algorithm.
