@@ -584,7 +584,7 @@ public class GibbsSampler {
 		int k = zdi;
 		Probability multiplier;
 		if(v == 0) {
-			multiplier = new Probability(1);
+			multiplier = new Probability(-1);
 			multiplier = multiplier.product(new Probability(lambda));
 			multiplier = multiplier.add(Probability.ONE);
 			System.out.println("multiplier:"+multiplier);
@@ -748,11 +748,11 @@ public class GibbsSampler {
 					// randomly sample a new value for xdi, using newly sampled zdi
 					p = rand.nextDouble();
 					marker = new Probability(p);
-					totalProb = getPXdiEqualsV(d, i, w, sampledZdi, 0);
+					Probability xzero = getPXdiEqualsV(d, i, w, sampledZdi, 0);
 					Probability check = getPXdiEqualsV(d, i, w, sampledZdi, 1);
-					System.out.println("should be 1:"+check.add(totalProb));
+					System.out.println("should be 1:"+check.add(xzero));
 					int sampledXdi = -1;
-					if(totalProb.getLogProb() > marker.getLogProb()) {
+					if(xzero.getLogProb() > marker.getLogProb()) {
 						// we have sampled xdi = 0
 						sampledXdi = 0;
 					}
