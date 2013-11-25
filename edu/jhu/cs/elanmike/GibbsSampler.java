@@ -40,6 +40,11 @@ public class GibbsSampler {
 	 */
 	private ArrayList< ArrayList< ArrayList<Integer> > > nckw;
 	/**
+	 * 2D array, number of times topic is mentioned in each collection
+	 * First index is collection, second is topic
+	 */
+	private ArrayList< ArrayList<Integer> > nckStar;
+	/**
 	 * Stores the topic index of each word in each document.
 	 * First index is document, second word index
 	 */
@@ -145,6 +150,7 @@ public class GibbsSampler {
 		nkStarTest = new ArrayList<Integer>();
 		nkwTest = new ArrayList<ArrayList<Integer> >();
 		nckwTest = new ArrayList< ArrayList< ArrayList<Integer> > >();
+		nckStar = new ArrayList<ArrayList<Integer> >();
 		
 		xdi = new ArrayList<ArrayList<Integer> >();
 		zdi = new ArrayList<ArrayList<Integer> >();
