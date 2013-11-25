@@ -1,5 +1,6 @@
 package edu.jhu.cs.elanmike;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -111,6 +112,31 @@ public class GibbsSampler {
 	}
 	
 	/**
+	 * Reads in our training file.
+	 * Each line represents a document.
+	 * The first token in a document is the collection from which it came
+	 * The rest of the tokens are words to be processed.
+	 * Processes all the words.
+	 * @param filename
+	 * @throws IOException
+	 */
+	private void readTrainingFile(String filename) throws IOException {
+		
+	}
+	/**
+	 * Reads in our test file.
+	 * Each line represents a document.
+	 * The first token in a document is the collection from which it came
+	 * The rest of the tokens are words to be processed.
+	 * Processes all the words.
+	 * @param filename
+	 * @throws IOException
+	 */
+	private void readTestFile(String filename) throws IOException {
+		
+	}
+
+	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -136,7 +162,20 @@ public class GibbsSampler {
 				alpha = Double.parseDouble(args[5]), 
 				beta = Double.parseDouble(args[6]);
 		GibbsSampler g = new GibbsSampler(type, 2, numTopics, lambda, alpha, beta);
-		
+		try {
+			g.readTrainingFile(trainingFile);
+		} catch (IOException e) {
+			System.err.println("error training!");
+			e.printStackTrace();
+			return;
+		}
+		try {
+			g.readTestFile(testFile);
+		} catch (IOException e) {
+			System.err.println("error training!");
+			e.printStackTrace();
+			return;
+		}
 	}
 	private static void usage() {
 		System.out.println("Usage:./collapsed-sampler trainFile testFile outputFile K lambda alpha beta totalNumSamples totalBurnIn\n" +
