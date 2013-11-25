@@ -588,6 +588,61 @@ public class GibbsSampler {
 		}
 	}
 	/**
+	 * Computes and returns our estimated theta_{d,k}
+	 * @param d
+	 * @param k
+	 * @return
+	 */
+	private Probability getThetadk(int d, int k) {
+		// ndk + alpha
+		Probability a = new Probability(alpha);
+		a = a.add(new Probability(getValue(ndk, k, d)));
+		// ndstar + K * alpha
+		Probability b = new Probability(numTopics);
+		b = b.product(new Probability(alpha));
+		b = b.add(new Probability(getValue(ndStar, d)));
+		// a / b
+		a = a.divide(b);
+		return a;
+	}
+	/**
+	 * Computes and returns our estimated phi_{k,w}
+	 * @param d
+	 * @param k
+	 * @return
+	 */
+	private Probability getPhikw(int k, int w) {
+		// nkw + beta
+		Probability c = new Probability(beta);
+		c = c.add(new Probability(getValue(nkw, k, w)));
+		// nkstar + V * beta
+		Probability f = new Probability(getVocabSize());
+		f = f.product(new Probability(beta));
+		f = f.add(new Probability(getValue(nkStar, k)));
+		// a / b
+		c = c.divide(f);
+		return c;
+	}
+	/**
+	 * Computes and returns our estimated phi_{k,w}
+	 * @param d
+	 * @param k
+	 * @return
+	 */
+	private Probability getPhickw(int c, int k, int w) {
+		int coll = c;
+		// nckw + beta
+		Probability p = new Probability(beta);
+		p = p.add(new Probability(getValue(nckw, coll, k, w)));
+		// nckstar + V * beta
+		Probability f = new Probability(getVocabSize());
+		f = f.product(new Probability(beta));
+		f = f.add(new Probability(getValue(nckStar, coll, k)));
+		// c / f
+		p = p.divide(f);
+		return p;
+	}
+	/**
 	 * Run sampling algorithm.
 	 * Each iteration runs on training data,
 	 * then on test data, then computes likelihoods.
@@ -638,10 +693,15 @@ public class GibbsSampler {
 					updateCountsNewlySampledAssignment(d, i);
 				}
 			}
-			// estimate map theta_dk
-			// estimate map phi_dk
-			// for each collection c
-			// estimate map phi_cdk
+//			// estimate map theta_dk
+//			Probability thetadk = getThetadk(d, k);
+//			// estimate map phi_dk
+//			Probability phikw = getPhikw(k, w);
+//			// for each collection c
+//			// estimate map phi_cdk
+//			for(int c = 0; c < numCollections; c++) {
+//				Probability phickw = getPhikw(c, k, w);
+//			}
 			if (t > totalBurnin) {
 				// save sample, add estimate to our expected value
 			}
