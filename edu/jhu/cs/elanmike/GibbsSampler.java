@@ -65,15 +65,28 @@ public class GibbsSampler {
 	}
 	
 	
-	private void processWord(String word, int collectingIdx, int docIdx, int wordIdx){
+	private void processWord(String word, int collectionIdx, int docIdx, int wordIdx){
 		if(!WordToIndex.containsKey(word)){
 			WordToIndex.put(word, WordToIndex.size());
 			//add a new word row to n^{k}_{w}
 			Integer[] topicArray = new Integer[numTopics];
 			nkw.add(new ArrayList<Integer>(Arrays.asList(topicArray)));
 			topicArray = new Integer[numTopics];
-			nkw.add(new ArrayList<Integer>(Arrays.asList(topicArray)));
+			nckw.get(collectionIdx).add(new ArrayList<Integer>(Arrays.asList(topicArray)));
 		}
+		
+		
+	}
+	
+	private Integer getValue(ArrayList a, int... indicies){
+		int depth = 0;
+		ArrayList curArray = a;
+		
+		while(depth <indicies.length - 1){
+			curArray = (ArrayList) curArray.get(indicies[depth]);
+			depth++;
+		}
+		return (Integer) curArray.get(indicies[depth]);
 	}
 	
 	/**
