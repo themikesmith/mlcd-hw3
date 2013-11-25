@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.StringTokenizer;
@@ -1170,6 +1169,8 @@ public class GibbsSampler {
 			return;
 		}
 		g.runSampling(totalIters, totalBurnin);
+		// after this we should have iters - burnin # of data points
+		// compute the sample means?
 	}
 	private static void usage() {
 		System.out.println("Usage:./collapsed-sampler trainFile testFile outputFile K lambda alpha beta totalNumSamples totalBurnIn\n" +
