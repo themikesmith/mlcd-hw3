@@ -72,7 +72,7 @@ public class GibbsSampler {
 		}else{
 			WordToIndex.put(word, WordToIndex.size());
 			//add a new word row to n^{k}_{w}
-			int[] topicArray = new int[NUM_COLLECTIONS];
+			Integer[] topicArray = new Integer[NUM_COLLECTIONS];
 			nkw.add(new ArrayList<Integer>(Arrays.asList(topicArray)));
 		}
 	}
