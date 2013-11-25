@@ -202,7 +202,7 @@ public class GibbsSampler {
 		for(int k = 0; k < numTopics; k++) {
 			nkStar.add(0);
 			nkw.add(new ArrayList<Integer>());
-			
+			nkwTest.add(new ArrayList<Integer>());
 		}
 		
 		rand = new Random();
