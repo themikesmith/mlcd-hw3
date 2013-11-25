@@ -147,6 +147,9 @@ public class GibbsSampler {
 			topicArray = new Integer[numTopics];
 			nckw.get(collectionIdx).add(new ArrayList<Integer>(Arrays.asList(topicArray)));
 		}
+		int wordIntValue = WordToIndex.get(word);
+		
+		//increment(ndStar,)
 		
 		
 	}
