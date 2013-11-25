@@ -690,7 +690,7 @@ public class GibbsSampler {
 					Probability totalProb = new Probability(0);
 					int sampledZdi = -1;
 					for(int k = 0; k < numTopics; k++) {
-						Probability curr = getPZdiEqualsK(d, totalBurnin, w, v, k);
+						Probability curr = getPZdiEqualsK(d, i, w, v, k);
 						totalProb = totalProb.add(curr);
 						if(totalProb.getLogProb() > marker.getLogProb()) {
 							// stop. we have sampled this value of k
