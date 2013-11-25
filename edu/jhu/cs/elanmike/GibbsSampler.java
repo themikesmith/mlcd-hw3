@@ -584,7 +584,7 @@ public class GibbsSampler {
 		int k = zdi;
 		Probability multiplier;
 		if(v == 0) {
-			multiplier = new Probability(-1);
+			multiplier = new Probability(1);
 			multiplier = multiplier.product(new Probability(lambda));
 			multiplier = multiplier.add(Probability.ONE);
 			System.out.println("multiplier:"+multiplier);
@@ -625,8 +625,8 @@ public class GibbsSampler {
 			f = f.add(new Probability(getValue(nckStar, coll, k)));
 			System.out.println("V * beta + nckstar:"+f);
 			// c / f
-			System.out.println("(beta + nckw) / (V * beta + nckstar):"+f);
 			c = c.divide(f);
+			System.out.println("(beta + nckw) / (V * beta + nckstar):"+f);
 			return multiplier.product(c);
 		}
 		else {
