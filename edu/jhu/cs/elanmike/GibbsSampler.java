@@ -30,6 +30,38 @@ public class GibbsSampler {
 	 * First index is collection, second index is topic, third is word type
 	 */
 	private ArrayList< ArrayList< ArrayList<Integer> > > nckw;
+
+	/**
+	 * 1D array, indexed by document number, holding the number of words in each document
+	 * for test data counts
+	 */
+	private ArrayList<Integer> ndStarTest;
+	/**
+	 * 2D array of counts of words of each topic in each document
+	 * first index is topic, second index is document
+	 * for test data counts
+	 */
+	private ArrayList< ArrayList<Integer> > ndkTest;
+	/**
+	 * 1D array counting the number of tokens that are assigned to each topic
+	 * First index is topic
+	 * for test data counts
+	 */
+	private ArrayList<Integer> nkStarTest;
+	/**
+	 * 2D array counting the number of word tokens labeled with each topic
+	 * First index is topic, second is word index
+	 * for test data counts
+	 */
+	private ArrayList< ArrayList<Integer> > nkwTest;
+	/**
+	 * 3D array, number of collections, number of topics, number of word types of each topic in each collection
+	 * First index is collection, second index is topic, third is word type
+	 * for test data counts
+	 */
+	private ArrayList< ArrayList< ArrayList<Integer> > > nckwTest;
+	
+	
 	/**
 	 * The number of topics.
 	 */
@@ -67,6 +99,12 @@ public class GibbsSampler {
 		nkStar = new ArrayList<Integer>();
 		nkw = new ArrayList<ArrayList<Integer> >();
 		nckw = new ArrayList< ArrayList< ArrayList<Integer> > >();
+		
+		ndStarTest = new ArrayList<Integer>();
+		ndkTest = new ArrayList<ArrayList<Integer> >();
+		nkStarTest = new ArrayList<Integer>();
+		nkwTest = new ArrayList<ArrayList<Integer> >();
+		nckwTest = new ArrayList< ArrayList< ArrayList<Integer> > >();
 		this.type = type;
 		this.numCollections = numCollections;
 		this.numTopics = numTopics;
@@ -152,14 +190,14 @@ public class GibbsSampler {
 		try {
 			g.readTrainingFile(trainingFile);
 		} catch (IOException e) {
-			System.err.println("error training!");
+			System.err.println("error getting training data!");
 			e.printStackTrace();
 			return;
 		}
 		try {
 			g.readTestFile(testFile);
 		} catch (IOException e) {
-			System.err.println("error training!");
+			System.err.println("error getting test data!");
 			e.printStackTrace();
 			return;
 		}
