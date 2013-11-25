@@ -298,7 +298,15 @@ public class GibbsSampler {
 	 * @param wordIdx
 	 */
 	private void updateCountsExcludeCurrentAssignment(int docIdx, int wordIdx) {
-		
+		// query zdi and xdi
+		int z = getValue(zdi, docIdx, wordIdx),
+			x = getValue(xdi, docIdx, wordIdx);
+		if(x == 0) { // decrement global
+			decrement(ndk, z, docIdx);
+		}
+		else { // x is the collection number
+			decrement(ndk, z, docIdx);
+		}
 	}
 	/**
 	 * Updates the counts to include the newly sampled assignment of the
