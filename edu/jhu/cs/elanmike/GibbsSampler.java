@@ -170,17 +170,24 @@ public class GibbsSampler {
 		this.alpha = alpha;
 		this.beta = beta;
 		
-		// init num collections per topic
+		// init nckstar, nckstartest, nckw, nckwtest
 		for(int c = 0; c < numCollections; c++) {
 			nckStar.add(new ArrayList<Integer>());
 			nckStarTest.add(new ArrayList<Integer>());
 			ArrayList<Integer> num = nckStar.get(c);
 			ArrayList<Integer> numTest = nckStarTest.get(c);
+			ArrayList<ArrayList<Integer>> aa = new ArrayList< ArrayList<Integer> >(),
+					bb = new ArrayList< ArrayList<Integer> >();
+			nckw.add(aa);
+			nckwTest.add(bb);
 			for(int k = 0; k < numTopics; k++) {
 				num.add(0);
 				numTest.add(0);
+				aa.add(new ArrayList<Integer>());
+				bb.add(new ArrayList<Integer>());
 			}
 		}
+		
 		// init count of topics
 		for(int k = 0; k < numTopics; k++) {
 			nkStar.add(0);
