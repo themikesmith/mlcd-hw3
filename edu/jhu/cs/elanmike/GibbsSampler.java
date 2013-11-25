@@ -288,13 +288,19 @@ public class GibbsSampler {
 	 */
 	private void updateCountsExcludeCurrentAssignment(int docIdx, int wordIdx) {
 		// query zdi and xdi
-		int z = getValue(zdi, docIdx, wordIdx),
-			x = getValue(xdi, docIdx, wordIdx);
+		int z = getValue(zdi, docIdx, wordIdx), // topic index
+			x = getValue(xdi, docIdx, wordIdx), // global flag
+			w = getValue(wdi, docIdx, wordIdx), // word value
+			c = getValue(collections_d, docIdx); // collection id
+		// decrement topic count per doc, ndk
+		decrement(ndk, z, docIdx);
+		// and decrement topic count per word, nkstar 
+		// and decrement nckstar ? 
 		if(x == 0) { // decrement global
-			decrement(ndk, z, docIdx);
+			decrement(nkw, z, w);
 		}
-		else { // x is the collection number
-			decrement(ndk, z, docIdx);
+		else { // collection-specific
+			decrement(nckw, c, z, w);
 		}
 	}
 	/**
