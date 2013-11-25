@@ -738,11 +738,10 @@ public class GibbsSampler {
 						if(totalProbs[k].getLogProb() > marker.getLogProb()) {
 							// stop. we have sampled this value of k
 							sampledZdi = k;
-							System.out.println("sampled k = "+sampledZdi);
 							break;
 						}
 					}
-					
+					System.out.println("sampled k = "+sampledZdi);
 					// randomly sample a new value for xdi, using newly sampled zdi
 					p = rand.nextDouble();
 					marker = new Probability(p);
@@ -757,6 +756,7 @@ public class GibbsSampler {
 					else {
 						sampledXdi = 1;
 					}
+					System.out.println("sampled x = "+sampledXdi);
 					// set zdi and xdi
 					setValue(zdi, sampledZdi, d, i);
 					setValue(xdi, sampledXdi, d, i);
