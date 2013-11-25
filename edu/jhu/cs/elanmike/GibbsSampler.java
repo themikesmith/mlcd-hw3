@@ -175,6 +175,9 @@ public class GibbsSampler {
 			collections_d.add(collectionIdx);
 			Integer[] topicArray = new Integer[numTopics];
 			ndk.add(new ArrayList<Integer>(Arrays.asList(topicArray)));
+			zdi.add(new ArrayList<Integer>());
+			xdi.add(new ArrayList<Integer>());
+			wdi.add(new ArrayList<Integer>());
 		}
 		
 		//if new word
