@@ -204,6 +204,7 @@ public class GibbsSampler {
 		increment(ndStar,docIdx);
 		increment(ndk,z,docIdx);
 		increment(nkStar,z);
+		increment(nckStar, collectionIdx, z);
 	}
 	
 	
