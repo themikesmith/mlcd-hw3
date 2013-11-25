@@ -601,18 +601,43 @@ public class GibbsSampler {
 			for(int d = 0; d < ndk.size(); d++) {
 				int numWordsInD = ndStar.get(d);
 				for(int i = 0; i < numWordsInD; i++) {
+					int w = getValue(wdi, d, i),
+						v = getValue(xdi, d, i);
+					// exclude current assignment
 					updateCountsExcludeCurrentAssignment(d, i);
-					// 	randomly sample a new value for zdi
+					// randomly sample a new value for zdi
 					double p = rand.nextDouble();
+					Probability marker = new Probability(p);
 					Probability totalProb = new Probability(0);
+					int sampledZdi = -1;
 					for(int k = 0; k < numTopics; k++) {
-						
+						Probability curr = getPZdiEqualsK(d, totalBurnin, w, v, k);
+						totalProb = totalProb.add(curr);
+						if(totalProb.getLogProb() > marker.getLogProb()) {
+							// stop. we have sampled this value of k
+							sampledZdi = k;
+							break;
+						}
 					}
-					// 	randomly sample a new value for xdi, using newly sampled zdi
+					// randomly sample a new value for xdi, using newly sampled zdi
+					p = rand.nextDouble();
+					marker = new Probability(p);
+					totalProb = getPXdiEqualsV(numWordsInD, i, w, sampledZdi, 0);
+					int sampledXdi = -1;
+					if(totalProb.getLogProb() > marker.getLogProb()) {
+						// we have sampled xdi = 0
+						sampledXdi = 0;
+					}
+					else {
+						sampledXdi = 1;
+					}
+					// set zdi and xdi
+					setValue(zdi, sampledZdi, d, i);
+					setValue(xdi, sampledXdi, d, i);
+					// and update counts
 					updateCountsNewlySampledAssignment(d, i);
 				}
 			}
-			// estimate params
 			// estimate map theta_dk
 			// estimate map phi_dk
 			// for each collection c
