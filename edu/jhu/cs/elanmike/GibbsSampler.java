@@ -274,6 +274,37 @@ public class GibbsSampler {
 		}
 		in.close();
 	}
+	
+	private void runSampling(int totalIters, int totalBurnin) {
+		// and now run sampling
+		for (int i = 0; i < totalIters; i++) {
+			// sample
+			// for each token (d,i) in each document d in the train set:
+			// update the counts to exclude the assignment of the current token
+			// randomly sample a new value for zdi
+			// randomly sample a new value for xdi, using newly sampled zdi
+			// update the counts to include the newly sampled assignments of the
+			// current token
+			// estimate params
+			// estimate map theta_dk
+			// estimate map phi_dk
+			// for each collection c
+			// estimate map phi_cdk
+			if (i > totalBurnin) {
+				// save sample, add estimate to our expected value
+			}
+			// sample z of the test set, directly use the current iteration's
+			// estimates of phis
+			// for each token (d,i) in each document d in the test set:
+			// update the counts to exclude the assignment of the current token
+			// randomly sample a new value for zdi
+			// randomly sample a new value for xdi, using newly sampled zdi
+			// update the counts to include the newly sampled assignments of the
+			// current token
+			// compute log likelihood of train
+			// compute log likelihood of test
+		}
+	}
 
 	/**
 	 * @param args
@@ -315,31 +346,7 @@ public class GibbsSampler {
 			e.printStackTrace();
 			return;
 		}
-		// and now run sampling
-		for(int i = 0; i < totalIters; i++) {
-			// sample
-			// for each token (d,i) in each document d in the train set:
-			// 	update the counts to exclude the assignment of the current token
-			// 	randomly sample a new value for zdi
-			// 	randomly sample a new value for xdi, using newly sampled zdi
-			// 	update the counts to include the newly sampled assignments of the current token
-			// estimate params
-			// estimate map theta_dk
-			// estimate map phi_dk
-			// for each collection c
-			//	estimate map phi_cdk
-			if(i > totalBurnin) {
-				// save sample, add estimate to our expected value
-			}
-			// sample z of the test set, directly use the current iteration's estimates of phis
-			// for each token (d,i) in each document d in the test set:
-			// 	update the counts to exclude the assignment of the current token
-			// 	randomly sample a new value for zdi
-			// 	randomly sample a new value for xdi, using newly sampled zdi
-			// 	update the counts to include the newly sampled assignments of the current token
-			// compute log likelihood of train
-			// compute log likelihood of test
-		}
+		g.runSampling(totalIters, totalBurnin);
 	}
 	private static void usage() {
 		System.out.println("Usage:./collapsed-sampler trainFile testFile outputFile K lambda alpha beta totalNumSamples totalBurnIn\n" +
