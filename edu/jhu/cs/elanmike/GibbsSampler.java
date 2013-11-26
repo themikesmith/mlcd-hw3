@@ -1,9 +1,14 @@
 package edu.jhu.cs.elanmike;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.StringTokenizer;
@@ -969,12 +974,21 @@ public class GibbsSampler {
 	 * Run sampling algorithm.
 	 * Each iteration runs on training data,
 	 * then on test data, then computes likelihoods.
+	 * prints out likelihoods of training and test data
+	 * to output files, naming them appropriately
 	 * @param totalIters
 	 * @param totalBurnin
+	 * @param outfilename the base output file name
+	 * @throws IOException 
 	 */
-	private void runSampling(int totalIters, int totalBurnin) {
+	private void runSampling(int totalIters, int totalBurnin, String outfilename) throws IOException {
 //		System.out.printf("run sampling! totaliters:%d burn in:%d\n", totalIters, totalBurnin);
-		boolean meansInitialized = false;
+		File trainLL = new File(outfilename+"-trainll"),
+				testLL = new File(outfilename+"-testll");
+		if(trainLL.exists()) trainLL.delete();
+		if(testLL.exists()) testLL.delete();
+		PrintWriter pwTrainLL = new PrintWriter(trainLL),
+			pwTestLL = new PrintWriter(testLL);
 		// and now run sampling
 		for (int t = 0; t < totalIters; t++) {
 //			System.out.printf("t:%d ",t);
@@ -1069,6 +1083,7 @@ public class GibbsSampler {
 				}
 			}
 			System.out.printf("ll(train) = %s\n", logLike_train);
+			printFloatToFile(logLike_train, pwTrainLL, true);
 			// compute log likelihood of test
 			Probability logLike_test = new Probability(0.0);
 			for (int d = 0; d < collections_dTest.size(); d++) {
@@ -1086,6 +1101,7 @@ public class GibbsSampler {
 				}
 			}
 			System.out.printf("ll(test) = %s\n", logLike_test);
+			printFloatToFile(logLike_test, pwTestLL, true);
 		}
 		int numSamples = totalIters - totalBurnin;
 		// divide means by N to actaully get means
@@ -1108,6 +1124,8 @@ public class GibbsSampler {
 				}
 			}
 		}
+		pwTrainLL.close();
+		pwTestLL.close();
 	}
 
 	private void printDebug(){
@@ -1206,11 +1224,11 @@ public class GibbsSampler {
 		// read arguments
 		String trainingFile = args[0], testFile = args[1], outFile = args[2];
 		int numTopics = Integer.parseInt(args[3]), totalIters = Integer.parseInt(args[7]), 
-				totalBurnin = Integer.parseInt(args[8]);
+				totalBurnin = Integer.parseInt(args[8]), numCollections = 2;
 		double lambda = Double.parseDouble(args[4]),
 				alpha = Double.parseDouble(args[5]), 
 				beta = Double.parseDouble(args[6]);
-		GibbsSampler g = new GibbsSampler(type, 2, numTopics, lambda, alpha, beta);
+		GibbsSampler g = new GibbsSampler(type, numCollections, numTopics, lambda, alpha, beta);
 		try {
 			g.readTrainingFile(trainingFile);
 		} catch (IOException e) {
@@ -1235,9 +1253,73 @@ public class GibbsSampler {
 			e.printStackTrace();
 			return;
 		}
-		g.runSampling(totalIters, totalBurnin);
+		try {
+			g.runSampling(totalIters, totalBurnin, outFile);
+		} catch (IOException e) {
+			System.err.println("error writing likelood files while sampling");
+			e.printStackTrace();
+			return;
+		}
 		// after this we should have iters - burnin # of data points
-		// compute the sample means?
+		// compute the sample means? - computed
+		// print out data::
+		// print out theta dk
+		try {
+			File f = new File(outFile+"theta");
+			if(f.exists()) f.delete();
+			PrintWriter pw = new PrintWriter(f);
+			for(int d = 0; d < g.collections_d.size(); d++) {
+				for(int k = 0; k < numTopics; k++) {
+					//TODO verify that we print out means
+					printFloatToFile(g.getProbability(g.theta_dkMean, d, k), pw, false);
+				}
+				pw.println();
+			}
+		}
+		catch(IOException ex) {
+			System.err.println("error writing to theta file");
+			ex.printStackTrace();
+		}
+		// print out phi kw
+		try {
+			File f = new File(outFile+"phi");
+			if(f.exists()) f.delete();
+			PrintWriter pw = new PrintWriter(f);
+			for(String word : g.WordToIndex.keySet()) {
+				pw.printf("%s", word);
+				for(int k = 0; k < numTopics; k++) {
+					//TODO verify that we print out means
+					pw.printf(" ");
+					printFloatToFile(g.getProbability(g.phi_kw, k, g.WordToIndex.get(word)), pw, false);
+				}
+				pw.println();
+			}
+		}
+		catch(IOException ex) {
+			System.err.println("error writing to phikw file");
+			ex.printStackTrace();
+		}
+		// for each collection, print out phi ckw
+		for(int c = 0; c < numCollections; c++) {
+			try {
+				File f = new File(outFile+"phi"+c);
+				if(f.exists()) f.delete();
+				PrintWriter pw = new PrintWriter(f);
+				for(String word : g.WordToIndex.keySet()) {
+					pw.printf("%s", word);
+					for(int k = 0; k < numTopics; k++) {
+						//TODO verify that we print out means
+						pw.printf(" ");
+						printFloatToFile(g.getProbability(g.phi_ckw, c, k, g.WordToIndex.get(word)), pw, false);
+					}
+					pw.println();
+				}
+			}
+			catch(IOException ex) {
+				System.err.println("error writing to phikw file");
+				ex.printStackTrace();
+			}
+		}
 	}
 	private static void usage() {
 		System.out.println("Usage:./collapsed-sampler trainFile testFile outputFile K lambda alpha beta totalNumSamples totalBurnIn\n" +
@@ -1247,5 +1329,9 @@ public class GibbsSampler {
 				"collect 100 samples after a 1000-iteration burn-in.\n" +
 				"An optional 10th argument may be passed '-b' to run blocked collapsed gibbs sampling" +
 				" instead of the default collapsed gibbs");
+	}
+	private static void printFloatToFile(Probability p, PrintWriter pw, boolean newline) {
+		if(newline) pw.printf("%.13f\n", Math.exp(p.getLogProb()));
+		else pw.printf("%.13f", Math.exp(p.getLogProb()));
 	}
 }
