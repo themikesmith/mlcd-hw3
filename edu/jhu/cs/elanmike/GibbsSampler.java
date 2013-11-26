@@ -2,13 +2,10 @@ package edu.jhu.cs.elanmike;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.StringTokenizer;
@@ -530,8 +527,7 @@ public class GibbsSampler {
 	private void updateTestCountsExcludeCurrentAssignment(int docIdx, int wordIdx) {
 //		System.out.printf("update counts exclude. docid:%d wordid:%d\n", docIdx, wordIdx);
 		// query zdi and xdi, and get word value and doc collection
-		int z = getValue(zdiTest, docIdx, wordIdx), // topic index
-			c = getValue(collections_dTest, docIdx); // collection id
+		int z = getValue(zdiTest, docIdx, wordIdx); // collection id
 		// decrement topic count per doc, ndk
 		decrement(ndkTest, docIdx, z);
 	}
@@ -544,8 +540,7 @@ public class GibbsSampler {
 	private void updateTestCountsNewlySampledAssignment(int docIdx, int wordIdx) {
 //		System.out.printf("update counts new sample. docid:%d wordid:%d\n", docIdx, wordIdx);
 		// query zdi and xdi, and get word value and doc collection
-		int z = getValue(zdiTest, docIdx, wordIdx), // topic index
-		c = getValue(collections_dTest, docIdx); // collection id
+		int z = getValue(zdiTest, docIdx, wordIdx); // collection id
 		// decrement topic count per doc, ndk
 		increment(ndkTest, docIdx, z);
 	}
