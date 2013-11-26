@@ -1290,7 +1290,7 @@ public class GibbsSampler {
 				for(int k = 0; k < numTopics; k++) {
 					//TODO verify that we print out means
 					pw.printf(" ");
-					printFloatToFile(g.getProbability(g.phi_kw, k, g.WordToIndex.get(word)), pw, false);
+					printFloatToFile(g.getProbability(g.phi_kwMean, k, g.WordToIndex.get(word)), pw, false);
 				}
 				pw.println();
 			}
@@ -1310,7 +1310,7 @@ public class GibbsSampler {
 					for(int k = 0; k < numTopics; k++) {
 						//TODO verify that we print out means
 						pw.printf(" ");
-						printFloatToFile(g.getProbability(g.phi_ckw, c, k, g.WordToIndex.get(word)), pw, false);
+						printFloatToFile(g.getProbability(g.phi_ckwMean, c, k, g.WordToIndex.get(word)), pw, false);
 					}
 					pw.println();
 				}
