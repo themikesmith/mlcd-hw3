@@ -142,9 +142,9 @@ public class GibbsSampler {
 	
 	GibbsSampler(SamplerType type, int numCollections, int numTopics, 
 			double lambda, double alpha, double beta) {
-		System.err.println("\n===[ New GibbsSampler ]===");
-		System.out.printf("type = %d \nnumCollections = %d  \nnumTopics = %d \nlambda = %f \nalpha = %f \nbeta = %f",
-				type.ordinal(),numCollections,numTopics,lambda,alpha,beta);
+//		System.err.println("\n===[ New GibbsSampler ]===");
+//		System.out.printf("type = %d \nnumCollections = %d  \nnumTopics = %d \nlambda = %f \nalpha = %f \nbeta = %f",
+//				type.ordinal(),numCollections,numTopics,lambda,alpha,beta);
 		
 		WordToIndex = new HashMap<String,Integer>();
 		ndStar = new ArrayList<Integer>();
@@ -1231,7 +1231,7 @@ public class GibbsSampler {
 			e.printStackTrace();
 			return;
 		}
-		g.printDebug();
+//		g.printDebug();
 //		System.err.println("\n\nEXCLUDING d= 0 w = 0");
 //		g.updateCountsExcludeCurrentAssignment(0, 0);
 //		System.err.println();
