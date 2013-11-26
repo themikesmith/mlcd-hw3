@@ -77,24 +77,6 @@ public class GibbsSampler {
 	 */
 	private ArrayList< ArrayList<Integer> > ndkTest;
 	/**
-	 * 1D array counting the number of tokens that are assigned to each topic
-	 * First index is topic
-	 * for test data counts
-	 */
-	private ArrayList<Integer> nkStarTest;
-	/**
-	 * 2D array counting the number of word tokens labeled with each topic
-	 * First index is topic, second is word index
-	 * for test data counts
-	 */
-	private ArrayList< ArrayList<Integer> > nkwTest;
-	/**
-	 * 3D array, number of collections, number of topics, number of word types of each topic in each collection
-	 * First index is collection, second index is topic, third is word type
-	 * for test data counts
-	 */
-	private ArrayList< ArrayList< ArrayList<Integer> > > nckwTest;
-	/**
 	 * Stores the topic index of each word in each document.
 	 * First index is document, second word index
 	 * for test data counts
@@ -106,13 +88,6 @@ public class GibbsSampler {
 	 * for test data counts
 	 */
 	private ArrayList< ArrayList<Integer> > xdiTest;
-	/**
-	 * 2D array, number of times topic is mentioned in each collection
-	 * First index is collection, second is topic
-	 * for test data counts
-	 */
-	private ArrayList< ArrayList<Integer> > nckStarTest;
-
 	/**
 	 * Stores the wordIntValue for each word in each document
 	 * First index is document, second word index
@@ -181,10 +156,6 @@ public class GibbsSampler {
 		collections_dTest = new ArrayList<Integer>();
 		ndStarTest = new ArrayList<Integer>();
 		ndkTest = new ArrayList<ArrayList<Integer> >();
-		nkStarTest = new ArrayList<Integer>();
-		nkwTest = new ArrayList<ArrayList<Integer> >();
-		nckwTest = new ArrayList< ArrayList< ArrayList<Integer> > >();
-		nckStarTest = new ArrayList<ArrayList<Integer> >();
 		
 		xdi = new ArrayList<ArrayList<Integer> >();
 		zdi = new ArrayList<ArrayList<Integer> >();
@@ -210,42 +181,31 @@ public class GibbsSampler {
 		this.alpha = alpha;
 		this.beta = beta;
 		
-		// init nckstar, nckstartest, nckw, nckwtest
+		// init all things collection , topic
 		for(int c = 0; c < numCollections; c++) {
 			nckStar.add(new ArrayList<Integer>());
-			nckStarTest.add(new ArrayList<Integer>());
-			
 			nckw.add(new ArrayList< ArrayList<Integer>>());
-			nckwTest.add(new ArrayList< ArrayList<Integer>>());
 			
 			phi_ckw.add(new ArrayList<ArrayList<Probability>>());
 			phi_ckwMean.add(new ArrayList<ArrayList<Probability>>());
 			
 			for(int k = 0; k < numTopics; k++) {
 				nckStar.get(c).add(0);
-				nckStarTest.get(c).add(0);
-				
 				nckw.get(c).add(new ArrayList<Integer>());
-				nckwTest.get(c).add(new ArrayList<Integer>());
 				
 				phi_ckw.get(c).add(new ArrayList<Probability>());
 				phi_ckwMean.get(c).add(new ArrayList<Probability>());
 			}
 		}
 		
-		// init count of topics
+		// init everything with index topic
 		for(int k = 0; k < numTopics; k++) {
 			nkStar.add(0);
-			nkStarTest.add(0);
 			nkw.add(new ArrayList<Integer>());
-			nkwTest.add(new ArrayList<Integer>());
 			
 			phi_kw.add(new ArrayList<Probability>());
 			phi_kwMean.add(new ArrayList<Probability>());
 		}
-		
-		
-		
 		
 		rand = new Random();
 	}
@@ -286,20 +246,17 @@ public class GibbsSampler {
 			//add a new word row to n^{k}_{w} and n^{(c),k}_{w}
 			for(int k = 0; k<numTopics; k++){
 				nkw.get(k).add(0);
-				nkwTest.get(k).add(0);
 				
 				phi_kw.get(k).add(new Probability(0));
 				phi_kwMean.get(k).add(new Probability(0));
 				for(int c = 0; c< numCollections; c++){
 					nckw.get(c).get(k).add(0);
-					nckwTest.get(c).get(k).add(0);
 					
 					phi_ckw.get(c).get(k).add(new Probability(0));
 					phi_ckwMean.get(c).get(k).add(new Probability(0));
 				}
 			}
 		}
-		
 		
 		int wordIntValue = WordToIndex.get(word);
 		int x = rand.nextInt(2);
@@ -334,7 +291,6 @@ public class GibbsSampler {
 		//if new document
 		if(docIdx >= collections_dTest.size()){
 			//System.out.printf("New document!\n");
-
 			ndStarTest.add(0);
 			collections_dTest.add(collectionIdx);
 			
@@ -347,13 +303,9 @@ public class GibbsSampler {
 			xdiTest.add(new ArrayList<Integer>());
 			wdiTest.add(new ArrayList<Integer>());
 			
-			theta_dk.add(new ArrayList<Probability>());
 			theta_dkTest.add(new ArrayList<Probability>());
-			theta_dkMean.add(new ArrayList<Probability>());
 			for(int k = 0; k< numTopics; k++) {
-				theta_dk.get(docIdx).add(new Probability(0.0));
 				theta_dkTest.get(docIdx).add(new Probability(0.0));
-				theta_dkMean.get(docIdx).add(new Probability(0.0));
 			}
 		}
 		// if new word
@@ -363,14 +315,11 @@ public class GibbsSampler {
 			// add a new word row to n^{k}_{w} and n^{(c),k}_{w}
 			for (int k = 0; k < numTopics; k++) {
 				nkw.get(k).add(0);
-				nkwTest.get(k).add(0);
-
+				
 				phi_kw.get(k).add(new Probability(0));
 				phi_kwMean.get(k).add(new Probability(0));
 				for (int c = 0; c < numCollections; c++) {
 					nckw.get(c).get(k).add(0);
-					nckwTest.get(c).get(k).add(0);
-
 					phi_ckw.get(c).get(k).add(new Probability(0));
 					phi_ckwMean.get(c).get(k).add(new Probability(0));
 				}
@@ -385,16 +334,9 @@ public class GibbsSampler {
 		zdiTest.get(docIdx).add(z);
 		wdiTest.get(docIdx).add(wordIntValue);
 		
-		if(x == 0){ // using collection-independent counts
-			increment(nkwTest,z,wordIntValue);
-		}else{ // using collection-dependent counts
-			increment(nckwTest,collectionIdx,z,wordIntValue);	
-		}
 		increment(ndStarTest,docIdx);
 		//System.out.printf("d = %d  z = %d\n",docIdx,z);
 		increment(ndkTest,docIdx,z);
-		increment(nkStarTest,z);
-		increment(nckStarTest, collectionIdx, z);
 	}
 	
 	private Integer getValue(ArrayList a, int... indicies){
@@ -587,10 +529,6 @@ public class GibbsSampler {
 			c = getValue(collections_dTest, docIdx); // collection id
 		// decrement topic count per doc, ndk
 		decrement(ndkTest, docIdx, z);
-		// and decrement topic count per word, nkstar
-		decrement(nkStarTest, z);
-		// and decrement nckstar
-		decrement(nckStarTest, c, z);
 	}
 	/**
 	 * Updates the counts to include the newly sampled assignment of the
@@ -605,10 +543,6 @@ public class GibbsSampler {
 		c = getValue(collections_dTest, docIdx); // collection id
 		// decrement topic count per doc, ndk
 		increment(ndkTest, docIdx, z);
-		// and decrement topic count per word, nkstar
-		increment(nkStarTest, z);
-		// and decrement nckstar
-		increment(nckStarTest, c, z);
 	}
 	
 	/**
@@ -791,7 +725,7 @@ public class GibbsSampler {
 			return a.product(getProbability(phi_kw, k, w));
 		}
 		else {
-			int c = getValue(collections_d, d);
+			int c = getValue(collections_dTest, d);
 			return a.product(getProbability(phi_ckw, c, k, w));
 		}
 	}
@@ -822,7 +756,7 @@ public class GibbsSampler {
 		}
 		else if(v == 1) {
 			multiplier = new Probability(lambda);
-			int c = getValue(collections_d, d);
+			int c = getValue(collections_dTest, d);
 			return multiplier.product(getProbability(phi_ckw, c, k, w));
 		}
 		else {
@@ -1120,7 +1054,7 @@ public class GibbsSampler {
 			}
 			// compute log likelihood of train
 			Probability logLike_train = new Probability(0.0);
-			for (int d = 0; d < collections_dTest.size(); d++) {
+			for (int d = 0; d < collections_d.size(); d++) {
 				for (int i = 0; i < ndStar.get(d); i++) {
 					for (int k = 0; k < numTopics; k++) {
 						Probability term1 = new Probability(1-lambda);
@@ -1138,14 +1072,14 @@ public class GibbsSampler {
 			// compute log likelihood of test
 			Probability logLike_test = new Probability(0.0);
 			for (int d = 0; d < collections_dTest.size(); d++) {
-				for (int i = 0; i < ndStar.get(d); i++) {
+				for (int i = 0; i < ndStarTest.get(d); i++) {
 					for (int k = 0; k < numTopics; k++) {
 						Probability term1 = new Probability(1-lambda);
 						term1 = term1.product(
-								getProbability(phi_kw,k,getValue(wdi,d,i).intValue()));
+								getProbability(phi_kw,k,getValue(wdiTest,d,i).intValue()));
 						Probability term2 = new Probability(lambda);
 						term2 = term2.product(
-								getProbability(phi_ckw,getValue(collections_d,d),k,getValue(wdi,d,i).intValue()));
+								getProbability(phi_ckw,getValue(collections_dTest,d),k,getValue(wdiTest,d,i).intValue()));
 						
 						logLike_test.add(getProbability(theta_dkTest,d,k).product(term1.add(term2)));
 					}
