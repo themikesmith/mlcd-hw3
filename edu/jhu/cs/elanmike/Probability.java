@@ -79,6 +79,7 @@ public class Probability {
 			value = this.logprob + Math.log1p(Math.exp(other.logprob - this.logprob));
 		}
 		else {
+			
 			System.out.println("uh oh!! we didn't account for a case in log add");
 //			System.err.println("uh oh!! we didn't account for a case in log add");
 			System.out.printf("this:%s\nother:%s\n",this,other);

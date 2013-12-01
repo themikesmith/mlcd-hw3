@@ -31,12 +31,12 @@ public class GibbsSampler {
 	 */
 	private ArrayList<Integer> nkStar;
 	/**
-	 * 2D array counting the number of word tokens labeled with each topic
+	 * 2D array counting the number of word tokens labeled with each topic  ( Corpus independent x = 0 )
 	 * First index is topic, second is word index
 	 */
 	private ArrayList< ArrayList<Integer> > nkw;
 	/**
-	 * 3D array, number of collections, number of topics, number of word types of each topic in each collection
+	 * 3D array, number of collections, number of topics, number of word types of each topic in each collection   ( Corpus dependent x = 1 )
 	 * First index is collection, second index is topic, third is word type
 	 */
 	private ArrayList< ArrayList< ArrayList<Integer> > > nckw;
@@ -346,9 +346,12 @@ public class GibbsSampler {
 		ArrayList curArray = a;
 		
 		while(depth <indicies.length - 1){
+			//System.out.printf("Depth(%d) = %d\n",indicies[depth], depth);
 			curArray = (ArrayList) curArray.get(indicies[depth]);
 			depth++;
 		}
+		
+		//System.out.printf("LastDepth(%d) = %d\n",indicies[depth], depth);
 		return (Integer) curArray.get(indicies[depth]);
 	}
 	
@@ -906,9 +909,13 @@ public class GibbsSampler {
 	 * Runs an iteration of training asmpling
 	 */
 	private void sampleTrainingIter() {
+		
+		// Loop through all documents
 		for(int d = 0; d < ndk.size(); d++) {
 //			System.out.printf("d:%d ",d);
 			int numWordsInD = ndStar.get(d);
+			
+			// Loop through all words
 			for(int i = 0; i < numWordsInD; i++) {
 				int w = getValue(wdi, d, i),
 					v = getValue(xdi, d, i);
@@ -1061,42 +1068,56 @@ public class GibbsSampler {
 					setProbability(theta_dkTest, thetadkTest, d, k);
 				}
 			}
+			
 			// compute log likelihood of train
 			Probability logLike_train = new Probability(0.0);
 			for (int d = 0; d < collections_d.size(); d++) {
 				for (int i = 0; i < ndStar.get(d); i++) {
 					for (int k = 0; k < numTopics; k++) {
-						Probability term1 = new Probability(1-lambda);
-						term1 = term1.product(
+						Probability oneMinusTheta_times_PhiKW = (new Probability(1-lambda)).product(
 								getProbability(phi_kw,k,getValue(wdi,d,i).intValue()));
-						Probability term2 = new Probability(lambda);
-						term2 = term2.product(
-								getProbability(phi_ckw,getValue(collections_d,d),k,getValue(wdi,d,i).intValue()));
+
+						Probability lambda_times_PhiCKW = (new Probability(lambda)).product(
+								getProbability(
+										phi_ckw,getValue(collections_d,d),k,getValue(wdi,d,i).intValue()));
 						
-						logLike_train.add(getProbability(theta_dk,d,k).product(term1.add(term2)));
+						System.out.printf("oneMinusTheta_times_PhiKW = %s  \n",oneMinusTheta_times_PhiKW);
+						System.out.printf("lambda_times_PhiCKW = %s  \n",lambda_times_PhiCKW);
+
+						logLike_train = logLike_train.add(getProbability(theta_dk,d,k).product(oneMinusTheta_times_PhiKW.add(lambda_times_PhiCKW)));
 					}
 				}
 			}
 			System.out.printf("ll(train) = %s\n", logLike_train);
 			printFloatToFile(logLike_train, pwTrainLL, true);
+			
+			
 			// compute log likelihood of test
 			Probability logLike_test = new Probability(0.0);
 			for (int d = 0; d < collections_dTest.size(); d++) {
 				for (int i = 0; i < ndStarTest.get(d); i++) {
 					for (int k = 0; k < numTopics; k++) {
-						Probability term1 = new Probability(1-lambda);
-						term1 = term1.product(
+						Probability oneMinusTheta_times_PhiKW = (new Probability(1-lambda)).product(
 								getProbability(phi_kw,k,getValue(wdiTest,d,i).intValue()));
-						Probability term2 = new Probability(lambda);
-						term2 = term2.product(
-								getProbability(phi_ckw,getValue(collections_dTest,d),k,getValue(wdiTest,d,i).intValue()));
 						
-						logLike_test.add(getProbability(theta_dkTest,d,k).product(term1.add(term2)));
+						System.out.printf("oneMinusTheta_times_PhiKW = %s  \n",oneMinusTheta_times_PhiKW);
+						//System.out.printf("ll(test1, %d) = %s  \n",d,k,term1);
+						
+						Probability lambda_times_PhiCKW = (new Probability(lambda)).product(
+								getProbability(phi_ckw,getValue(collections_dTest,d),k,getValue(wdiTest,d,i).intValue()));
+
+						System.out.printf("lambda_times_PhiCKW = %s  \n",lambda_times_PhiCKW);
+						
+						logLike_test = logLike_test.add(
+								getProbability(theta_dkTest,d,k).product(
+										oneMinusTheta_times_PhiKW.product(
+												lambda_times_PhiCKW)));
+						
+						//System.out.printf("ll(test, %d) = %s  \n",d, logLike_test);
 					}
 				}
 			}
-			System.out.printf("ll(test) = %s\n", logLike_test);
-			printFloatToFile(logLike_test, pwTestLL, true);
+			
 		}
 		int numSamples = totalIters - totalBurnin;
 		// divide means by N to actaully get means
@@ -1159,6 +1180,8 @@ public class GibbsSampler {
 			for(int i = 0; i<xdi.get(d).size(); i++){
 				System.out.printf("%d\t", getValue(zdi,d,i));
 			}
+			
+			System.out.printf("\n");
 		}
 		
 		System.out.println("\n\n=== nkStar ===");
@@ -1193,14 +1216,23 @@ public class GibbsSampler {
 		
 		//
 		
-		
+		System.out.println();
 		
 	}
+	
+	
+	
 	
 	/**
 	 * @param args
 	 */
  	public static void main(String[] args) {
+ 		//GibbsSampler g = new GibbsSampler(null, 2, 1, 1.0, 1.0, 1.0);
+// 		ArrayList<ArrayList<Integer>> a = new ArrayList<ArrayList<Integer>>();
+// 		a.add(new ArrayList<Integer>());
+// 		a.get(0).add(7);
+// 		System.out.printf("a (0,0) = %d ",g.getValue(a,0,0));
+ 		
 		SamplerType type = SamplerType.COLLAPSED;
 		if(args.length < 9 || args.length > 10) {
 			System.err.printf("Error: You passed %d arguments.\n",args.length);
@@ -1231,16 +1263,43 @@ public class GibbsSampler {
 			e.printStackTrace();
 			return;
 		}
-//		g.printDebug();
-//		System.err.println("\n\nEXCLUDING d= 0 w = 0");
-//		g.updateCountsExcludeCurrentAssignment(0, 0);
-//		System.err.println();
-//		g.printDebug();
-//		
-//		System.err.println("\n\nINCLUDING d= 0 w = 0");
-//		g.updateCountsNewlySampledAssignment(0, 0);
-//		System.err.println();
-//		g.printDebug();
+		
+		
+		//START DEBUG
+		g.printDebug();
+		System.err.println("\n\nEXCLUDING d= 0 w = 0");
+		g.updateCountsExcludeCurrentAssignment(0, 0);
+		System.err.println();
+		g.printDebug();
+		
+		System.err.println("\n\nINCLUDING d= 0 w = 0");
+		g.updateCountsNewlySampledAssignment(0, 0);
+		System.err.println();
+		g.printDebug();
+		
+		
+		System.err.println("\n\nEXCLUDING d= 0 w = 1");
+		g.updateCountsExcludeCurrentAssignment(0, 1);
+		System.err.println();
+		g.printDebug();
+		
+		System.err.println("\n\nINCLUDING d= 0 w = 1");
+		g.updateCountsNewlySampledAssignment(0, 1);
+		System.err.println();
+		g.printDebug();
+		
+		
+		System.err.println("\n\nEXCLUDING d= 0 w = 2");
+		g.updateCountsExcludeCurrentAssignment(0, 2);
+		System.err.println();
+		g.printDebug();
+		
+		System.err.println("\n\nINCLUDING d= 0 w = 2");
+		g.updateCountsNewlySampledAssignment(0, 2);
+		System.err.println();
+		g.printDebug();
+		//END DEBUG
+		
 		try {
 			g.readTestFile(testFile);
 		} catch (IOException e) {
@@ -1315,6 +1374,7 @@ public class GibbsSampler {
 				ex.printStackTrace();
 			}
 		}
+
 	}
 	private static void usage() {
 		System.out.println("Usage:./collapsed-sampler trainFile testFile outputFile K lambda alpha beta totalNumSamples totalBurnIn\n" +
