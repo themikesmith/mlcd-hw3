@@ -381,14 +381,24 @@ public class GibbsSampler {
 	}
 	
 	private Probability getProbability(ArrayList a, int... indicies){
-		int depth = 0;
-		ArrayList curArray = a;
-		
-		while(depth <indicies.length - 1){
-			curArray = (ArrayList) curArray.get(indicies[depth]);
-			depth++;
+		try {
+			int depth = 0;
+			ArrayList curArray = a;
+			
+			while(depth <indicies.length - 1){
+				curArray = (ArrayList) curArray.get(indicies[depth]);
+				depth++;
+			}
+			return (Probability) curArray.get(indicies[depth]);
 		}
-		return (Probability) curArray.get(indicies[depth]);
+		catch(ArrayIndexOutOfBoundsException ex) {
+			System.err.printf("indices:");
+			for(int i : indicies) {
+				System.err.printf("%d, ",i);
+			}
+			ex.printStackTrace();
+			return null;
+		}
 	}
 	
 	private void setProbability(ArrayList a, Probability val, int... indicies){
@@ -633,7 +643,7 @@ public class GibbsSampler {
 //		System.out.println("K * alpha + ndstar:"+b);
 		// a / b
 		a = a.divide(b);
-		if(a.getLogProb() == Double.NaN) {
+		if(Double.isNaN(a.getLogProb()))  {
 			a = Probability.ZERO;
 		}
 //		System.out.println("(alpha + ndk) / (K * alpha + ndstar):"+a);
@@ -647,7 +657,7 @@ public class GibbsSampler {
 			f = f.add(new Probability(getValue(nkStar, k)));
 			// a / b
 			c = c.divide(f);
-			if(c.getLogProb() == Double.NaN) {
+			if(Double.isNaN(c.getLogProb()))  {
 				c = Probability.ZERO;
 			}
 			return a.product(c);
@@ -663,7 +673,7 @@ public class GibbsSampler {
 			f = f.add(new Probability(getValue(nckStar, coll, k)));
 			// c / f
 			c = c.divide(f);
-			if(c.getLogProb() == Double.NaN) {
+			if(Double.isNaN(c.getLogProb()))  {
 				c = Probability.ZERO;
 			}
 			return a.product(c);
@@ -707,7 +717,7 @@ public class GibbsSampler {
 			// a / b
 //			System.out.println("(beta + nkw) / (V * beta + nkstar):"+f);
 			c = c.divide(f);
-			if(c.getLogProb() == Double.NaN) {
+			if(Double.isNaN(c.getLogProb()))  {
 				c = Probability.ZERO;
 			}
 			return multiplier.product(c);
@@ -734,7 +744,7 @@ public class GibbsSampler {
 //			System.out.println("V * beta + nckstar:"+f);
 			// c / f
 			c = c.divide(f);
-			if(c.getLogProb() == Double.NaN) {
+			if(Double.isNaN(c.getLogProb()))  {
 				c = Probability.ZERO;
 			}
 //			System.out.println("(beta + nckw) / (V * beta + nckstar):"+f);
@@ -782,9 +792,10 @@ public class GibbsSampler {
 //		System.out.println("K * alpha + ndstar:"+b);
 		// a / b
 		a = a.divide(b);
-		if(a.getLogProb() == Double.NaN) {
+		if(Double.isNaN(a.getLogProb()))  {
 			a = Probability.ZERO;
 		}
+//		System.out.printf("a:%f\n", a.getLogProb());
 //		System.out.println("(alpha + ndk) / (K * alpha + ndstar):"+a);
 		if(xdi == 0) {
 			return a.product(getProbability(phi_kw, k, w));
@@ -938,7 +949,7 @@ public class GibbsSampler {
 //				System.out.println("marker:"+marker);
 				for(int k = 0; k < numTopics; k++) {
 //					System.out.println("kth total:"+totalProbs[k]);
-					if(totalProbs[k].getLogProb() > marker.getLogProb()) {
+					if(totalProbs[k].getLogProb() >= marker.getLogProb()) {
 						// stop. we have sampled this value of k
 						sampledZdi = k;
 						break;
@@ -1271,7 +1282,9 @@ public class GibbsSampler {
 					logLike_test += Math.log(topicTotal);
 				}
 			}
+
 			System.out.printf("T:%d ll(test) = %s\n",t, logLike_test);
+
 			printDoubleToFile(logLike_test, pwTestLL, true);
 		}
 		int numSamples = totalIters - totalBurnin;
@@ -1410,8 +1423,8 @@ public class GibbsSampler {
 		double lambda = Double.parseDouble(args[4]),
 				alpha = Double.parseDouble(args[5]), 
 				beta = Double.parseDouble(args[6]);
-		System.out.printf("trainfile:%s testfile:%s output:%s \nk:%d lambda:%f alpha:%f beta:%f \ntotaliters:%d totalburnin:%d\n",
-				trainingFile, testFile, outFile, numTopics, lambda, alpha, beta, totalIters, totalBurnin);
+//		System.out.printf("trainfile:%s testfile:%s output:%s \nk:%d lambda:%f alpha:%f beta:%f \ntotaliters:%d totalburnin:%d\n",
+//				trainingFile, testFile, outFile, numTopics, lambda, alpha, beta, totalIters, totalBurnin);
 		GibbsSampler g = new GibbsSampler(type, numCollections, numTopics, lambda, alpha, beta);
 		try {
 			g.readTrainingFile(trainingFile);
