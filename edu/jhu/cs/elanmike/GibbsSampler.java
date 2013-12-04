@@ -381,14 +381,24 @@ public class GibbsSampler {
 	}
 	
 	private Probability getProbability(ArrayList a, int... indicies){
-		int depth = 0;
-		ArrayList curArray = a;
-		
-		while(depth <indicies.length - 1){
-			curArray = (ArrayList) curArray.get(indicies[depth]);
-			depth++;
+		try {
+			int depth = 0;
+			ArrayList curArray = a;
+			
+			while(depth <indicies.length - 1){
+				curArray = (ArrayList) curArray.get(indicies[depth]);
+				depth++;
+			}
+			return (Probability) curArray.get(indicies[depth]);
 		}
-		return (Probability) curArray.get(indicies[depth]);
+		catch(ArrayIndexOutOfBoundsException ex) {
+			System.err.printf("indices:");
+			for(int i : indicies) {
+				System.err.printf("%d, ",i);
+			}
+			ex.printStackTrace();
+			return null;
+		}
 	}
 	
 	private void setProbability(ArrayList a, Probability val, int... indicies){
@@ -939,7 +949,7 @@ public class GibbsSampler {
 //				System.out.println("marker:"+marker);
 				for(int k = 0; k < numTopics; k++) {
 //					System.out.println("kth total:"+totalProbs[k]);
-					if(totalProbs[k].getLogProb() > marker.getLogProb()) {
+					if(totalProbs[k].getLogProb() >= marker.getLogProb()) {
 						// stop. we have sampled this value of k
 						sampledZdi = k;
 						break;
