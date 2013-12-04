@@ -484,6 +484,8 @@ public class GibbsSampler {
 			c = getValue(collections_d, docIdx); // collection id
 		// decrement topic count per doc, ndk
 		decrement(ndk, docIdx, z);
+		decrement(ndStar, docIdx);
+		
 		// and decrement topic count per word, nkstar
 		decrement(nkStar, z);
 		// and decrement nckstar
@@ -510,6 +512,7 @@ public class GibbsSampler {
 		c = getValue(collections_d, docIdx); // collection id
 		// decrement topic count per doc, ndk
 		increment(ndk, docIdx, z);
+		increment(ndStar, docIdx);
 		// and decrement topic count per word, nkstar
 		increment(nkStar, z);
 		// and decrement nckstar
@@ -533,6 +536,7 @@ public class GibbsSampler {
 		int z = getValue(zdiTest, docIdx, wordIdx); // collection id
 		// decrement topic count per doc, ndk
 		decrement(ndkTest, docIdx, z);
+		decrement(ndStarTest, docIdx);
 	}
 	/**
 	 * Updates the counts to include the newly sampled assignment of the
@@ -546,6 +550,9 @@ public class GibbsSampler {
 		int z = getValue(zdiTest, docIdx, wordIdx); // collection id
 		// decrement topic count per doc, ndk
 		increment(ndkTest, docIdx, z);
+		increment(ndStarTest, docIdx);
+
+		
 	}
 	
 	/**
@@ -846,6 +853,7 @@ public class GibbsSampler {
 	 * Runs an iteration of test sampling
 	 */
 	private void sampleTestIter() {
+		
 		for(int d = 0; d < ndkTest.size(); d++) {
 //			System.out.printf("d:%d ",d);
 			int numWordsInD = ndStarTest.get(d);
