@@ -132,6 +132,7 @@ public class GibbsSampler {
 		COLLAPSED, BLOCKED
 	}
 	private SamplerType type;
+	private static final boolean COUNTS_ARE_SEPRERATED = false;
 	
 	/**
 	 * Map from word string to index
@@ -215,7 +216,9 @@ public class GibbsSampler {
 	
 	private void processWord(String word, int collectionIdx, int docIdx, int wordIdx){
 		//System.out.printf("Processing: %s, c=%d d=%d i=%d \n",word,collectionIdx,docIdx,wordIdx);
-		//if new document
+		
+		
+		//NEW DOCUMENT
 		if(docIdx >= collections_d.size()){
 			//System.out.printf("New document!\n");
 
@@ -241,7 +244,7 @@ public class GibbsSampler {
 			}
 		}
 		
-		//if new word
+		//NEW WORD
 		if(!WordToIndex.containsKey(word)){
 			//System.out.printf("New word!\n");
 			WordToIndex.put(word, WordToIndex.size());
@@ -268,16 +271,25 @@ public class GibbsSampler {
 		zdi.get(docIdx).add(z);
 		wdi.get(docIdx).add(wordIntValue);
 		
-		if(x == 0){ // using collection-independent counts
+		if(COUNTS_ARE_SEPRERATED){
+			if(x == 0){ // using collection-independent counts
+				increment(nkw,z,wordIntValue);
+				increment(nkStar,z);
+			}else{ // using collection-dependent counts
+				increment(nckw,collectionIdx,z,wordIntValue);
+				increment(nckStar, collectionIdx, z);
+			}
+		}else{
 			increment(nkw,z,wordIntValue);
-		}else{ // using collection-dependent counts
-			increment(nckw,collectionIdx,z,wordIntValue);	
+			increment(nkStar,z);
+			increment(nckw,collectionIdx,z,wordIntValue);
+			increment(nckStar, collectionIdx, z);
 		}
 		increment(ndStar,docIdx);
 		//System.out.printf("d = %d  z = %d\n",docIdx,z);
 		increment(ndk,docIdx,z);
-		increment(nkStar,z);
-		increment(nckStar, collectionIdx, z);
+		
+		
 	}
 	
 	/**
@@ -290,7 +302,8 @@ public class GibbsSampler {
 	 */
 	private void processWordTest(String word, int collectionIdx, int docIdx, int wordIdx){
 		//System.out.printf("Processing: %s, c=%d d=%d i=%d \n",word,collectionIdx,docIdx,wordIdx);
-		//if new document
+		
+		//NEW DOCUMENT
 		if(docIdx >= collections_dTest.size()){
 			//System.out.printf("New document!\n");
 			ndStarTest.add(0);
@@ -310,7 +323,8 @@ public class GibbsSampler {
 				theta_dkTest.get(docIdx).add(new Probability(0.0));
 			}
 		}
-		// if new word
+		
+		//NEW WORD
 		if (!WordToIndex.containsKey(word)) {
 			// System.out.printf("New word!\n");
 			WordToIndex.put(word, WordToIndex.size());
@@ -482,18 +496,29 @@ public class GibbsSampler {
 			x = getValue(xdi, docIdx, wordIdx), // global flag
 			w = getValue(wdi, docIdx, wordIdx), // word value
 			c = getValue(collections_d, docIdx); // collection id
+		
+		
 		// decrement topic count per doc, ndk
 		decrement(ndk, docIdx, z);
 		decrement(ndStar, docIdx);
-		if(x == 0) { // decrement global
-			decrement(nkw, z, w);
+		
+		if(COUNTS_ARE_SEPRERATED){
+			if(x == 0) { // decrement global
+				// and decrement topic count per word, nkstar
+				decrement(nkw, z, w);
+				decrement(nkStar, z);
+			}else { // collection-specific
+				// and decrement nckstar
+				decrement(nckw, c, z, w);
+				decrement(nckStar, c, z);
+			}
+		}else{
 			// and decrement topic count per word, nkstar
+			decrement(nkw, z, w);
 			decrement(nkStar, z);
-		}
-		else { // collection-specific
-			decrement(nckw, c, z, w);
 			// and decrement nckstar
-			decrement(nckStar, c, z);
+			decrement(nckw, c, z, w);
+			decrement(nckStar, c, z);			
 		}
 	}
 	/**
@@ -509,17 +534,29 @@ public class GibbsSampler {
 		x = getValue(xdi, docIdx, wordIdx), // global flag
 		w = getValue(wdi, docIdx, wordIdx), // word value
 		c = getValue(collections_d, docIdx); // collection id
-		// increment topic count per doc, ndk
+		
+		
+		// decrement topic count per doc, ndk
 		increment(ndk, docIdx, z);
 		increment(ndStar, docIdx);
-		if (x == 0) { // increment global
+		
+		if(COUNTS_ARE_SEPRERATED){
+			if(x == 0) { // decrement global
+				// and decrement topic count per word, nkstar
+				increment(nkw, z, w);
+				increment(nkStar, z);
+			}else { // collection-specific
+				// and decrement nckstar
+				increment(nckw, c, z, w);
+				increment(nckStar, c, z);
+			}
+		}else{
+			// and decrement topic count per word, nkstar
 			increment(nkw, z, w);
-			// and increment nckstar
-			increment(nckStar, c, z);
-		} else { // collection-specific
-			increment(nckw, c, z, w);
-			// and increment topic count per word, nkstar
 			increment(nkStar, z);
+			// and decrement nckstar
+			increment(nckw, c, z, w);
+			increment(nckStar, c, z);			
 		}
 	}
 	
@@ -1086,8 +1123,8 @@ public class GibbsSampler {
 								getProbability(
 										phi_ckw,getValue(collections_d,d),k,getValue(wdi,d,i).intValue()));
 						
-						System.out.printf("oneMinusTheta_times_PhiKW = %s  \n",oneMinusTheta_times_PhiKW);
-						System.out.printf("lambda_times_PhiCKW = %s  \n",lambda_times_PhiCKW);
+//						System.out.printf("oneMinusTheta_times_PhiKW = %s  \n",oneMinusTheta_times_PhiKW);
+//						System.out.printf("lambda_times_PhiCKW = %s  \n",lambda_times_PhiCKW);
 
 						logLike_train = logLike_train.add(getProbability(theta_dk,d,k).product(oneMinusTheta_times_PhiKW.add(lambda_times_PhiCKW)));
 					}
@@ -1105,13 +1142,13 @@ public class GibbsSampler {
 						Probability oneMinusTheta_times_PhiKW = (new Probability(1-lambda)).product(
 								getProbability(phi_kw,k,getValue(wdiTest,d,i).intValue()));
 						
-						System.out.printf("oneMinusTheta_times_PhiKW = %s  \n",oneMinusTheta_times_PhiKW);
+//						System.out.printf("oneMinusTheta_times_PhiKW = %s  \n",oneMinusTheta_times_PhiKW);
 						//System.out.printf("ll(test1, %d) = %s  \n",d,k,term1);
 						
 						Probability lambda_times_PhiCKW = (new Probability(lambda)).product(
 								getProbability(phi_ckw,getValue(collections_dTest,d),k,getValue(wdiTest,d,i).intValue()));
 
-						System.out.printf("lambda_times_PhiCKW = %s  \n",lambda_times_PhiCKW);
+//						System.out.printf("lambda_times_PhiCKW = %s  \n",lambda_times_PhiCKW);
 						
 						logLike_test = logLike_test.add(
 								getProbability(theta_dkTest,d,k).product(
