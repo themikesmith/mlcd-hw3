@@ -1059,6 +1059,8 @@ public class GibbsSampler {
 			}
 			//SANITY CHECKS
 			
+			double epsilon = 1.0 - 0.99999999999999;
+			
 			//Theta_dk should sum to 1 over topics
 			for(int d = 0; d < collections_d.size(); d++) {
 				Probability curDocSum = Probability.ZERO;
@@ -1066,7 +1068,9 @@ public class GibbsSampler {
 					Probability curProb = getProbability(theta_dk, d,k);
 					curDocSum = curDocSum.add(curProb);
 				}
-				System.out.println("Theta_dk check (should be near one):\t" + curDocSum);
+				if(Math.abs( 1.0 - Math.exp(curDocSum.getLogProb()) ) > epsilon){
+					System.err.println("Error: Theta_dk check (should be near one):\t" + curDocSum);
+				}
 			}
 			
 			
@@ -1077,7 +1081,9 @@ public class GibbsSampler {
 					Probability curProb = getProbability(phi_kw,k,w);
 					curTopicSum = curTopicSum.add(curProb);
 				}
-				System.out.println("Phi_kw check (should be near one):\t" + curTopicSum);
+				if(Math.abs( 1.0 - Math.exp(curTopicSum.getLogProb()) ) > epsilon){
+					System.out.println("Error: Phi_kw check (should be near one):\t" + curTopicSum);
+				}
 			}
 			
 			//Phi_ckw should sum to 1 over words
@@ -1088,7 +1094,9 @@ public class GibbsSampler {
 						Probability curProb = getProbability(phi_ckw,c,k,w);
 						curTopicSum = curTopicSum.add(curProb);
 					}
-					System.out.println("Phi_ckw check (should be near one):\t" + curTopicSum);
+					if(Math.abs( 1.0 - Math.exp(curTopicSum.getLogProb()) ) > epsilon){
+						System.out.println("Error: Phi_ckw check (should be near one):\t" + curTopicSum);
+					}
 				}
 			}
 			
