@@ -132,7 +132,7 @@ public class GibbsSampler {
 		COLLAPSED, BLOCKED
 	}
 	private SamplerType type;
-	private static final boolean COUNTS_ARE_SEPRERATED = false;
+	private static final boolean COUNTS_ARE_SEPARATED = false;
 	
 	/**
 	 * Map from word string to index
@@ -271,7 +271,7 @@ public class GibbsSampler {
 		zdi.get(docIdx).add(z);
 		wdi.get(docIdx).add(wordIntValue);
 		
-		if(COUNTS_ARE_SEPRERATED){
+		if(COUNTS_ARE_SEPARATED){
 			if(x == 0){ // using collection-independent counts
 				increment(nkw,z,wordIntValue);
 				increment(nkStar,z);
@@ -502,7 +502,7 @@ public class GibbsSampler {
 		decrement(ndk, docIdx, z);
 		decrement(ndStar, docIdx);
 		
-		if(COUNTS_ARE_SEPRERATED){
+		if(COUNTS_ARE_SEPARATED){
 			if(x == 0) { // decrement global
 				// and decrement topic count per word, nkstar
 				decrement(nkw, z, w);
@@ -540,7 +540,7 @@ public class GibbsSampler {
 		increment(ndk, docIdx, z);
 		increment(ndStar, docIdx);
 		
-		if(COUNTS_ARE_SEPRERATED){
+		if(COUNTS_ARE_SEPARATED){
 			if(x == 0) { // decrement global
 				// and decrement topic count per word, nkstar
 				increment(nkw, z, w);
