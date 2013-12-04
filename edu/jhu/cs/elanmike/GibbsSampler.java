@@ -633,7 +633,7 @@ public class GibbsSampler {
 //		System.out.println("K * alpha + ndstar:"+b);
 		// a / b
 		a = a.divide(b);
-		if(a.getLogProb() == Double.NaN) {
+		if(Double.isNaN(a.getLogProb()))  {
 			a = Probability.ZERO;
 		}
 //		System.out.println("(alpha + ndk) / (K * alpha + ndstar):"+a);
@@ -647,7 +647,7 @@ public class GibbsSampler {
 			f = f.add(new Probability(getValue(nkStar, k)));
 			// a / b
 			c = c.divide(f);
-			if(c.getLogProb() == Double.NaN) {
+			if(Double.isNaN(c.getLogProb()))  {
 				c = Probability.ZERO;
 			}
 			return a.product(c);
@@ -663,7 +663,7 @@ public class GibbsSampler {
 			f = f.add(new Probability(getValue(nckStar, coll, k)));
 			// c / f
 			c = c.divide(f);
-			if(c.getLogProb() == Double.NaN) {
+			if(Double.isNaN(c.getLogProb()))  {
 				c = Probability.ZERO;
 			}
 			return a.product(c);
@@ -707,7 +707,7 @@ public class GibbsSampler {
 			// a / b
 //			System.out.println("(beta + nkw) / (V * beta + nkstar):"+f);
 			c = c.divide(f);
-			if(c.getLogProb() == Double.NaN) {
+			if(Double.isNaN(c.getLogProb()))  {
 				c = Probability.ZERO;
 			}
 			return multiplier.product(c);
@@ -734,7 +734,7 @@ public class GibbsSampler {
 //			System.out.println("V * beta + nckstar:"+f);
 			// c / f
 			c = c.divide(f);
-			if(c.getLogProb() == Double.NaN) {
+			if(Double.isNaN(c.getLogProb()))  {
 				c = Probability.ZERO;
 			}
 //			System.out.println("(beta + nckw) / (V * beta + nckstar):"+f);
@@ -782,9 +782,10 @@ public class GibbsSampler {
 //		System.out.println("K * alpha + ndstar:"+b);
 		// a / b
 		a = a.divide(b);
-		if(a.getLogProb() == Double.NaN) {
+		if(Double.isNaN(a.getLogProb()))  {
 			a = Probability.ZERO;
 		}
+//		System.out.printf("a:%f\n", a.getLogProb());
 //		System.out.println("(alpha + ndk) / (K * alpha + ndstar):"+a);
 		if(xdi == 0) {
 			return a.product(getProbability(phi_kw, k, w));
