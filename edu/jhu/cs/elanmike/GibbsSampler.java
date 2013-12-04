@@ -1178,15 +1178,16 @@ public class GibbsSampler {
 			}
 //			System.out.printf("ll(train) = %s\n", logLike_train.getLogProb());
 			System.out.printf("ll(train) = %s\n", logLike_train);
-			printFloatToFile(logLike_train, pwTrainLL, true);
-			
+			printDoubleToFile(logLike_train, pwTrainLL, true);
 			
 			// compute log likelihood of test
-			Probability logLike_test = new Probability(0.0);
+//			Probability logLike_test = new Probability(0.0);
+			double logLike_test = 0;
 			for (int d = 0; d < collections_dTest.size(); d++) {
 				for (int i = 0; i < ndStarTest.get(d); i++) {
+					double topicTotal = 0;
 					for (int k = 0; k < numTopics; k++) {
-						Probability oneMinusTheta_times_PhiKW = (new Probability(1-lambda)).product(
+						Probability oneMinusLambda_times_PhiKW = (new Probability(1-lambda)).product(
 								getProbability(phi_kw,k,getValue(wdiTest,d,i).intValue()));
 						
 //						System.out.printf("oneMinusTheta_times_PhiKW = %s  \n",oneMinusTheta_times_PhiKW);
@@ -1196,17 +1197,18 @@ public class GibbsSampler {
 								getProbability(phi_ckw,getValue(collections_dTest,d),k,getValue(wdiTest,d,i).intValue()));
 
 //						System.out.printf("lambda_times_PhiCKW = %s  \n",lambda_times_PhiCKW);
-						
-						logLike_test = logLike_test.add(
-								getProbability(theta_dkTest,d,k).product(
-										oneMinusTheta_times_PhiKW.product(
-												lambda_times_PhiCKW)));
+				
+						Probability sum = oneMinusLambda_times_PhiKW.add(lambda_times_PhiCKW);
+						Probability thetadk = getProbability(theta_dk,d,k);
+						topicTotal = topicTotal + Math.exp(thetadk.product(sum).getLogProb());
 						
 						//System.out.printf("ll(test, %d) = %s  \n",d, logLike_test);
 					}
+					logLike_test += Math.log(topicTotal);
 				}
 			}
-			
+			System.out.printf("ll(test) = %s\n", logLike_test);
+			printDoubleToFile(logLike_test, pwTestLL, true);
 		}
 		int numSamples = totalIters - totalBurnin;
 		// divide means by N to actaully get means
@@ -1478,7 +1480,7 @@ public class GibbsSampler {
 		if(newline) pw.printf("%.13f\n", p.getLogProb());
 		else pw.printf("%.13f", p.getLogProb());
 	}
-	private static void printFloatToFile(double p, PrintWriter pw, boolean newline) {
+	private static void printDoubleToFile(double p, PrintWriter pw, boolean newline) {
 		if(newline) pw.printf("%.13f\n", p);
 		else pw.printf("%.13f", p);
 	}
