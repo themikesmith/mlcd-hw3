@@ -1092,7 +1092,6 @@ public class GibbsSampler {
 				}
 			}
 			
-			
 			// Counts check;
 			// Does ndk over k = ndstar?
 			for(int d = 0; d < collections_d.size(); d++) {
