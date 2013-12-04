@@ -13,50 +13,16 @@ def main():
 	print >> sys.stderr, "reading results..."
 	infile = open(sys.argv[1], 'r')
 	data = {}
-	label = None
+	#label = None
+	label = 'logLikelihood'
+	count = 0
 	for line in infile:
-		if line.startswith('# '):
-			# get data label, and continue using that label
-			daily = (line.find('daily') != -1)
-			asdf = line.split('vs')
-			x = asdf[0]
-			y = asdf[1]
-			url = (line.find('url') != -1)
-			nourl = (line.find('nourl') != -1)
-			label = 'weekly '
-			if daily:
-				label = 'daily '
-			awareness = (x.find('awareness') != -1)
-			nourl = (x.find('nourl') != -1)
-			if nourl and awareness:
-				label += 'awareness nourl'
-			elif awareness:
-				label += 'awareness'
-			elif not awareness and nourl:
-				label += 'infection nourl'
-			elif not awareness:
-				label += 'infection'
-			else:
-				print >> sys.stderr, " uh oh!! "
-			label += ' vs '
-			awareness = (y.find('awareness') != -1)
-			nourl = (y.find('nourl') != -1)
-			if nourl and awareness:
-				label += 'awareness nourl'
-			elif awareness:
-				label += 'awareness'
-			elif not awareness and nourl:
-				label += 'infection nourl'
-			elif not awareness:
-				label += 'infection'
-			else:
-				print >> sys.stderr, " uh oh!! "
-			print >> sys.stderr, "using label:%s\n" % label
-		elif len(line) > 0 and not line.startswith('##'): # ignore ## comments and blanks
+		if len(line) > 0 and not line.startswith('##'): # ignore ## comments and blanks
 			# lines tab delineated - lag	n	corr
 			data[label] = data.get(label, []) # init with list
 			things = line.strip().split()
-			data[label].append( (things[0], things[1], things[2]) )
+			data[label].append( (count, count, things[0]) )
+			count = count + 1
 	infile.close()
 
 	# now data maps label -> list of (lag, n, corr) tuples
@@ -70,35 +36,8 @@ def main():
 		y = asdf[1]
 		url = (lbl.find('url') != -1)
 		nourl = (lbl.find('nourl') != -1)
-		label = 'weekly '
-		if daily:
-			label = 'daily '
-		awareness = (x.find('awareness') != -1)
-		nourl = (x.find('nourl') != -1)
-		if nourl and awareness:
-			label += 'awareness nourl'
-		elif awareness:
-			label += 'awareness'
-		elif not awareness and nourl:
-			label += 'infection nourl'
-		elif not awareness:
-			label += 'infection'
-		else:
-			print >> sys.stderr, " uh oh!! "
-		label += ' vs '
-		awareness = (y.find('awareness') != -1)
-		nourl = (y.find('nourl') != -1)
-		if nourl and awareness:
-			label += 'awareness nourl'
-		elif awareness:
-			label += 'awareness'
-		elif not awareness and nourl:
-			label += 'infection nourl'
-		elif not awareness:
-			label += 'infection'
-		else:
-			print >> sys.stderr, " uh oh!! "
-		print >> sys.stderr, "plotting label:%s" % label
+		label = 'logLikelihood vs iterations '
+		
 		x = []
 		y = []
 		z = []

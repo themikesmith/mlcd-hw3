@@ -1241,7 +1241,7 @@ public class GibbsSampler {
 				}
 			}
 //			System.out.printf("ll(train) = %s\n", logLike_train.getLogProb());
-			System.out.printf("ll(train) = %s\n", logLike_train);
+			System.out.printf("t:%d ll(train) = %s\n",t, logLike_train);
 			printDoubleToFile(logLike_train, pwTrainLL, true);
 			
 			// compute log likelihood of test
@@ -1271,7 +1271,7 @@ public class GibbsSampler {
 					logLike_test += Math.log(topicTotal);
 				}
 			}
-			System.out.printf("ll(test) = %s\n", logLike_test);
+			System.out.printf("T:%d ll(test) = %s\n",t, logLike_test);
 			printDoubleToFile(logLike_test, pwTestLL, true);
 		}
 		int numSamples = totalIters - totalBurnin;
