@@ -633,6 +633,9 @@ public class GibbsSampler {
 //		System.out.println("K * alpha + ndstar:"+b);
 		// a / b
 		a = a.divide(b);
+		if(a.getLogProb() == Double.NaN) {
+			a = Probability.ZERO;
+		}
 //		System.out.println("(alpha + ndk) / (K * alpha + ndstar):"+a);
 		if(xdi == 0) {
 			// nkw + beta
@@ -644,6 +647,9 @@ public class GibbsSampler {
 			f = f.add(new Probability(getValue(nkStar, k)));
 			// a / b
 			c = c.divide(f);
+			if(c.getLogProb() == Double.NaN) {
+				c = Probability.ZERO;
+			}
 			return a.product(c);
 		}
 		else {
@@ -657,6 +663,9 @@ public class GibbsSampler {
 			f = f.add(new Probability(getValue(nckStar, coll, k)));
 			// c / f
 			c = c.divide(f);
+			if(c.getLogProb() == Double.NaN) {
+				c = Probability.ZERO;
+			}
 			return a.product(c);
 		}
 	}
@@ -698,6 +707,9 @@ public class GibbsSampler {
 			// a / b
 //			System.out.println("(beta + nkw) / (V * beta + nkstar):"+f);
 			c = c.divide(f);
+			if(c.getLogProb() == Double.NaN) {
+				c = Probability.ZERO;
+			}
 			return multiplier.product(c);
 		}
 		else if(v == 1) {
@@ -722,6 +734,9 @@ public class GibbsSampler {
 //			System.out.println("V * beta + nckstar:"+f);
 			// c / f
 			c = c.divide(f);
+			if(c.getLogProb() == Double.NaN) {
+				c = Probability.ZERO;
+			}
 //			System.out.println("(beta + nckw) / (V * beta + nckstar):"+f);
 			return multiplier.product(c);
 		}
@@ -753,21 +768,24 @@ public class GibbsSampler {
 //			d, i, w, xdi, k);
 		// ndk + alpha
 		Probability a = new Probability(alpha);
-		System.out.println("alpha:"+a);
-		System.out.printf("ndk d:%d k:%d = %d\n", d, k, getValue(ndkTest, d, k));
+//		System.out.println("alpha:"+a);
+//		System.out.printf("ndk d:%d k:%d = %d\n", d, k, getValue(ndkTest, d, k));
 		a = a.add(new Probability(getValue(ndkTest, d, k)));
-		System.out.println("alpha + ndk:"+a);
+//		System.out.println("alpha + ndk:"+a);
 		// ndstar + K * alpha
 		Probability b = new Probability(numTopics);
-		System.out.println("K:"+b);
+//		System.out.println("K:"+b);
 		b = b.product(new Probability(alpha));
-		System.out.println("alpha:"+alpha);
-		System.out.println("ndstar:"+getValue(ndStarTest, d));
+//		System.out.println("alpha:"+alpha);
+//		System.out.println("ndstar:"+getValue(ndStarTest, d));
 		b = b.add(new Probability(getValue(ndStarTest, d)));
-		System.out.println("K * alpha + ndstar:"+b);
+//		System.out.println("K * alpha + ndstar:"+b);
 		// a / b
 		a = a.divide(b);
-		System.out.println("(alpha + ndk) / (K * alpha + ndstar):"+a);
+		if(a.getLogProb() == Double.NaN) {
+			a = Probability.ZERO;
+		}
+//		System.out.println("(alpha + ndk) / (K * alpha + ndstar):"+a);
 		if(xdi == 0) {
 			return a.product(getProbability(phi_kw, k, w));
 		}
@@ -892,12 +910,12 @@ public class GibbsSampler {
 	private void sampleTestIter() {
 		
 		for(int d = 0; d < ndkTest.size(); d++) {
-//			System.out.printf("d:%d ",d);
 			int numWordsInD = ndStarTest.get(d);
+//			System.out.printf("\nd:%d numwords:%d\n",d, numWordsInD);
 			for(int i = 0; i < numWordsInD; i++) {
 				int w = getValue(wdiTest, d, i),
 					v = getValue(xdiTest, d, i);
-//				System.out.printf("i:%d w:%d\n",i,w);
+//				System.out.printf("\ni:%d w:%d\n",i,w);
 				// exclude current assignment
 				updateTestCountsExcludeCurrentAssignment(d, i);
 				// randomly sample a new value for zdi
@@ -908,9 +926,9 @@ public class GibbsSampler {
 				for(int k = 0; k < numTopics; k++) {
 //					System.out.printf("\nk:%d\ntotal before:%s\n", k, totalProb);
 					Probability curr = getTestPZdiEqualsK(d, i, w, v, k);
-					System.out.println("curr:"+curr);
+//					System.out.println("curr:"+curr);
 					totalProb = totalProb.add(curr);
-					System.out.println("total after:"+totalProb);
+//					System.out.println("total after:"+totalProb);
 					totalProbs[k] = totalProb;
 				}
 				// get random num
