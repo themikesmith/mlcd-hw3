@@ -1063,8 +1063,10 @@ public class GibbsSampler {
 			for(int d = 0; d < collections_d.size(); d++) {
 				double curDocSum = 0.0;
 				for(int k = 0; k < numTopics; k++) {
-					curDocSum
+					Probability curProb = getProbability(theta_dk, d,k);
+					curDocSum+= Math.exp(curProb.getLogProb());
 				}
+				System.out.println("Should be near 1: " + curDocSum);
 			}
 			
 			
