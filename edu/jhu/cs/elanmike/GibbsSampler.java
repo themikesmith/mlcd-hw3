@@ -594,7 +594,8 @@ public class GibbsSampler {
 	 * @return the vocab size.
 	 */
 	private int getVocabSize() {
-		return WordToIndex.keySet().size() + 1;
+//		return WordToIndex.keySet().size() + 1;
+		return WordToIndex.keySet().size();
 	}
 	/**
 	 * Get the probability that z_{d,i} = k
