@@ -509,17 +509,17 @@ public class GibbsSampler {
 		x = getValue(xdi, docIdx, wordIdx), // global flag
 		w = getValue(wdi, docIdx, wordIdx), // word value
 		c = getValue(collections_d, docIdx); // collection id
-		// decrement topic count per doc, ndk
+		// increment topic count per doc, ndk
 		increment(ndk, docIdx, z);
 		increment(ndStar, docIdx);
-		// and decrement topic count per word, nkstar
-		increment(nkStar, z);
-		// and decrement nckstar
-		increment(nckStar, c, z);
-		if (x == 0) { // decrement global
+		if (x == 0) { // increment global
 			increment(nkw, z, w);
+			// and increment nckstar
+			increment(nckStar, c, z);
 		} else { // collection-specific
 			increment(nckw, c, z, w);
+			// and increment topic count per word, nkstar
+			increment(nkStar, z);
 		}
 	}
 	
@@ -547,11 +547,9 @@ public class GibbsSampler {
 //		System.out.printf("update counts new sample. docid:%d wordid:%d\n", docIdx, wordIdx);
 		// query zdi and xdi, and get word value and doc collection
 		int z = getValue(zdiTest, docIdx, wordIdx); // collection id
-		// decrement topic count per doc, ndk
+		// increment topic count per doc, ndk
 		increment(ndkTest, docIdx, z);
 		increment(ndStarTest, docIdx);
-
-		
 	}
 	
 	/**
