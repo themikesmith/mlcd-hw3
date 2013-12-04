@@ -1061,20 +1061,36 @@ public class GibbsSampler {
 			
 			//Theta_dk should sum to 1 over topics
 			for(int d = 0; d < collections_d.size(); d++) {
-				double curDocSum = 0.0;
+				Probability curDocSum = Probability.ZERO;
 				for(int k = 0; k < numTopics; k++) {
 					Probability curProb = getProbability(theta_dk, d,k);
-					curDocSum+= Math.exp(curProb.getLogProb());
+					curDocSum = curDocSum.add(curProb);
 				}
 				System.out.println("Should be near 1: " + curDocSum);
 			}
 			
 			
 			//Phi_kw should sum to 1 over words
-			
+			for(int k = 0; k < numTopics; k++) {
+				Probability curTopicSum = Probability.ZERO;
+				for(int w = 0; w < WordToIndex.keySet().size(); w++) {
+					Probability curProb = getProbability(phi_kw,k,w);
+					curTopicSum = curTopicSum.add(curProb);
+				}
+				System.out.println("Should be near 1: " + curTopicSum);
+			}
 			
 			//Phi_ckw should sum to 1 over words
-			
+			for(int c = 0; c < numCollections; c++) {
+				for(int k = 0; k < numTopics; k++) {
+					Probability curTopicSum = Probability.ZERO;
+					for(int w = 0; w < WordToIndex.keySet().size(); w++) {
+						Probability curProb = getProbability(phi_ckw,c,k,w);
+						curTopicSum = curTopicSum.add(curProb);
+					}
+					System.out.println("Should be near 1: " + curTopicSum);
+				}
+			}
 			
 			if (t >= totalBurnin) {
 				// save sample, add estimate to our expected value
