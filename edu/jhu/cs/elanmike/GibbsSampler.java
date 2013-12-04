@@ -1066,7 +1066,7 @@ public class GibbsSampler {
 					Probability curProb = getProbability(theta_dk, d,k);
 					curDocSum = curDocSum.add(curProb);
 				}
-				System.out.println("Should be near 1: " + curDocSum);
+				System.out.println("Theta_dk check (should be near one):\t" + curDocSum);
 			}
 			
 			
@@ -1077,7 +1077,7 @@ public class GibbsSampler {
 					Probability curProb = getProbability(phi_kw,k,w);
 					curTopicSum = curTopicSum.add(curProb);
 				}
-				System.out.println("Should be near 1: " + curTopicSum);
+				System.out.println("Phi_kw check (should be near one):\t" + curTopicSum);
 			}
 			
 			//Phi_ckw should sum to 1 over words
@@ -1088,7 +1088,45 @@ public class GibbsSampler {
 						Probability curProb = getProbability(phi_ckw,c,k,w);
 						curTopicSum = curTopicSum.add(curProb);
 					}
-					System.out.println("Should be near 1: " + curTopicSum);
+					System.out.println("Phi_ckw check (should be near one):\t" + curTopicSum);
+				}
+			}
+			
+			
+			// Counts check;
+			// Does ndk over k = ndstar?
+			for(int d = 0; d < collections_d.size(); d++) {
+				int sum = 0; 
+				for(int k = 0; k < numTopics; k++) {
+					sum += getValue(ndk,d,k); 
+				}
+				if(sum !=  getValue(ndStar,d)){
+					System.err.printf("Error (ndk over k != ndstar): %d != %d\n",
+							sum,getValue(ndStar,d));
+				}
+			}
+			// Does nkw over w = nkstar?
+			for(int k = 0; k < numTopics; k++) {
+				int sum = 0; 
+				for(int w = 0; w < WordToIndex.size(); w++) {
+					sum += getValue(nkw,k,w); 
+				}
+				if(sum !=  getValue(nkStar,k)){
+					System.err.printf("Error (nkw over w != nkstar): %d != %d\n",
+							sum,getValue(nkStar,k,k));
+				}
+			}
+			// Does nckw over w = nckstar?
+			for(int c = 0; c< numCollections; c++){
+				for(int k = 0; k < numTopics; k++) {
+					int sum = 0; 
+					for(int w = 0; w < WordToIndex.size(); w++) {
+						sum += getValue(nckw,c,k,w); 
+					}
+					if(sum !=  getValue(nckStar,c,k)){
+						System.err.printf("Error (nckw over w != nckstar): %d != %d\n",
+								sum,getValue(nckStar,c,k));
+					}
 				}
 			}
 			
