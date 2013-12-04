@@ -1056,6 +1056,24 @@ public class GibbsSampler {
 					}
 				}
 			}
+			
+			//SANITY CHECKS
+			
+			//Theta_dk should sum to 1 over topics
+			for(int d = 0; d < collections_d.size(); d++) {
+				double curDocSum = 0.0;
+				for(int k = 0; k < numTopics; k++) {
+					curDocSum
+				}
+			}
+			
+			
+			//Phi_kw should sum to 1 over words
+			
+			
+			//Phi_ckw should sum to 1 over words
+			
+			
 			if (t >= totalBurnin) {
 				// save sample, add estimate to our expected value
 //				if(!meansInitialized) {
