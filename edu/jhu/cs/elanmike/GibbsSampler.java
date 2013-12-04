@@ -485,16 +485,15 @@ public class GibbsSampler {
 		// decrement topic count per doc, ndk
 		decrement(ndk, docIdx, z);
 		decrement(ndStar, docIdx);
-		
-		// and decrement topic count per word, nkstar
-		decrement(nkStar, z);
-		// and decrement nckstar
-		decrement(nckStar, c, z);
 		if(x == 0) { // decrement global
 			decrement(nkw, z, w);
+			// and decrement topic count per word, nkstar
+			decrement(nkStar, z);
 		}
 		else { // collection-specific
 			decrement(nckw, c, z, w);
+			// and decrement nckstar
+			decrement(nckStar, c, z);
 		}
 	}
 	/**
