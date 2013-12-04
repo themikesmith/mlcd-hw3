@@ -1307,40 +1307,40 @@ public class GibbsSampler {
 		}
 		
 		
-		//START DEBUG
-		g.printDebug();
-		System.err.println("\n\nEXCLUDING d= 0 w = 0");
-		g.updateCountsExcludeCurrentAssignment(0, 0);
-		System.err.println();
-		g.printDebug();
-		
-		System.err.println("\n\nINCLUDING d= 0 w = 0");
-		g.updateCountsNewlySampledAssignment(0, 0);
-		System.err.println();
-		g.printDebug();
-		
-		
-		System.err.println("\n\nEXCLUDING d= 0 w = 1");
-		g.updateCountsExcludeCurrentAssignment(0, 1);
-		System.err.println();
-		g.printDebug();
-		
-		System.err.println("\n\nINCLUDING d= 0 w = 1");
-		g.updateCountsNewlySampledAssignment(0, 1);
-		System.err.println();
-		g.printDebug();
-		
-		
-		System.err.println("\n\nEXCLUDING d= 0 w = 2");
-		g.updateCountsExcludeCurrentAssignment(0, 2);
-		System.err.println();
-		g.printDebug();
-		
-		System.err.println("\n\nINCLUDING d= 0 w = 2");
-		g.updateCountsNewlySampledAssignment(0, 2);
-		System.err.println();
-		g.printDebug();
-		//END DEBUG
+//		//START DEBUG
+//		g.printDebug();
+//		System.err.println("\n\nEXCLUDING d= 0 w = 0");
+//		g.updateCountsExcludeCurrentAssignment(0, 0);
+//		System.err.println();
+//		g.printDebug();
+//		
+//		System.err.println("\n\nINCLUDING d= 0 w = 0");
+//		g.updateCountsNewlySampledAssignment(0, 0);
+//		System.err.println();
+//		g.printDebug();
+//		
+//		
+//		System.err.println("\n\nEXCLUDING d= 0 w = 1");
+//		g.updateCountsExcludeCurrentAssignment(0, 1);
+//		System.err.println();
+//		g.printDebug();
+//		
+//		System.err.println("\n\nINCLUDING d= 0 w = 1");
+//		g.updateCountsNewlySampledAssignment(0, 1);
+//		System.err.println();
+//		g.printDebug();
+//		
+//		
+//		System.err.println("\n\nEXCLUDING d= 0 w = 2");
+//		g.updateCountsExcludeCurrentAssignment(0, 2);
+//		System.err.println();
+//		g.printDebug();
+//		
+//		System.err.println("\n\nINCLUDING d= 0 w = 2");
+//		g.updateCountsNewlySampledAssignment(0, 2);
+//		System.err.println();
+//		g.printDebug();
+//		//END DEBUG
 		
 		try {
 			g.readTestFile(testFile);
