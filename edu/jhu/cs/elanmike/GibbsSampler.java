@@ -1058,40 +1058,40 @@ public class GibbsSampler {
 				}
 			}
 			
-			//SANITY CHECKS
-			
-			//Theta_dk should sum to 1 over topics
-			for(int d = 0; d < collections_d.size(); d++) {
-				Probability curDocSum = Probability.ZERO;
-				for(int k = 0; k < numTopics; k++) {
-					Probability curProb = getProbability(theta_dk, d,k);
-					curDocSum = curDocSum.add(curProb);
-				}
-				System.out.println("Should be near 1: " + curDocSum);
-			}
-			
-			
-			//Phi_kw should sum to 1 over words
-			for(int k = 0; k < numTopics; k++) {
-				Probability curTopicSum = Probability.ZERO;
-				for(int w = 0; w < WordToIndex.keySet().size(); w++) {
-					Probability curProb = getProbability(phi_kw,k,w);
-					curTopicSum = curTopicSum.add(curProb);
-				}
-				System.out.println("Should be near 1: " + curTopicSum);
-			}
-			
-			//Phi_ckw should sum to 1 over words
-			for(int c = 0; c < numCollections; c++) {
-				for(int k = 0; k < numTopics; k++) {
-					Probability curTopicSum = Probability.ZERO;
-					for(int w = 0; w < WordToIndex.keySet().size(); w++) {
-						Probability curProb = getProbability(phi_ckw,c,k,w);
-						curTopicSum = curTopicSum.add(curProb);
-					}
-					System.out.println("Should be near 1: " + curTopicSum);
-				}
-			}
+//			//SANITY CHECKS
+//			
+//			//Theta_dk should sum to 1 over topics
+//			for(int d = 0; d < collections_d.size(); d++) {
+//				Probability curDocSum = Probability.ZERO;
+//				for(int k = 0; k < numTopics; k++) {
+//					Probability curProb = getProbability(theta_dk, d,k);
+//					curDocSum = curDocSum.add(curProb);
+//				}
+//				System.out.println("Should be near 1: " + curDocSum);
+//			}
+//			
+//			
+//			//Phi_kw should sum to 1 over words
+//			for(int k = 0; k < numTopics; k++) {
+//				Probability curTopicSum = Probability.ZERO;
+//				for(int w = 0; w < WordToIndex.keySet().size(); w++) {
+//					Probability curProb = getProbability(phi_kw,k,w);
+//					curTopicSum = curTopicSum.add(curProb);
+//				}
+//				System.out.println("Should be near 1: " + curTopicSum);
+//			}
+//			
+//			//Phi_ckw should sum to 1 over words
+//			for(int c = 0; c < numCollections; c++) {
+//				for(int k = 0; k < numTopics; k++) {
+//					Probability curTopicSum = Probability.ZERO;
+//					for(int w = 0; w < WordToIndex.keySet().size(); w++) {
+//						Probability curProb = getProbability(phi_ckw,c,k,w);
+//						curTopicSum = curTopicSum.add(curProb);
+//					}
+//					System.out.println("Should be near 1: " + curTopicSum);
+//				}
+//			}
 			
 			if (t >= totalBurnin) {
 				// save sample, add estimate to our expected value
@@ -1149,24 +1149,34 @@ public class GibbsSampler {
 			}
 			
 			// compute log likelihood of train
-			Probability logLike_train = new Probability(0.0);
+//			Probability logLike_train = new Probability(0.0);
+			double logLike_train = 0;
 			for (int d = 0; d < collections_d.size(); d++) {
 				for (int i = 0; i < ndStar.get(d); i++) {
+					double topicTotal = 0;
 					for (int k = 0; k < numTopics; k++) {
-						Probability oneMinusTheta_times_PhiKW = (new Probability(1-lambda)).product(
-								getProbability(phi_kw,k,getValue(wdi,d,i).intValue()));
+						Probability oneMinusLambda_times_PhiKW = (new Probability(1-lambda)).product(
+								getProbability(phi_kw,k,getValue(wdi,d,i)));
 
 						Probability lambda_times_PhiCKW = (new Probability(lambda)).product(
 								getProbability(
-										phi_ckw,getValue(collections_d,d),k,getValue(wdi,d,i).intValue()));
+										phi_ckw,getValue(collections_d,d),k,getValue(wdi,d,i)));
 						
 //						System.out.printf("oneMinusTheta_times_PhiKW = %s  \n",oneMinusTheta_times_PhiKW);
 //						System.out.printf("lambda_times_PhiCKW = %s  \n",lambda_times_PhiCKW);
 
-						logLike_train = logLike_train.add(getProbability(theta_dk,d,k).product(oneMinusTheta_times_PhiKW.add(lambda_times_PhiCKW)));
+						Probability sum = oneMinusLambda_times_PhiKW.add(lambda_times_PhiCKW);
+						Probability thetadk = getProbability(theta_dk,d,k);
+						topicTotal = topicTotal + Math.exp(thetadk.product(sum).getLogProb());
+//						double thetadk = Math.exp(getProbability(theta_dk,d,k).getLogProb());
+//						double one = Math.exp(oneMinusLambda_times_PhiKW.getLogProb()),
+//							two = Math.exp(lambda_times_PhiCKW.getLogProb());
+//						logLike_train = logLike_train + Math.log(thetadk * (one + two));
 					}
+					logLike_train += Math.log(topicTotal);
 				}
 			}
+//			System.out.printf("ll(train) = %s\n", logLike_train.getLogProb());
 			System.out.printf("ll(train) = %s\n", logLike_train);
 			printFloatToFile(logLike_train, pwTrainLL, true);
 			
@@ -1465,7 +1475,11 @@ public class GibbsSampler {
 				" instead of the default collapsed gibbs");
 	}
 	private static void printFloatToFile(Probability p, PrintWriter pw, boolean newline) {
-		if(newline) pw.printf("%.13f\n", Math.exp(p.getLogProb()));
-		else pw.printf("%.13f", Math.exp(p.getLogProb()));
+		if(newline) pw.printf("%.13f\n", p.getLogProb());
+		else pw.printf("%.13f", p.getLogProb());
+	}
+	private static void printFloatToFile(double p, PrintWriter pw, boolean newline) {
+		if(newline) pw.printf("%.13f\n", p);
+		else pw.printf("%.13f", p);
 	}
 }
