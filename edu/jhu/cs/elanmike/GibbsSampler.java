@@ -753,19 +753,21 @@ public class GibbsSampler {
 //			d, i, w, xdi, k);
 		// ndk + alpha
 		Probability a = new Probability(alpha);
+		System.out.println("alpha:"+a);
+		System.out.printf("ndk d:%d k:%d = %d\n", d, k, getValue(ndkTest, d, k));
 		a = a.add(new Probability(getValue(ndkTest, d, k)));
-//		System.out.println("alpha + ndk:"+a);
+		System.out.println("alpha + ndk:"+a);
 		// ndstar + K * alpha
 		Probability b = new Probability(numTopics);
-//		System.out.println("K:"+b);
+		System.out.println("K:"+b);
 		b = b.product(new Probability(alpha));
-//		System.out.println("alpha:"+alpha);
-//		System.out.println("ndstar:"+getValue(ndStarTest, d));
+		System.out.println("alpha:"+alpha);
+		System.out.println("ndstar:"+getValue(ndStarTest, d));
 		b = b.add(new Probability(getValue(ndStarTest, d)));
-//		System.out.println("K * alpha + ndstar:"+b);
+		System.out.println("K * alpha + ndstar:"+b);
 		// a / b
 		a = a.divide(b);
-//		System.out.println("(alpha + ndk) / (K * alpha + ndstar):"+a);
+		System.out.println("(alpha + ndk) / (K * alpha + ndstar):"+a);
 		if(xdi == 0) {
 			return a.product(getProbability(phi_kw, k, w));
 		}
@@ -906,9 +908,9 @@ public class GibbsSampler {
 				for(int k = 0; k < numTopics; k++) {
 //					System.out.printf("\nk:%d\ntotal before:%s\n", k, totalProb);
 					Probability curr = getTestPZdiEqualsK(d, i, w, v, k);
-//					System.out.println("curr:"+curr);
+					System.out.println("curr:"+curr);
 					totalProb = totalProb.add(curr);
-//					System.out.println("total after:"+totalProb);
+					System.out.println("total after:"+totalProb);
 					totalProbs[k] = totalProb;
 				}
 				// get random num
@@ -1390,6 +1392,8 @@ public class GibbsSampler {
 		double lambda = Double.parseDouble(args[4]),
 				alpha = Double.parseDouble(args[5]), 
 				beta = Double.parseDouble(args[6]);
+		System.out.printf("trainfile:%s testfile:%s output:%s \nk:%d lambda:%f alpha:%f beta:%f \ntotaliters:%d totalburnin:%d\n",
+				trainingFile, testFile, outFile, numTopics, lambda, alpha, beta, totalIters, totalBurnin);
 		GibbsSampler g = new GibbsSampler(type, numCollections, numTopics, lambda, alpha, beta);
 		try {
 			g.readTrainingFile(trainingFile);

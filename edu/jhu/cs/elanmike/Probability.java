@@ -83,6 +83,12 @@ public class Probability {
 			System.out.println("uh oh!! we didn't account for a case in log add");
 //			System.err.println("uh oh!! we didn't account for a case in log add");
 			System.out.printf("this:%s\nother:%s\n",this,other);
+			try {
+				throw new Exception(String.format("this:%s\nother:%s\n",this,other));
+			}
+			catch(Exception ex) {
+				ex.printStackTrace();
+			}
 			value = Double.NaN; // try to throw an error
 		}
 		return new Probability(value, true);
