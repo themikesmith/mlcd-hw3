@@ -221,19 +221,15 @@ We wish to derive the update equations for variational inference, as computing $
 From the graphical model of our distribution at the top of page 6 of the homework PDF, it is easy to mutilate the graph of P to arrive at a more tractable family of approximate Q distributions.  We omit the $w$ node, and omit the edges between $\theta$, $z$, $\phi$, and $x$.  We also introduce free variational parameters $\gamma$, $\delta$, $\zeta$, and $\eta$ respectively on our factors of Q, themselves distributions.  $q(\theta \mid \gamma) \sim \mathrm{Dirichlet}(\gamma)$, $q(z \mid \delta) \sim \mathrm{Multinomial}(\delta)$, $q(\phi \mid \zeta) \sim \mathrm{Dirichlet}(\zeta)$, and $q(x \mid \eta) \sim \mathrm{Bernoulli}(\eta)$.\\
 We note that we want to minimize the KL Divergence from $q$ to $p$, which is
 \begin{equation*}
-\mathrm{KL}(q\|p) = \ln(Z) - \mathrm{E}_q (\log p) - \mathrm{E}_q (\log q) 
+\mathrm{KL}(q\|p) = \ln(Z) - \mathrm{E}_q (\log \widetilde{p}) - \mathrm{E}_q (\log q) 
 \end{equation*}
 and this is equivalent to maximizing the energy functional:
 \begin{equation*}
-F = \mathrm{E}_q (\log p) + \mathrm{E}_q (\log q)
+F = \mathrm{E}_q (\log \widetilde{p}) + \mathrm{E}_q (\log q)
 \end{equation*}
-We know that our joint of $p$ factorizes as the following:
+We know that our joint of $\widetilde{p}$ factorizes as the following:
 \begin{equation*}
-p(\theta, c, \phi, z, x, w, \mid \alpha, \beta, \lambda) = p(z \mid \theta) p(\theta \mid \alpha) p(x \mid \lambda) p(\phi \mid \beta) p(w \mid z, x, c, \phi)
-\end{equation*}
-and that our denominator in the conditional factorizes as the following:
-\begin{equation*}
-p(w, \mid \alpha, \beta, \lambda) = p(w, \mid \alpha, \beta, \lambda)
+\widetilde{p}(\theta, c, \phi, z, x, w, \mid \alpha, \beta, \lambda) = p(z \mid \theta) p(\theta \mid \alpha) p(x \mid \lambda) p(\phi \mid \beta) p(w \mid z, x, c, \phi)
 \end{equation*}
 and that $p(w \mid z, x, c, \phi)$ factorizes as the following:
 \begin{equation*}
@@ -246,7 +242,7 @@ q(\theta, z, \phi, x \mid \gamma, \delta, \zeta, \eta) = q(\theta \mid \gamma) \
 so we can plug these into our definition of the energy functional.
 \begin{align*}
 F &= \mathrm{E}_q \{\log p(z \mid \theta) + \log p(\theta \mid \alpha) + \log p(x \mid \lambda) + \log p(\phi \mid \beta) \\
-&+ \log p(w \mid z, x, c, \phi) - \log p(w, \mid \alpha, \beta, \lambda) \} \\
+&+ \log p(w \mid z, x, c, \phi) \\
 &+ \mathrm{E}_q \{ \log q(\theta \mid \gamma) + \sum_d \left( \log q(z \mid \delta) + \log q(\phi \mid \zeta) + \log q(x \mid \eta) \right) \} 
 \end{align*}
 Now, we can calculate the individual terms by taking the logarithm of each, also moving the expectation to each term, as the expectation of a sum is the sum of expectations.\\
@@ -254,15 +250,23 @@ Now, we can calculate the individual terms by taking the logarithm of each, also
 \begin{align*}
 \mathrm{E}_q \log p(z \mid \theta) &= \sum\limits_{i=1}^{N_d} \sum\limits_{k=1}^K (\alpha - 1)(\Psi(\gamma_k) - \Psi(\sum_{j=1}^k \gamma_j) ) \\
 \mathrm{E}_q\log p(\theta \mid \alpha) &= \log \Gamma (K \alpha) - \sum\limits_{k=1}^K \log \Gamma(\alpha) + \sum\limits_{k=1}^K (\alpha - 1)(\Psi(\gamma_k) - \Psi(\sum_{j=1}^K \gamma_j) )\\
-\mathrm{E}_q\log p(x \mid \lambda) &= ??\\
+\mathrm{E}_q\log p(x \mid \lambda) &= I(x=0) Q(x=0|\eta) \log \lambda + I(x=1) Q(x=1|\eta) \log (1-\lambda) \\
 \mathrm{E}_q\log p(\phi \mid \beta) &= \log \Gamma (K \beta) - \sum\limits_{k=1}^V \log \Gamma(\beta) + \sum\limits_{k=1}^V (\beta - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) )\\
 \mathrm{E}_q\log p(w \mid z, x, c, \phi) &= \sum_{d,i} \left( I(x_{d,i} = 0) p(w_{d,i} \mid \phi_k) + I(x_{d,i} = 1) p(w_{d,i} \mid \phi_{k}^{c})  \right)\\
-\mathrm{E}_q\log p(w, \mid \alpha, \beta, \lambda) &= ??\\
 \mathrm{E}_q\log q(\theta \mid \gamma) &= \log \Gamma (\sum\limits_{k=1}^K \gamma_k) - \sum\limits_{k=1}^K \log \Gamma(\gamma_k) + \sum\limits_{k=1}^K (\gamma_k - 1)(\Psi(\gamma_k) - \Psi(\sum_{j=1}^K \gamma_j) )\\
 \mathrm{E}_q\log q(z \mid \delta) &= \sum\limits_{i=1}^{N_d} \sum\limits_{k=1}^K \delta_{i,k} \log \delta_{i,k} \\
 \mathrm{E}_q\log q(\phi \mid \zeta) &= \log \Gamma (\sum\limits_{k=1}^V \zeta_k) - \sum\limits_{k=1}^V \log \Gamma(\zeta_k) + \sum\limits_{k=1}^V (\zeta_k - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) )\\
-\mathrm{E}_q\log q(x \mid \eta) &= ??\\
+\mathrm{E}_q\log q(x \mid \eta) &= I(x=0) Q(x=0|\eta) \log \eta + I(x=1) Q(x=1|\eta) \log (1-\eta) \\
 \end{align*}
+We now need to define four update equations for $Q$, one each for $\theta$, $z$, $\phi$, and $x$.  For each variable, we collect terms involving that variable into an intermediate equation $\mathrm{Update}_{Q_i}$, which is in log space.  We'll take the derivative with respect to variable $i$ and set that to zero, rearrange, and exponentiate.
+\begin{align*}
+\mathrm{Update}_{Q_\theta} &= asdf \\ 
+\mathrm{Update}_{Q_z} &= asdf \\
+\mathrm{Update}_{Q_\phi} &= asdf \\
+\mathrm{Update}_{Q_x} &= asdf 
+\end{align*}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
