@@ -136,12 +136,45 @@ We note that we want to minimize the KL Divergence from $q$ to $p$, which is
 \end{equation*}
 and this is equivalent to maximizing the energy functional:
 \begin{equation*}
-\mathrm{E}_q (\log p) + \mathrm{E}_q (\log q)
+F = \mathrm{E}_q (\log p) + \mathrm{E}_q (\log q)
 \end{equation*}
-We know that $p$ factorizes, and that $q$ factorizes,
-
+We know that our joint of $p$ factorizes as the following:
+\begin{equation*}
+p(\theta, c, \phi, z, x, w, \mid \alpha, \beta, \lambda) = p(z \mid \theta) p(\theta \mid \alpha) p(x \mid \lambda) p(\phi \mid \beta) p(w \mid z, x, c, \phi)
+\end{equation*}
+and that our denominator in the conditional factorizes as the following:
+\begin{equation*}
+p(w, \mid \alpha, \beta, \lambda) = p(w, \mid \alpha, \beta, \lambda)
+\end{equation*}
+and that $p(w \mid z, x, c, \phi)$ factorizes as the following:
+\begin{equation*}
+p(w \mid z, x, c, \phi) = \prod_{(d,i)} ( p(w_{d,i} \mid \phi_k)^{I(x_{d,i} = 0)} p(w_{d,i} \mid \phi_{k}^{c})^{I(x_{d,i} = 1)} )
+\end{equation*}
+and that $q$ factorizes\ as the following:
+\begin{equation*}
+q(\theta, z, \phi, x \mid \gamma, \delta, \zeta, \eta) = q(\theta \mid \gamma) \prod_d q(z \mid \delta) q(\phi \mid \zeta) q(x \mid \eta)
+\end{equation*}
+so we can plug these into our definition of the energy functional.
+\begin{align*}
+F &= \mathrm{E}_q \{\log p(z \mid \theta) + \log p(\theta \mid \alpha) + \log p(x \mid \lambda) + \log p(\phi \mid \beta) \\
+&+ \log p(w \mid z, x, c, \phi) - \log p(w, \mid \alpha, \beta, \lambda) \} \\
+&+ \mathrm{E}_q \{ \log q(\theta \mid \gamma) + \sum_d \left( \log q(z \mid \delta) + \log q(\phi \mid \zeta) + \log q(x \mid \eta) \right) \} 
+\end{align*}
+Now, we can calculate the individual terms by taking the logarithm of each, also moving the expectation to each term, as the expectation of a sum is the sum of expectations.\\
+\noindent \textit{Note that some of these equations were taken from\\ http://machinelearning.wustl.edu/mlpapers/paper\_files/BleiNJ03.pdf }
+\begin{align*}
+\mathrm{E}_q \log p(z \mid \theta) &= \sum\limits_{i=1}^{N_d} \sum\limits_{k=1}^K (\alpha - 1)(\Psi(\gamma_k) - \Psi(\sum_{j=1}^k \gamma_j) ) \\
+\mathrm{E}_q\log p(\theta \mid \alpha) &= \log \Gamma (K \alpha) - \sum\limits_{k=1}^K \log \Gamma(\alpha) + \sum\limits_{k=1}^K (\alpha - 1)(\Psi(\gamma_k) - \Psi(\sum_{j=1}^K \gamma_j) )\\
+\mathrm{E}_q\log p(x \mid \lambda) &= ??\\
+\mathrm{E}_q\log p(\phi \mid \beta) &= \log \Gamma (K \beta) - \sum\limits_{k=1}^V \log \Gamma(\beta) + \sum\limits_{k=1}^V (\beta - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) )\\
+\mathrm{E}_q\log p(w \mid z, x, c, \phi) &= \sum_{d,i} \left( I(x_{d,i} = 0) p(w_{d,i} \mid \phi_k) + I(x_{d,i} = 1) p(w_{d,i} \mid \phi_{k}^{c})  \right)\\
+\mathrm{E}_q\log p(w, \mid \alpha, \beta, \lambda) &= ??\\
+\mathrm{E}_q\log q(\theta \mid \gamma) &= \log \Gamma (\sum\limits_{k=1}^K \gamma_k) - \sum\limits_{k=1}^K \log \Gamma(\gamma_k) + \sum\limits_{k=1}^K (\gamma_k - 1)(\Psi(\gamma_k) - \Psi(\sum_{j=1}^K \gamma_j) )\\
+\mathrm{E}_q\log q(z \mid \delta) &= \sum\limits_{i=1}^{N_d} \sum\limits_{k=1}^K \delta_{i,k} \log \delta_{i,k} \\
+\mathrm{E}_q\log q(\phi \mid \zeta) &= \log \Gamma (\sum\limits_{k=1}^V \zeta_k) - \sum\limits_{k=1}^V \log \Gamma(\zeta_k) + \sum\limits_{k=1}^V (\zeta_k - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) )\\
+\mathrm{E}_q\log q(x \mid \eta) &= ??\\
+\end{align*}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
