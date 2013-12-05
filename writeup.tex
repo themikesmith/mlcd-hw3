@@ -110,7 +110,21 @@ P &(z_{d,i}=k, x_{d,i} = 1 \mid z-z_{d,i},x-x_{d,i},c,w;\alpha, \beta, \lambda) 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{7 Variational Inference}
-\noindent {\bf(a) Changing Day 1 Ice creams from 2 to 1...}\\
+\noindent {\bf(7.1) Derivation}\\
+We wish to derive the update equations for variational inference, as computing $p(\theta, c, \phi, z, x \mid w, \alpha, \beta, \lambda)$ for exact inference is intractable.  By definition of a conditional probability we have:
+\begin{equation*}
+\frac{p(\theta, c, \phi, z, x, w, \mid \alpha, \beta, \lambda)}{p(w \mid \alpha, \beta, \lambda)}
+\end{equation*}
+From the graphical model of our distribution at the top of page 6 of the homework PDF, it is easy to mutilate the graph of P to arrive at a more tractable family of approximate Q distributions.  We omit the $w$ node, and omit the edges between $\theta$, $z$, $\phi$, and $x$.  We also introduce free variational parameters $\gamma$, $\delta$, $\zeta$, and $\eta$ respectively on our factors of Q, themselves distributions.  $q(\theta \mid \gamma) \sim \mathrm{Dirichlet}(\gamma)$, $q(z \mid \delta) \sim \mathrm{Multinomial}(\delta)$, $q(\phi \mid \zeta) \sim \mathrm{Dirichlet}(\zeta)$, and $q(x \mid \eta) \sim \mathrm{Bernoulli}(\eta)$.\\
+We note that we want to minimize the KL Divergence from $q$ to $p$, which is
+\begin{equation*}
+\mathrm{KL}(q\|p) = \ln(Z) - \mathrm{E}_q (\log p) - \mathrm{E}_q (\log q) 
+\end{equation*}
+and this is equivalent to maximizing the energy functional:
+\begin{equation*}
+\mathrm{E}_q (\log p) + \mathrm{E}_q (\log q)
+\end{equation*}
+We know that $p$ factorizes, and that $q$ factorizes,
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
