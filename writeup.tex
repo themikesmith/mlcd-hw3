@@ -5,7 +5,8 @@
 
 
 \documentclass[12pt]{article}
-
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
 %AMS-TeX packages
 \usepackage{amssymb,amsmath,amsthm} 
 %geometry (sets margin) and other useful packages
@@ -126,7 +127,34 @@ We note that all variables are binary.  We can also see that in $\phi(u_\phi, x_
 This does not look like a reasonable approximation, because we are losing many of the dependencies of the distribution.  The KL divergence is extremely high, signifying that Q is not a very close approximation for P.  Though we have optimized Q given this family of distributions, we should have chosen a different family.\\
 
 \noindent \textbf{c - Derive structured mean field}\\
-
+For structured mean field, we are assuming the following about our family of Q's.
+\[
+Q(X_i) = Q(A,B,C,D,E,F) = \frac{1}{Z_Q} \Psi_1 (A,B,C) \Psi_2 (D,E,F)
+\]
+Note that our set of factors for $P$ is $\Phi = \lbrace A, BA, CAB, ECD, DB, FD\rbrace$.  From p458 of Koller, we have the energy functional:
+\[
+F\left[P_\Phi, Q\right] = \sum\limits_{k = 1}^{K} \mathrm{E}_Q (\ln \phi_k) - \sum\limits_{j = 1}^{J} \mathrm{E}_Q ( \ln \psi_j ) + \ln Z_Q
+\]
+We take the derivative, set equal to 0, and we obtain the update equation on p458, that $\psi_j$ is a stationary point if and only if the following holds:
+\[
+\psi_j(c_j) \propto \mathrm{exp} \left\lbrace \mathrm{E}_Q \lbrace \ln P_\Psi \mid c_j \rbrace - \sum_{k \not = j} \mathrm{E}_Q \lbrace \ln \psi_k \mid c_j \rbrace - F\left[P_\Phi, Q\right] \right\rbrace
+\]
+We note that the energy functional is independent of the current assignment $c_j$ so we can absorb it into the normalization constant, and we have:
+\[
+\psi_j(c_j) \propto \mathrm{exp} \left\lbrace \mathrm{E}_Q \lbrace \ln P_\Psi \mid c_j \rbrace - \sum_{k \not = j} \mathrm{E}_Q \lbrace \ln \psi_k \mid c_j \rbrace \right\rbrace
+\]
+As per p461 of Koller, we can simplify this further because of the marginal independencies in Q.  Expectations with respect to variables that aren't in the scope of $C_j$ add a constant amount to all expectations, so can be absorbed into the normalization constant.  We get, therefore:
+\begin{multline*}
+\psi_j(c_j) \propto \mathrm{exp} \left\lbrace \sum_{\phi \in A_j} \mathrm{E}_{X \sim Q} \left[ \ln \phi \mid c_j \right] - \sum_{\psi_k \in B_j} \mathrm{E}_{X \sim Q} \lbrace \ln \psi_k \mid c_j \rbrace \right\rbrace \\
+A_j = \lbrace \phi \in \Phi : Q \not \models (U_\phi \independent C_j)\rbrace \\ 
+B_j = \lbrace \psi \in \Psi : Q \not \models (C_k \independent C_j)\rbrace - \lbrace
+ C_j \rbrace \\
+\end{multline*}
+We note that in our simple example, the set $B_j$ is empty for both structures ABC, DEF.  We see that $A_j$ is the set of all factors such that Q does not say they are independent from the variables in $\psi_j$.  Let $ g(\phi, c_j) = \sum_{u_\phi} Q(u_\phi \mid c_j) \ln \phi(u_\phi)$.  We note that the terms $Q(u_\phi \mid c_j)$ may equal marginal probabilities, marginalizing out all variables in the sepset $u_\phi - c_j$.  We get as update equations, therefore:
+\begin{align*}
+\psi_{ABC}(c_{abc}) &= \mathrm{exp} \lbrace g(A, abc) + g(BA, abc) + g(ABC,abc) + g(ECD, abc) + g(DB,abc) \rbrace \\ 
+\psi_{DEF}(c_{def}) &= \mathrm{exp} \lbrace g(DB, def) + g(ECD, def) + g(FD,def) \rbrace \\ 
+\end{align*}
 
 \noindent \textbf{d - Implement and test structured mean field}\\
 This does look like a better approximation than mean field.  It is encapsulating dependencies between A, B, and C, and between D, E, and F, as opposed to assuming they are all independent.  This more closely approximates our true distribution P.  The smaller KL divergence means it's closer to P.  Structured mean field performs better for this network because it's simple, and there are very clear dependencies.  We chose structures / clusters / groups of variables such that we capture some of these dependencies, and this of course will be better than simply assuming everything is indepdendent of everything else, as in mean field.  
