@@ -106,8 +106,22 @@ P &(z_{d,i}=k, x_{d,i} = 1 \mid z-z_{d,i},x-x_{d,i},c,w;\alpha, \beta, \lambda) 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{6 Text Analysis with MCLDA}
-\noindent {\bf(a) Changing Day 1 Ice creams from 2 to 1...}\\
+\noindent {\bf(1)} For each chain the training likelihood increases (monotonically, save for minor fluctuations)  till it plateaus around 300 iterations. Similarly the likelihood for test data decreases till it plateaus however with much more variation. \\
+\\
+\noindent {\bf(4)} TOPICS \\
+\\
+\noindent {\bf(5)} Lambdas\\
+\\
+\noindent {\bf(6)} Words \\
+\noindent {\bf(a)} topics \\
+\\
+\noindent {\bf(b)} Varying $\lambda$ controls the amount we sample from global vs corpus dependent distribution of words in topics. Test performance increases with $\lambda$ initially but then peaks around .75 before decreasing again. This implies that there is an optimal lambda that is between always sampling from the global and always sampling from collection dependent. This intuitively makes sense because with $\lambda = 0$ this would imply that each bag of words for a topic is uniform between collections. The other extreme with $\lambda=1$ would imply that there was zero benefit to generalizing topics across collections and that the training data contained every word per collection per topic that it would see in test data. Everywhere in between implies that there are differences in which words each collection uses to describe a topic but there is still benefit to considering the generalized corpus.
 
+Unsurprisingly, the likelihood of training data is maximized by setting $\lambda$ to 1.0 since there is no need to generalize with training data.
+ \\
+\\
+\noindent {\bf(a)} alpha/beta \\
+\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{7 Variational Inference}
 \noindent {\bf(7.1) Derivation}\\
