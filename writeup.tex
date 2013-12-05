@@ -105,9 +105,9 @@ Q(x_i) = \frac{1}{Z_i} \mathrm{exp} \left\lbrace \sum_{\phi \in \Phi} \mathrm{E}
 \end{equation*}
 which is the equation that must hold if and only if $Q(X_i)$ is a local maximum of the mean field given $\lbrace Q(X_j) \rbrace_{j \not = i}$.  We note that if $X_i \not \in Scope(\phi)$ then $\mathrm{E}_{U_\phi \sim Q} [\ln \phi \mid x_i] = \mathrm{E}_{U_\phi \sim Q} [\ln \phi]$.  Put another way, expectations on such factors do not depend on $x_i$, and may therefore be lumped into the normalization constant $Z_i$.  We can therefore simplify and get:
 \begin{equation*}
-Q(x_i) = \frac{1}{Z_i} \mathrm{exp} \left\lbrace \sum_{\phi : X_i \in Scope(\phi)} \mathrm{E}_{(U_\phi - \lbrace X_i \rbrace) \sim Q} [\ln U_\phi , x_i] \right\rbrace
+Q(x_i) = \frac{1}{Z_i} \mathrm{exp} \left\lbrace \sum_{\phi : X_i \in Scope(\phi)} \mathrm{E}_{(U_\phi - \lbrace X_i \rbrace) \sim Q} [\ln \phi(U_\phi , x_i)] \right\rbrace
 \end{equation*}
-Given our network for $P$, we see that we have factors over $(A)$, $(BA)$, $(CAB)$, $(DB)$, $(ECD)$, and $(FD)$.  We see from our previous simplification that the update equation for $Q(x_i)$ only sums over each factor $\phi$ such that $X_i$ is in $\phi$'s scope, lumping everything else into the normalization constant.  If we define $f(\phi, x_i) = \mathrm{E}_{(U_\phi - \lbrace X_i \rbrace) \sim Q} [\ln U_\phi , x_i]$, we get the following update equations:
+Given our network for $P$, we see that we have factors over $(A)$, $(BA)$, $(CAB)$, $(DB)$, $(ECD)$, and $(FD)$.  We see from our previous simplification that the update equation for $Q(x_i)$ only sums over each factor $\phi$ such that $X_i$ is in $\phi$'s scope, lumping everything else into the normalization constant.  If we define $f(\phi, x_i) = \mathrm{E}_{(U_\phi - \lbrace X_i \rbrace) \sim Q} [\ln \phi(U_\phi , x_i)]$, we get the following update equations:
 \begin{align*}
 Q(a) &= \frac{1}{Z_a} \mathrm{exp} \left\lbrace f(A,a) + f(BA,a) + f(CAB,a) \right\rbrace \\
 Q(b) &= \frac{1}{Z_b} \mathrm{exp} \left\lbrace f(DB,b) + f(BA,b) + f(CAB,b) \right\rbrace \\
@@ -116,7 +116,11 @@ Q(d) &= \frac{1}{Z_d} \mathrm{exp} \left\lbrace f(ECD,d) + f(DB,d) + f(FD,d) \ri
 Q(e) &= \frac{1}{Z_e} \mathrm{exp} \left\lbrace f(ECD,e) \right\rbrace \\
 Q(f) &= \frac{1}{Z_f} \mathrm{exp} \left\lbrace f(FD,f) \right\rbrace \\
 \end{align*}
-
+We now look at $f(\phi, x_i)$.
+\[
+f(\phi, x_i) = \mathrm{E}_{(U_\phi - \lbrace X_i \rbrace) \sim Q} [\ln \phi(U_\phi , x_i)] = \sum_{u_\phi \in (U_\phi - \lbrace X_i \rbrace)} Q(u_\phi) \ln \phi(u_\phi, x_i)
+\]
+We note that all variables are binary.  We can also see that in $\phi(u_\phi, x_i)$ we are considering only the sub-factor that has $X_i = x_i$, and we are summing over all other values $u_\phi$ of the other variables $(U_\phi - \lbrace X_i \rbrace)$, and multiplying by $Q(u_\phi)$, which is a product of marginals.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{3 Analyzing Multiple Text Corpora}
