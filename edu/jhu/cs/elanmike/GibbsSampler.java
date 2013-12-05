@@ -1498,6 +1498,7 @@ public class GibbsSampler {
 					printFloatToFile(g.getProbability(g.theta_dkMean, d, k), pw, false);
 				}
 				pw.println();
+				pw.flush();
 			}
 		}
 		catch(IOException ex) {
@@ -1517,6 +1518,7 @@ public class GibbsSampler {
 					printFloatToFile(g.getProbability(g.phi_kwMean, k, g.WordToIndex.get(word)), pw, false);
 				}
 				pw.println();
+				pw.flush();
 			}
 		}
 		catch(IOException ex) {
@@ -1537,6 +1539,7 @@ public class GibbsSampler {
 						printFloatToFile(g.getProbability(g.phi_ckwMean, c, k, g.WordToIndex.get(word)), pw, false);
 					}
 					pw.println();
+					pw.flush();
 				}
 			}
 			catch(IOException ex) {

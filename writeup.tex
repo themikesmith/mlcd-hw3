@@ -286,25 +286,36 @@ F &= \mathrm{E}_q \{\log p(z \mid \theta) + \log p(\theta \mid \alpha) + \log p(
 &+ \log p(w \mid z, x, c, \phi) \\
 &+ \mathrm{E}_q \{ \log q(\theta \mid \gamma) + \sum_d \left( \log q(z \mid \delta) + \log q(\phi \mid \zeta) + \log q(x \mid \eta) \right) \} 
 \end{align*}
-Now, we can calculate the individual terms by taking the logarithm of each, also moving the expectation to each term, as the expectation of a sum is the sum of expectations.\\
-\noindent \textit{Note that some of these equations were taken from\\ http://machinelearning.wustl.edu/mlpapers/paper\_files/BleiNJ03.pdf }
+Now, we can calculate the individual terms by taking the logarithm of each, also moving the expectation to each term, as the expectation of a sum is the sum of expectations.  We note that $q(\theta \mid \gamma) \sim \mathrm{Dirichlet}(\gamma)$, $q(z \mid \delta) \sim \mathrm{Multinomial}(\delta)$, $q(\phi \mid \zeta) \sim \mathrm{Dirichlet}(\zeta)$, $q(x \mid \eta) \sim \mathrm{Bernoulli}(\eta)$, and we consider only the update equations given a specific document, as the source did.\\
+\noindent \textit{Note that some of these equations were taken from\\ http://machinelearning.wustl.edu/mlpapers/paper\_files/BleiNJ03.pdf \\ We cite their derivations.}
 \begin{align*}
-\mathrm{E}_q \log p(z \mid \theta) &= \sum\limits_{i=1}^{N_d} \sum\limits_{k=1}^K (\alpha - 1)(\Psi(\gamma_k) - \Psi(\sum_{j=1}^k \gamma_j) ) \\
+\mathrm{E}_q \log p(z \mid \theta) &= \sum\limits_{i=1}^{N_d} \sum\limits_{k=1}^K \delta_{i,k}(\Psi(\gamma_k) - \Psi(\sum_{j=1}^k \gamma_j) ) \\
 \mathrm{E}_q\log p(\theta \mid \alpha) &= \log \Gamma (K \alpha) - \sum\limits_{k=1}^K \log \Gamma(\alpha) + \sum\limits_{k=1}^K (\alpha - 1)(\Psi(\gamma_k) - \Psi(\sum_{j=1}^K \gamma_j) )\\
 \mathrm{E}_q\log p(x \mid \lambda) &= I(x=0) Q(x=0|\eta) \log \lambda + I(x=1) Q(x=1|\eta) \log (1-\lambda) \\
-\mathrm{E}_q\log p(\phi \mid \beta) &= \log \Gamma (K \beta) - \sum\limits_{k=1}^V \log \Gamma(\beta) + \sum\limits_{k=1}^V (\beta - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) )\\
-\mathrm{E}_q\log p(w \mid z, x, c, \phi) &= \sum_{d,i} \left( I(x_{d,i} = 0) p(w_{d,i} \mid \phi_k) + I(x_{d,i} = 1) p(w_{d,i} \mid \phi_{k}^{c})  \right)\\
+\mathrm{E}_q\log p(\phi \mid \beta) &= I(x=0)(\log \Gamma (K \beta) - \sum\limits_{k=1}^V \log \Gamma(\beta) + \sum\limits_{k=1}^V (\beta - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) ))\\
+&+ I(x=1,c=0)(\log \Gamma (K \beta) - \sum\limits_{k=1}^V \log \Gamma(\beta) + \sum\limits_{k=1}^V (\beta - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) ))\\
+&+ I(x=1,c=1)(\log \Gamma (K \beta) - \sum\limits_{k=1}^V \log \Gamma(\beta) + \sum\limits_{k=1}^V (\beta - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) ))\\
+\mathrm{E}_q\log p(w \mid z, x, c, \phi) &= \sum_{d,i} \sum_{w \in V} \left( I(x_{d,i} = 0) p(w_{d,i} \mid \phi_z) + I(x_{d,i} = 1) p(w_{d,i} \mid \phi_{z}^{c})  \right)\\
 \mathrm{E}_q\log q(\theta \mid \gamma) &= \log \Gamma (\sum\limits_{k=1}^K \gamma_k) - \sum\limits_{k=1}^K \log \Gamma(\gamma_k) + \sum\limits_{k=1}^K (\gamma_k - 1)(\Psi(\gamma_k) - \Psi(\sum_{j=1}^K \gamma_j) )\\
 \mathrm{E}_q\log q(z \mid \delta) &= \sum\limits_{i=1}^{N_d} \sum\limits_{k=1}^K \delta_{i,k} \log \delta_{i,k} \\
-\mathrm{E}_q\log q(\phi \mid \zeta) &= \log \Gamma (\sum\limits_{k=1}^V \zeta_k) - \sum\limits_{k=1}^V \log \Gamma(\zeta_k) + \sum\limits_{k=1}^V (\zeta_k - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) )\\
+\mathrm{E}_q\log p(\phi \mid \zeta) &= I(x=0)(\log \Gamma (K \zeta) - \sum\limits_{k=1}^V \log \Gamma(\zeta) + \sum\limits_{k=1}^V (\zeta - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) ))\\
+&+ I(x=1,c=0)(\log \Gamma (K \zeta) - \sum\limits_{k=1}^V \log \Gamma(\zeta) + \sum\limits_{k=1}^V (\zeta - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) ))\\
+&+ I(x=1,c=1)(\log \Gamma (K \zeta) - \sum\limits_{k=1}^V \log \Gamma(\zeta) + \sum\limits_{k=1}^V (\zeta - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) ))\\
 \mathrm{E}_q\log q(x \mid \eta) &= I(x=0) Q(x=0|\eta) \log \eta + I(x=1) Q(x=1|\eta) \log (1-\eta) \\
 \end{align*}
-We now need to define four update equations for $Q$, one each for $\theta$, $z$, $\phi$, and $x$.  For each variable, we collect terms involving that variable into an intermediate equation $\mathrm{Update}_{Q_i}$, which is in log space.  We'll take the derivative with respect to variable $i$ and set that to zero, rearrange, and exponentiate.
+We now need to define four update equations for $Q$, one each for $\gamma_{d,k}$, $\delta_{d,i}$, $\zeta_{k,w}$, and $\eta_{d,i}$.  For each variable, we form the Langrangian by collecting terms involving that variable and adding the constraints of that variable.  We'll take the derivative with respect to variable $i$ and set that to zero, rearrange, and exponentiate.
 \begin{align*}
-\mathrm{Update}_{Q_\theta} &= asdf \\ 
-\mathrm{Update}_{Q_z} &= asdf \\
-\mathrm{Update}_{Q_\phi} &= asdf \\
-\mathrm{Update}_{Q_x} &= asdf 
+L_{\gamma_{k}} &= (\alpha - 1)(\Psi(\gamma_k) - \Psi(\sum_{j=1}^k \gamma_j) ) \\ 
+L_{\delta_{i,k}} &= asdf \\
+L_{\zeta_{k,w}} &= asdf \\
+L_{\eta_{i}} &= asdf 
+\end{align*}
+Therefore, the update equations are the following:
+\begin{align*}
+\mathrm{Update}_{Q_\gamma} &= asdf \\ 
+\mathrm{Update}_{Q_\delta} &= asdf \\
+\mathrm{Update}_{Q_\zeta} &= asdf \\
+\mathrm{Update}_{Q_\eta} &= asdf 
 \end{align*}
 
 
