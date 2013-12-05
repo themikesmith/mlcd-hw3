@@ -257,7 +257,9 @@ Now, we can calculate the individual terms by taking the logarithm of each, also
 \mathrm{E}_q\log p(w \mid z, x, c, \phi) &= \sum_{d,i} \sum_{w \in V} \left( I(x_{d,i} = 0) p(w_{d,i} \mid \phi_z) + I(x_{d,i} = 1) p(w_{d,i} \mid \phi_{z}^{c})  \right)\\
 \mathrm{E}_q\log q(\theta \mid \gamma) &= \log \Gamma (\sum\limits_{k=1}^K \gamma_k) - \sum\limits_{k=1}^K \log \Gamma(\gamma_k) + \sum\limits_{k=1}^K (\gamma_k - 1)(\Psi(\gamma_k) - \Psi(\sum_{j=1}^K \gamma_j) )\\
 \mathrm{E}_q\log q(z \mid \delta) &= \sum\limits_{i=1}^{N_d} \sum\limits_{k=1}^K \delta_{i,k} \log \delta_{i,k} \\
-\mathrm{E}_q\log q(\phi \mid \zeta) &= \log \Gamma (\sum\limits_{k=1}^V \zeta_k) - \sum\limits_{k=1}^V \log \Gamma(\zeta_k) + \sum\limits_{k=1}^V (\zeta_k - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) )\\
+\mathrm{E}_q\log p(\phi \mid \zeta) &= I(x=0)(\log \Gamma (K \zeta) - \sum\limits_{k=1}^V \log \Gamma(\zeta) + \sum\limits_{k=1}^V (\zeta - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) ))\\
+&+ I(x=1,c=0)(\log \Gamma (K \zeta) - \sum\limits_{k=1}^V \log \Gamma(\zeta) + \sum\limits_{k=1}^V (\zeta - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) ))\\
+&+ I(x=1,c=1)(\log \Gamma (K \zeta) - \sum\limits_{k=1}^V \log \Gamma(\zeta) + \sum\limits_{k=1}^V (\zeta - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) ))\\
 \mathrm{E}_q\log q(x \mid \eta) &= I(x=0) Q(x=0|\eta) \log \eta + I(x=1) Q(x=1|\eta) \log (1-\eta) \\
 \end{align*}
 We now need to define four update equations for $Q$, one each for $\gamma_{d,k}$, $\delta_{d,i}$, $\zeta_{k,w}$, and $\eta_{d,i}$.  For each variable, we form the Langrangian by collecting terms involving that variable and adding the constraints of that variable.  We'll take the derivative with respect to variable $i$ and set that to zero, rearrange, and exponentiate.
