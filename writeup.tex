@@ -161,12 +161,10 @@ This does look like a better approximation than mean field.  It is encapsulating
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{3 Analyzing Multiple Text Corpora}
-\noindent {\bf(a) Changing Day 1 Ice creams from 2 to 1...}\\
-
+%\noindent {\bf(a) Changing Day 1 Ice creams from 2 to 1...}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{4 Collapsed Gibbs Sampler Implementation}
-\noindent {\bf(a) Changing Day 1 Ice creams from 2 to 1...}\\
-
+%\noindent {\bf(a) Changing Day 1 Ice creams from 2 to 1...}\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{5 Blocked Gibbs Sampler}
 \noindent {\bf(5.1) Analysis Questions}\\
@@ -244,7 +242,7 @@ P &(z_{d,i}=k, x_{d,i} = 1 \mid z-z_{d,i},x-x_{d,i},c,w;\alpha, \beta, \lambda) 
 \noindent {\bf(b)} Varying $\lambda$ controls the amount we sample from global vs corpus dependent distribution of topics. Test performance increases with $\lambda$ initially but then peaks around .75 before decreasing again. This implies that there is an optimal lambda that is between always sampling from the global and always sampling from collection dependent. This intuitively makes sense because with $\lambda = 0$ this would imply that there is no advantage of looking at collection specific topics. The other extreme with $\lambda=1$ would imply that there was no benefit to generalizing and considering global topics. Everywhere in between implies that there are differences in which words each collection uses to describe a topic but there is still benefit to considering the generalized corpus. The fact that our value slightly prefers collection specific seems reasonable since means that documents mostly talk about collection specific topics (NLP vs ML) but global topics still contribute. 
  \\
 \\
-\noindent {\bf(c)} alpha/beta \\
+\noindent {\bf(c)} Alpha and  beta control how counts affect theta and phi vs a default smoothed value.  \\
 
 %\begin{figure}[H]
 %\centering
