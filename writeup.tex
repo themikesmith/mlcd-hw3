@@ -120,7 +120,16 @@ We now look at $f(\phi, x_i)$.
 \[
 f(\phi, x_i) = \mathrm{E}_{(U_\phi - \lbrace X_i \rbrace) \sim Q} [\ln \phi(U_\phi , x_i)] = \sum_{u_\phi \in (U_\phi - \lbrace X_i \rbrace)} Q(u_\phi) \ln \phi(u_\phi, x_i)
 \]
-We note that all variables are binary.  We can also see that in $\phi(u_\phi, x_i)$ we are considering only the sub-factor that has $X_i = x_i$, and we are summing over all other values $u_\phi$ of the other variables $(U_\phi - \lbrace X_i \rbrace)$, and multiplying by $Q(u_\phi)$, which is a product of marginals.
+We note that all variables are binary.  We can also see that in $\phi(u_\phi, x_i)$ we are considering only the sub-factor that has $X_i = x_i$, and we are summing over all other values $u_\phi$ of the other variables $(U_\phi - \lbrace X_i \rbrace)$, and multiplying by $Q(u_\phi)$, which is a product of marginals.  As a result, we arrived at the update equations in our 'inference.R' file.
+
+\noindent \textbf{b - Implement and test mean field}\\
+This does not look like a reasonable approximation, because we are losing many of the dependencies of the distribution.  The KL divergence is extremely high, signifying that Q is not a very close approximation for P.  Though we have optimized Q given this family of distributions, we should have chosen a different family.\\
+
+\noindent \textbf{c - Derive structured mean field}\\
+
+
+\noindent \textbf{d - Implement and test structured mean field}\\
+This does look like a better approximation than mean field.  It is encapsulating dependencies between A, B, and C, and between D, E, and F, as opposed to assuming they are all independent.  This more closely approximates our true distribution P.  The smaller KL divergence means it's closer to P.  Structured mean field performs better for this network because it's simple, and there are very clear dependencies.  We chose structures / clusters / groups of variables such that we capture some of these dependencies, and this of course will be better than simply assuming everything is indepdendent of everything else, as in mean field.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{3 Analyzing Multiple Text Corpora}

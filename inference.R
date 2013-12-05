@@ -10,8 +10,8 @@ mean.field.inference <- function()
   a.up <- function(a)
   {
     tempA <- 
-      log(prob.a(a)) 
-    + log(prob.b.given.a(2,a))*q.b[2]  
+#      log(prob.a(a)) +
+     log(prob.b.given.a(2,a))*q.b[2]  
     + log(prob.b.given.a(1,a))*q.b[1]
     + log(prob.c.given.ab(1,a,1))*q.c[1]*q.b[1]
     + log(prob.c.given.ab(2,a,1))*q.c[2]*q.b[1]
