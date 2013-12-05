@@ -65,8 +65,58 @@
 \thispagestyle{empty}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{2 Variational Inference}
-\noindent {\bf(a) Changing Day 1 Ice creams from 2 to 1...}\\
+\section*{2 Variational Inference - Mean-Field and Structured Mean-Field}
+\noindent {\bf(2.1.a) Derivation of mean field given our network...}\\
+For mean field, we are assuming an approximate distribution $Q = \prod_i Q(x_i)$, that is a product of marginals, to approximate our actual distribution $P$.  We also assume that $\forall i, \sum\limits_{x_i} Q(x_i) = 1$, that each marginal $Q(x_i)$ is a valid distribution in itself.\\
+We want to optimize the energy functional, or minimize $\mathrm{KL}(q\|p)$.  The energy functional is as follows:
+\begin{align*}
+F &= \mathrm{E}_Q \ln P + \mathrm{H}_Q(X) \\
+&= \mathrm{E}_Q \ln P + \mathrm{E}_Q \ln Q \\
+&= \sum_{\phi \in \Phi} \mathrm{E}_Q [\ln \phi] + \mathrm{E}_Q \ln Q
+\end{align*}
+The first term is equal to the following, since $Q$ is a product of marginals:
+\begin{equation*}
+\mathrm{E}_Q \ln P = \mathrm{E}_{U_\phi \sim Q} [\ln \phi] = \sum_{u_\phi} Q(u_\phi) \ln \phi(u_\phi) = \sum_{u_\phi} \left( \prod_{X_i \in U_\phi } Q(x_i) \right) \ln \phi(u_\phi)
+\end{equation*}
+The second term, the entropy term, is equal to:
+\begin{equation*}
+\mathrm{H}_Q(X) = \mathrm{E}_Q \ln Q = \sum_i \mathrm{H}_Q(X_i)
+\end{equation*}
+We want to optimize the energy functional, subject to our given constraints, so we write a Lagrangian objective as follows, for each variable $i$:
+\begin{align*}
+L_i &= \sum_{\phi \in \Phi} \mathrm{E}_{U_\phi \sim Q} [\ln \phi] + \mathrm{H}_Q(X_i) + \lambda_i (\sum_{x_i} Q(x_i) = 1) \\
+&= \sum_{\phi \in \Phi} \sum_{u_\phi} Q(u_\phi) \ln \phi(u_\phi) + \mathrm{H}_Q(X_i) + \lambda_i (\sum_{x_i} Q(x_i) = 1)
+\end{align*}
+We take the derivative with respect to one variable $x_i$ now. (We need to do this for each variable in turn, and optimize with respect to each variable.)  Since
+\begin{equation*}
+\frac{\delta }{\delta Q(x_i)} \mathrm{E}_{U_\phi \sim Q} [\ln \phi] = \mathrm{E}_{U_\phi \sim Q} [\ln \phi \mid x_i]
+\end{equation*}
+we have the derivative of the lagrangian as
+\begin{equation*}
+\frac{\delta L_i }{\delta Q(x_i)} = \sum_{\phi \in \Phi} \mathrm{E}_{U_\phi \sim Q} [\ln \phi \mid x_i] - \ln Q(x_i) - 1 + \lambda_i
+\end{equation*}
+Setting this derivative equal to 0 and rearranging terms we get:
+\begin{equation*}
+\ln Q(x_i) = \lambda - 1 + \sum_{\phi \in \Phi} \mathrm{E}_{U_\phi \sim Q} [\ln \phi \mid x_i]
+\end{equation*}
+Continuing to follow Koller p.450-452, we exponentiate both sides and renormalize; because $\lambda_i$ is a constant relative to $x_i$, it drops out when we renormalize, so we get:
+\begin{equation*}
+Q(x_i) = \frac{1}{Z_i} \mathrm{exp} \left\lbrace \sum_{\phi \in \Phi} \mathrm{E}_{U_\phi \sim Q} [\ln \phi \mid x_i] \right\rbrace
+\end{equation*}
+which is the equation that must hold if and only if $Q(X_i)$ is a local maximum of the mean field given $\lbrace Q(X_j) \rbrace_{j \not = i}$.  We note that if $X_i \not \in Scope(\phi)$ then $\mathrm{E}_{U_\phi \sim Q} [\ln \phi \mid x_i] = \mathrm{E}_{U_\phi \sim Q} [\ln \phi]$.  Put another way, expectations on such factors do not depend on $x_i$, and may therefore be lumped into the normalization constant $Z_i$.  We can therefore simplify and get:
+\begin{equation*}
+Q(x_i) = \frac{1}{Z_i} \mathrm{exp} \left\lbrace \sum_{\phi : X_i \in Scope(\phi)} \mathrm{E}_{(U_\phi - \lbrace X_i \rbrace) \sim Q} [\ln U_\phi , x_i] \right\rbrace
+\end{equation*}
+Given our network for $P$, we see that we have factors over $(A)$, $(BA)$, $(CAB)$, $(DB)$, $(ECD)$, and $(FD)$.  We see from our previous simplification that the update equation for $Q(x_i)$ only sums over each factor $\phi$ such that $X_i$ is in $\phi$'s scope, lumping everything else into the normalization constant.  If we define $f(\phi, x_i) = \mathrm{E}_{(U_\phi - \lbrace X_i \rbrace) \sim Q} [\ln U_\phi , x_i]$, we get the following update equations:
+\begin{align*}
+Q(a) &= \frac{1}{Z_a} \mathrm{exp} \left\lbrace f(A,a) + f(BA,a) + f(CAB,a) \right\rbrace \\
+Q(b) &= \frac{1}{Z_b} \mathrm{exp} \left\lbrace f(DB,b) + f(BA,b) + f(CAB,b) \right\rbrace \\
+Q(c) &= \frac{1}{Z_c} \mathrm{exp} \left\lbrace f(CAB,c) + f(ECD,c) \right\rbrace \\
+Q(d) &= \frac{1}{Z_d} \mathrm{exp} \left\lbrace f(ECD,d) + f(DB,d) + f(FD,d) \right\rbrace \\
+Q(e) &= \frac{1}{Z_e} \mathrm{exp} \left\lbrace f(ECD,e) \right\rbrace \\
+Q(f) &= \frac{1}{Z_f} \mathrm{exp} \left\lbrace f(FD,f) \right\rbrace \\
+\end{align*}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{3 Analyzing Multiple Text Corpora}
