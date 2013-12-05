@@ -1423,8 +1423,8 @@ public class GibbsSampler {
 		double lambda = Double.parseDouble(args[4]),
 				alpha = Double.parseDouble(args[5]), 
 				beta = Double.parseDouble(args[6]);
-//		System.out.printf("trainfile:%s testfile:%s output:%s \nk:%d lambda:%f alpha:%f beta:%f \ntotaliters:%d totalburnin:%d\n",
-//				trainingFile, testFile, outFile, numTopics, lambda, alpha, beta, totalIters, totalBurnin);
+		System.out.printf("trainfile:%s testfile:%s output:%s \nk:%d lambda:%f alpha:%f beta:%f \ntotaliters:%d totalburnin:%d\n",
+				trainingFile, testFile, outFile, numTopics, lambda, alpha, beta, totalIters, totalBurnin);
 		GibbsSampler g = new GibbsSampler(type, numCollections, numTopics, lambda, alpha, beta);
 		try {
 			g.readTrainingFile(trainingFile);
