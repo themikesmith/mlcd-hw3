@@ -199,35 +199,35 @@ P &(z_{d,i}=k, x_{d,i} = 1 \mid z-z_{d,i},x-x_{d,i},c,w;\alpha, \beta, \lambda) 
 \section*{6 Text Analysis with MCLDA}
 \noindent {\bf(1)} For each chain the training likelihood increases (monotonically, save for minor fluctuations)  till it plateaus around 300 iterations. Similarly the likelihood for test data decreases till it plateaus however with much more variation. \\
 
-\begin{figure}[H]
-\centering
-\includegraphics[keepaspectratio=true,scale=0.8]{charts/chain1}
-\label{chain1}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[keepaspectratio=true,scale=0.8]{charts/chain2}
-\label{chain2}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[keepaspectratio=true,scale=0.8]{charts/chain3}
-\label{chain3}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[keepaspectratio=true,scale=0.8]{charts/trainingLLOfChains}yo
-\label{chainTraining}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[keepaspectratio=true,scale=0.8]{charts/testLLOfChains}
-\label{chainTest}
-\end{figure}
+%\begin{figure}[H]
+%\centering
+%\includegraphics[keepaspectratio=true,scale=0.8]{charts/chain1}
+%\label{chain1}
+%\end{figure}
+%
+%\begin{figure}[H]
+%\centering
+%\includegraphics[keepaspectratio=true,scale=0.8]{charts/chain2}
+%\label{chain2}
+%\end{figure}
+%
+%\begin{figure}[H]
+%\centering
+%%\includegraphics[keepaspectratio=true,scale=0.8]{charts/chain3}
+%\label{chain3}
+%\end{figure}
+%
+%\begin{figure}[H]
+%\centering
+%\includegraphics[keepaspectratio=true,scale=0.8]{charts/trainingLLOfChains}yo
+%\label{chainTraining}
+%\end{figure}
+%
+%\begin{figure}[H]
+%\centering
+%\includegraphics[keepaspectratio=true,scale=0.8]{charts/testLLOfChains}
+%\label{chainTest}
+%\end{figure}
 
 \noindent {\bf(4)} TOPICS \\
 \\
@@ -246,12 +246,12 @@ P &(z_{d,i}=k, x_{d,i} = 1 \mid z-z_{d,i},x-x_{d,i},c,w;\alpha, \beta, \lambda) 
 \\
 \noindent {\bf(c)} alpha/beta \\
 
-\begin{figure}[H]
-\centering
-\includegraphics[keepaspectratio=true,scale=0.8]{charts/VaryingAlphasBetasOnTest}
-\caption{Write some caption here}\label{alphaBetaVariation}
-\end{figure}
-
+%\begin{figure}[H]
+%\centering
+%\includegraphics[keepaspectratio=true,scale=0.8]{charts/VaryingAlphasBetasOnTest}
+%\caption{Write some caption here}\label{alphaBetaVariation}
+%\end{figure}
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{7 Variational Inference}
 \noindent {\bf(7.1) Derivation}\\
@@ -296,8 +296,8 @@ Now, we can calculate the individual terms by taking the logarithm of each, also
 &+ I(x=1,c=0)(\log \Gamma (K \beta) - \sum\limits_{k=1}^V \log \Gamma(\beta) + \sum\limits_{k=1}^V (\beta - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) ))\\
 &+ I(x=1,c=1)(\log \Gamma (K \beta) - \sum\limits_{k=1}^V \log \Gamma(\beta) + \sum\limits_{k=1}^V (\beta - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) ))\\
 \mathrm{E}_q\log p(w \mid z, x, c, \phi) &= \sum_{d,i} \lbrace q(w_{d,i} \mid \phi_k)^{I(x_{d,i} = 0)} q(w_{d,i} \mid \phi_{k}^{c_0})^{I(x_{d,i} = 1, c= 0)} q(w_{d,i} \mid \phi_{k}^{c_1})^{I(x_{d,i} = 1, c= 1)} \\ 
-& \times [ I(x_{d,i} = 0) (\log p(w_{d,i} \mid \phi_k)) + I(x_{d,i} = 1, c= 0) (\log p(w_{d,i} \mid \phi_{k}^{c_0}) \\
-& + I(x_{d,i} = 1, c= 1) (\log p(w_{d,i} \mid \phi_{k}^{c_1})) ] \rbrace \\
+& \times [ I(x_{d,i} = 0) (\log p(w_{d,i} \mid \phi_z)) + I(x_{d,i} = 1, c= 0) (\log p(w_{d,i} \mid \phi_{z}^{c_0}) \\
+& + I(x_{d,i} = 1, c= 1) (\log p(w_{d,i} \mid \phi_{z}^{c_1})) ] \rbrace \\
 \mathrm{E}_q\log q(\theta \mid \gamma) &= \log \Gamma (\sum\limits_{k=1}^K \gamma_k) - \sum\limits_{k=1}^K \log \Gamma(\gamma_k) + \sum\limits_{k=1}^K (\gamma_k - 1)(\Psi(\gamma_k) - \Psi(\sum_{j=1}^K \gamma_j) )\\
 \mathrm{E}_q\log q(z \mid \delta) &= \sum\limits_{i=1}^{N_d} \sum\limits_{k=1}^K \delta_{i,k} \log \delta_{i,k} \\
 \mathrm{E}_q\log q(\phi \mid \zeta) &= I(x=0)(\log \Gamma (K \zeta) - \sum\limits_{k=1}^V \log \Gamma(\zeta) + \sum\limits_{k=1}^V (\zeta - 1)(\Psi(\zeta_k) - \Psi(\sum_{j=1}^V \zeta_j) ))\\
@@ -311,7 +311,8 @@ L_{\gamma_{k}} &= \delta_{i,k}(\Psi(\gamma_k) - \Psi(\sum_{j=1}^k \gamma_j) ) + 
 &+ \log \Gamma (\sum\limits_{k=1}^K \gamma_k) - \sum\limits_{k=1}^K \log \Gamma(\gamma_k) + \sum\limits_{k=1}^K (\gamma_k - 1)(\Psi(\gamma_k) - \Psi(\sum_{j=1}^K \gamma_j) ) \\ 
 L_{\delta_{i,k}} &= \delta_{i,k}(\Psi(\gamma_k) - \Psi(\sum_{j=1}^k \gamma_j) ) + \delta_{i,k} \log \delta_{i,k} \\
 L_{\zeta_{k,w}} &= asdf \\
-L_{\eta_{i}} &= asdf 
+L_{\eta_{i}} &= I(x=0) Q(x=0|\eta) \log \lambda + I(x=1) Q(x=1|\eta) \log (1-\lambda) \\
+&+ I(x=0) Q(x=0|\eta) \log \eta + I(x=1) Q(x=1|\eta) \log (1-\eta)
 \end{align*}
 Therefore, the update equations are the following:
 \begin{align*}
