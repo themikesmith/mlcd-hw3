@@ -92,9 +92,17 @@ P (z_{d,i}, x_{d,i} \mid z-z_{d,i},x-x_{d,i},c,w;\alpha, \beta, \lambda) &= \fra
 \end{align}
 
 \begin{align}
-P (z_{d,i}=k, x_{d,i} = 0 \mid z-z_{d,i},x-x_{d,i},c,w;\alpha, \beta, \lambda) &= \nonumber\\
-\frac{\frac{\Gamma(n^{k}_{w_{d,i}} +1+\beta)}{\Gamma(1+\sum_{w} n^{k}_{w}+\beta)}  \frac{\Gamma(n^{d}_{k} +1+\alpha)}{\Gamma(1+\sum_{k'} n^{k'}_{w}+\alpha)}}{\frac{\Gamma(n^{k}_{w_{d,i}} +\beta)}{\Gamma(\sum_{w} n^{k}_{w}+\beta)}  \frac{\Gamma(n^{d}_{k} +\alpha)}{\Gamma(\sum_{k'} n^{k'}_{w}+\alpha)}} P(x_{d,i} = 0 \mid \lambda)
+P &(z_{d,i}=k, x_{d,i} = 0 \mid z-z_{d,i},x-x_{d,i},c,w;\alpha, \beta, \lambda)  \nonumber\\
+&=\frac{\frac{\Gamma(n^{k}_{w_{d,i}} +1+\beta)}{\Gamma(1+\sum_{w} n^{k}_{w}+\beta)}  \frac{\Gamma(n^{d}_{k} +1+\alpha)}{\Gamma(1+\sum_{k'} n^{k'}_{w}+\alpha)}}{\frac{\Gamma(n^{k}_{w_{d,i}} +\beta)}{\Gamma(\sum_{w} n^{k}_{w}+\beta)}  \frac{\Gamma(n^{d}_{k} +\alpha)}{\Gamma(\sum_{k'} n^{k'}_{w}+\alpha)}} P(x_{d,i} = 0 \mid \lambda)\nonumber\\
+&= \frac{n^{k}_{w_{d,i}}+\beta}{n^{k}_{*}+V\beta}  \frac{n^{d}_{k} +\alpha}{n^{d}_{*} +K\alpha} (1-\lambda) 
 \end{align}
+
+\begin{align}
+P &(z_{d,i}=k, x_{d,i} = 1 \mid z-z_{d,i},x-x_{d,i},c,w;\alpha, \beta, \lambda)  \nonumber\\
+&=\frac{\frac{\Gamma(n^{c,k}_{w_{d,i}} +1+\beta)}{\Gamma(1+\sum_{w} n^{c,k}_{w}+\beta)}  \frac{\Gamma(n^{d}_{k} +1+\alpha)}{\Gamma(1+\sum_{k'} n^{k'}_{w}+\alpha)}}{\frac{\Gamma(n^{c,k}_{w_{d,i}} +\beta)}{\Gamma(\sum_{w} n^{c,k}_{w}+\beta)}  \frac{\Gamma(n^{d}_{k} +\alpha)}{\Gamma(\sum_{k'} n^{k'}_{w}+\alpha)}} P(x_{d,i} = 1 \mid \lambda)\nonumber\\
+&= \frac{n^{c,k}_{w_{d,i}}+\beta}{n^{c,k}_{*}+V\beta}  \frac{n^{d}_{k} +\alpha}{n^{d}_{*} +K\alpha} (\lambda) 
+\end{align}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{6 Text Analysis with MCLDA}
