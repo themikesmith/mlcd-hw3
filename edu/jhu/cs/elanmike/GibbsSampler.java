@@ -993,7 +993,7 @@ public class GibbsSampler {
 				// exclude current assignment
 				updateTestCountsExcludeCurrentAssignment(d, i);
 				// randomly sample a new value for zdi
-				Probability[] totalProbs = new Probability[numTopics];
+				Probability[] totalProbs = new Probability[numTopics*2];
 				// find total
 				Probability totalProb = new Probability(0);
 				int sampledZdi = -1;
