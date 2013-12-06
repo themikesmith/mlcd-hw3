@@ -1434,7 +1434,7 @@ public class GibbsSampler {
 //						System.out.printf("lambda_times_PhiCKW = %s  \n",lambda_times_PhiCKW);
 				
 						Probability sum = oneMinusLambda_times_PhiKW.add(lambda_times_PhiCKW);
-						Probability thetadk = getProbability(theta_dk,d,k);
+						Probability thetadk = getProbability(theta_dkTest,d,k);
 						topicTotal = topicTotal + Math.exp(thetadk.product(sum).getLogProb());
 						
 						//System.out.printf("ll(test, %d) = %s  \n",d, logLike_test);
