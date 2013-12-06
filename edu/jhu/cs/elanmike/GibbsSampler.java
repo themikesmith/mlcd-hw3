@@ -916,9 +916,9 @@ public class GibbsSampler {
 		return p;
 	}
 	/**
-	 * Runs an iteration of test sampling
+	 * Runs an iteration of test sampling - collapsed gibbs
 	 */
-	private void sampleTestIter() {
+	private void sampleTestIterCollapsed() {
 		
 		for(int d = 0; d < ndkTest.size(); d++) {
 			int numWordsInD = ndStarTest.get(d);
@@ -980,20 +980,89 @@ public class GibbsSampler {
 		}
 	}
 	/**
-	 * Runs an iteration of training asmpling
+	 * Runs an iteration of sampling for test data - blocked gibbs
 	 */
-	private void sampleTrainingIter() {
-		
-		// Loop through all documents
-		for(int d = 0; d < ndk.size(); d++) {
-//			System.out.printf("d:%d ",d);
-			int numWordsInD = ndStar.get(d);
-			
-			// Loop through all words
+	private void sampleTestIterBlocked() {
+		for(int d = 0; d < ndkTest.size(); d++) {
+			int numWordsInD = ndStarTest.get(d);
+//			System.out.printf("\nd:%d numwords:%d\n",d, numWordsInD);
 			for(int i = 0; i < numWordsInD; i++) {
-				int w = getValue(wdi, d, i),
-					v = getValue(xdi, d, i);
-//				System.out.printf("i:%d w:%d\n",i,w);
+				int w = getValue(wdiTest, d, i),
+					v = getValue(xdiTest, d, i);
+//				System.out.printf("\ni:%d w:%d\n",i,w);
+				// exclude current assignment
+				updateTestCountsExcludeCurrentAssignment(d, i);
+				// randomly sample a new value for zdi
+				Probability[] totalProbs = new Probability[numTopics];
+				// find total
+				Probability totalProb = new Probability(0);
+				int sampledZdi = -1;
+				// weight with lambda
+				Probability plambda = new Probability(lambda);
+				for (int k = 0; k < numTopics; k++) {
+					// System.out.printf("\nk:%d\ntotal before:%s\n", k,
+					// totalProb);
+					Probability curr = getTestPZdiEqualsK(d, i, w, v, k);
+					// System.out.println("curr:"+curr);
+					totalProb = totalProb.add(curr).product(plambda);
+					// System.out.println("total after:"+totalProb);
+					totalProbs[k] = totalProb;
+				}
+				// weight with (1-lambda)
+				Probability oneMinusLambda = new Probability(1-lambda);
+				for (int k = 0; k < numTopics; k++) {
+					// System.out.printf("\nk:%d\ntotal before:%s\n", k,
+					// totalProb);
+					Probability curr = getTestPZdiEqualsK(d, i, w, v, k);
+					// System.out.println("curr:"+curr);
+					totalProb = totalProb.add(curr).product(oneMinusLambda);
+					// System.out.println("total after:"+totalProb);
+					totalProbs[k+numTopics] = totalProb;
+				}
+				// get random num
+				double p = rand.nextDouble();
+				Probability marker = new Probability(p);
+				marker = marker.product(totalProb);
+				// System.out.println("marker:"+marker);
+				for (int k = 0; k < numTopics*2; k++) {
+					// System.out.println("kth total:"+totalProbs[k]);
+					if (totalProbs[k].getLogProb() > marker.getLogProb()) {
+						// stop. we have sampled this value of k
+						sampledZdi = k % numTopics;
+						break;
+					}
+				}
+				// System.out.println("sampled k = "+sampledZdi);
+				// xda is 1 if total < lambda, else 0
+				int sampledXdi = -1;
+				if (marker.getLogProb() < plambda.getLogProb()) {
+					// we have sampled xdi = 1
+					sampledXdi = 1;
+				} else {
+					sampledXdi = 0;
+				}
+//				System.out.println("sampled x = "+sampledXdi);
+				// set zdi and xdi
+				setValue(zdiTest, sampledZdi, d, i);
+				setValue(xdiTest, sampledXdi, d, i);
+				// and update counts
+				updateTestCountsNewlySampledAssignment(d, i);
+			}
+		}
+	}
+	/**
+	 * Runs an iteration of sampling for training - collapsed gibbs
+	 */
+	private void sampleTrainingIterCollapsed() {
+		// Loop through all documents
+		for (int d = 0; d < ndk.size(); d++) {
+			// System.out.printf("d:%d ",d);
+			int numWordsInD = ndStar.get(d);
+
+			// Loop through all words
+			for (int i = 0; i < numWordsInD; i++) {
+				int w = getValue(wdi, d, i), v = getValue(xdi, d, i);
+				// System.out.printf("i:%d w:%d\n",i,w);
 				// exclude current assignment
 				updateCountsExcludeCurrentAssignment(d, i);
 				// randomly sample a new value for zdi
@@ -1001,28 +1070,29 @@ public class GibbsSampler {
 				// find total
 				Probability totalProb = new Probability(0);
 				int sampledZdi = -1;
-				for(int k = 0; k < numTopics; k++) {
-//					System.out.printf("\nk:%d\ntotal before:%s\n", k, totalProb);
+				for (int k = 0; k < numTopics; k++) {
+					// System.out.printf("\nk:%d\ntotal before:%s\n", k,
+					// totalProb);
 					Probability curr = getPZdiEqualsK(d, i, w, v, k);
-//					System.out.println("curr:"+curr);
+					// System.out.println("curr:"+curr);
 					totalProb = totalProb.add(curr);
-//					System.out.println("total after:"+totalProb);
+					// System.out.println("total after:"+totalProb);
 					totalProbs[k] = totalProb;
 				}
 				// get random num
 				double p = rand.nextDouble();
 				Probability marker = new Probability(p);
 				marker = marker.product(totalProb);
-//				System.out.println("marker:"+marker);
-				for(int k = 0; k < numTopics; k++) {
-//					System.out.println("kth total:"+totalProbs[k]);
-					if(totalProbs[k].getLogProb() > marker.getLogProb()) {
+				// System.out.println("marker:"+marker);
+				for (int k = 0; k < numTopics; k++) {
+					// System.out.println("kth total:"+totalProbs[k]);
+					if (totalProbs[k].getLogProb() > marker.getLogProb()) {
 						// stop. we have sampled this value of k
 						sampledZdi = k;
 						break;
 					}
 				}
-//				System.out.println("sampled k = "+sampledZdi);
+				// System.out.println("sampled k = "+sampledZdi);
 				// randomly sample a new value for xdi, using newly sampled zdi
 				p = rand.nextDouble();
 				marker = new Probability(p);
@@ -1030,14 +1100,13 @@ public class GibbsSampler {
 				Probability xone = getPXdiEqualsV(d, i, w, sampledZdi, 1);
 				marker = marker.product(xzero.add(xone));
 				int sampledXdi = -1;
-				if(xzero.getLogProb() > marker.getLogProb()) {
+				if (xzero.getLogProb() > marker.getLogProb()) {
 					// we have sampled xdi = 0
 					sampledXdi = 0;
-				}
-				else {
+				} else {
 					sampledXdi = 1;
 				}
-//				System.out.println("sampled x = "+sampledXdi);
+				// System.out.println("sampled x = "+sampledXdi);
 				// set zdi and xdi
 				setValue(zdi, sampledZdi, d, i);
 				setValue(xdi, sampledXdi, d, i);
@@ -1045,6 +1114,97 @@ public class GibbsSampler {
 				updateCountsNewlySampledAssignment(d, i);
 			}
 		}
+	}
+	/**
+	 * Runs an iteration of sampling for training - collapsed gibbs
+	 */
+	private void sampleTrainingIterBlocked() {
+		// Loop through all documents
+		for (int d = 0; d < ndk.size(); d++) {
+			// System.out.printf("d:%d ",d);
+			int numWordsInD = ndStar.get(d);
+
+			// Loop through all words
+			for (int i = 0; i < numWordsInD; i++) {
+				int w = getValue(wdi, d, i), v = getValue(xdi, d, i);
+				// System.out.printf("i:%d w:%d\n",i,w);
+				// exclude current assignment
+				updateCountsExcludeCurrentAssignment(d, i);
+				// randomly sample a new value for zdi
+				Probability[] totalProbs = new Probability[numTopics*2];
+				// find total
+				Probability totalProb = new Probability(0);
+				int sampledZdi = -1;
+				// weight with lambda
+				Probability plambda = new Probability(lambda);
+				for (int k = 0; k < numTopics; k++) {
+					// System.out.printf("\nk:%d\ntotal before:%s\n", k,
+					// totalProb);
+					Probability curr = getPZdiEqualsK(d, i, w, v, k);
+					// System.out.println("curr:"+curr);
+					totalProb = totalProb.add(curr).product(plambda);
+					// System.out.println("total after:"+totalProb);
+					totalProbs[k] = totalProb;
+				}
+				// weight with (1-lambda)
+				Probability oneMinusLambda = new Probability(1-lambda);
+				for (int k = 0; k < numTopics; k++) {
+					// System.out.printf("\nk:%d\ntotal before:%s\n", k,
+					// totalProb);
+					Probability curr = getPZdiEqualsK(d, i, w, v, k);
+					// System.out.println("curr:"+curr);
+					totalProb = totalProb.add(curr).product(oneMinusLambda);
+					// System.out.println("total after:"+totalProb);
+					totalProbs[k+numTopics] = totalProb;
+				}
+				// get random num
+				double p = rand.nextDouble();
+				Probability marker = new Probability(p);
+				marker = marker.product(totalProb);
+				// System.out.println("marker:"+marker);
+				for (int k = 0; k < numTopics*2; k++) {
+					// System.out.println("kth total:"+totalProbs[k]);
+					if (totalProbs[k].getLogProb() > marker.getLogProb()) {
+						// stop. we have sampled this value of k
+						sampledZdi = k % numTopics;
+						break;
+					}
+				}
+				// System.out.println("sampled k = "+sampledZdi);
+				// xda is 1 if total < lambda, else 0
+				int sampledXdi = -1;
+				if (marker.getLogProb() < plambda.getLogProb()) {
+					// we have sampled xdi = 1
+					sampledXdi = 1;
+				} else {
+					sampledXdi = 0;
+				}
+				// System.out.println("sampled x = "+sampledXdi);
+				// set zdi and xdi
+				setValue(zdi, sampledZdi, d, i);
+				setValue(xdi, sampledXdi, d, i);
+				// and update counts
+				updateCountsNewlySampledAssignment(d, i);
+			}
+		}
+	}
+	/**
+	 * Runs an iteration of training asmpling
+	 */
+	private void sampleTrainingIter() {
+		if(type.equals(SamplerType.COLLAPSED)) {
+			sampleTrainingIterCollapsed();
+		}
+		else sampleTrainingIterBlocked();
+	}
+	/**
+	 * Runs an iteration of training asmpling
+	 */
+	private void sampleTestIter() {
+		if(type.equals(SamplerType.COLLAPSED)) {
+			sampleTestIterCollapsed();
+		}
+		else sampleTestIterBlocked();
 	}
 	/**
 	 * Run sampling algorithm.
