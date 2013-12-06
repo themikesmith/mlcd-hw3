@@ -127,11 +127,11 @@ We note that all variables are binary.  We can also see that in $\phi(u_\phi, x_
 This does not look like a reasonable approximation, because we are losing many of the dependencies of the distribution.  The KL divergence is extremely high, signifying that Q is not a very close approximation for P.  Though we have optimized Q given this family of distributions, we should have chosen a different family.\\
 
 \noindent \textbf{c - Derive structured mean field}\\
-For structured mean field, we are assuming the following about our family of Q's.
+For structured mean field in our simple distribution, we are assuming the following about our family of Q's.
 \[
 Q(X_i) = Q(A,B,C,D,E,F) = \frac{1}{Z_Q} \Psi_1 (A,B,C) \Psi_2 (D,E,F)
 \]
-Note that our set of factors for $P$ is $\Phi = \lbrace A, BA, CAB, ECD, DB, FD\rbrace$.  From p458 of Koller, we have the energy functional:
+For reference, our set of factors for $P$ remains $\Phi = \lbrace A, BA, CAB, ECD, DB, FD\rbrace$.  From p458 of Koller, we have the energy functional:
 \[
 F\left[P_\Phi, Q\right] = \sum\limits_{k = 1}^{K} \mathrm{E}_Q (\ln \phi_k) - \sum\limits_{j = 1}^{J} \mathrm{E}_Q ( \ln \psi_j ) + \ln Z_Q
 \]
@@ -161,11 +161,11 @@ This does look like a better approximation than mean field.  It is encapsulating
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{3 Analyzing Multiple Text Corpora}
-\noindent {\bf(a) Changing Day 1 Ice creams from 2 to 1...}\\
+\noindent {\bf(a) Problem details...}\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{4 Collapsed Gibbs Sampler Implementation}
-\noindent {\bf(a) Changing Day 1 Ice creams from 2 to 1...}\\
+\noindent {\bf(a) See output files...}\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{5 Blocked Gibbs Sampler}
@@ -174,7 +174,7 @@ Given the full expanded form of the likelihood:\\
 \begin{align}
 P (z, x, c, w\mid \alpha, \beta, \lambda) &= P (w \mid z, x, c, \beta)P (z\mid \alpha)P(x\mid \lambda) \nonumber\\
 &=\prod_{k}(\frac{\Gamma(\sum_{w} \beta)}{\Gamma(\sum_{w} n^{k}_{w}+\beta)} \prod_{w} \frac{\Gamma(n^{k}_{w}+\beta))}{\Gamma(\beta)} )\nonumber\\
-&\times \prod_{c}\prod_{k}(\frac{\Gamma(\sum_{w} \beta)}{\Gamma(\sum_{w} n^{c,k}_{w}+\beta))} \prod_{w} \frac{\Gamma(n^{c,k}_{w}+\beta))}{\Gamma(\beta)} )\nonumber\\
+&\times \prod_{c}\prod_{k}(\frac{\Gamma(\sum_{w} \beta)}{\Gamma(\sum_{w} n^{c,k}_{w}+\beta))} \prod_{w} \frac{•}{•}\Gamma(n^{c,k}_{w}+\beta))}{\Gamma(\beta)} )\nonumber\\
 &\times \prod_{d}(\frac{\Gamma(\sum_{k} \alpha)}{\Gamma(\sum_{k} n^{d}_{k}+\alpha)} \prod_{k} \frac{\Gamma(n^{d}_{k}+\alpha))}{\Gamma(\alpha)} ) \times \prod_{(d,i)} P(x_{d,i} \mid \lambda)\nonumber\\
 \end{align}
 
