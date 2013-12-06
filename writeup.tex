@@ -197,6 +197,9 @@ P &(z_{d,i}=k, x_{d,i} = 1 \mid z-z_{d,i},x-x_{d,i},c,w;\alpha, \beta, \lambda) 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{6 Text Analysis with MCLDA}
+
+\noindent{\bf Note:} Since our test data is much shorter than our training data it's likelihood is naturally much higher. A possibly more informative metric would have been log likelihood per word.\\
+\\
 \noindent {\bf(1)} For each chain the training likelihood increases (monotonically, save for minor fluctuations)  till it plateaus around 300 iterations. Similarly the likelihood for test data decreases till it plateaus however with much more variation. \\
 
 \begin{figure}[H]
@@ -244,7 +247,7 @@ P &(z_{d,i}=k, x_{d,i} = 1 \mid z-z_{d,i},x-x_{d,i},c,w;\alpha, \beta, \lambda) 
 \end{figure}
 
 \noindent {\bf(6)}  \\
-\noindent {\bf(a)} As we increase K we allow topics to become more and more specific meaning that we can label individual documents with a might higher granularity increasing the log likelihood.  \\
+\noindent {\bf(a)} As we increase K we allow topics to become more and more specific meaning that we can label individual documents with a might higher granularity increasing the log likelihood. This greatly increases our likelihood on test data to a point (around K=40) afterwards we start overfitting the training data and our rate begins to drop off again. \\
 \\
 \noindent {\bf(b)} Varying $\lambda$ controls the amount we sample from global vs corpus dependent distribution of topics. Test performance increases with $\lambda$ initially but then peaks around .75 before decreasing again. This implies that there is an optimal lambda that is between always sampling from the global and always sampling from collection dependent. This intuitively makes sense because with $\lambda = 0$ this would imply that there is no advantage of looking at collection specific topics. In the other extreme with $\lambda=1$ would imply that there was no benefit to generalizing and considering global topics. Everywhere in between implies that there are differences in which words each collection uses to describe a topic but there is still benefit to considering the generalized corpus. Our data shows that between these two collections we much heavily prefer the collection dependent distributions (although I believe that it's likely with a finer resolution search we would find a maxima not at 1).   \\
 \\
